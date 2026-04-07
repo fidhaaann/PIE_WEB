@@ -1,0 +1,189 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Google Fonts import ── */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&family=Inter:wght@300;400;500;600&display=swap');
+
+/* ── CSS Variables ── */
+:root {
+  --bg-start:       #0C342C;
+  --bg-mid:         #076653;
+  --bg-end:         #0a5544;
+  --accent:         #E3EF26;
+  --accent-dim:     #CBDD1E;
+  --text-primary:   #F5F5F0;
+  --text-secondary: rgba(245, 245, 240, 0.65);
+  --text-muted:     rgba(245, 245, 240, 0.35);
+  --border:         rgba(245, 245, 240, 0.1);
+  --border-accent:  rgba(227, 239, 38, 0.3);
+  --glass-bg:       rgba(6, 38, 30, 0.6);
+  --glass-border:   rgba(245, 245, 240, 0.08);
+  --card-bg:        rgba(7, 102, 83, 0.15);
+  --card-hover:     rgba(7, 102, 83, 0.3);
+}
+
+/* ── Base reset ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  scroll-behavior: auto; /* Lenis handles this */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background: linear-gradient(160deg, #06231D 0%, #0C342C 35%, #076653 75%, #0a5544 100%);
+  background-attachment: fixed;
+  color: var(--text-primary);
+  font-family: 'Inter', system-ui, sans-serif;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* ── Typography ── */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.15;
+}
+
+p { color: var(--text-secondary); line-height: 1.7; }
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 2px; }
+
+/* ── Selection ── */
+::selection { background: var(--accent); color: #06231D; }
+
+/* ── Utility classes ── */
+.accent { color: var(--accent); }
+.section-pad { padding: clamp(4rem, 8vw, 8rem) clamp(1.25rem, 5vw, 6rem); }
+
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid var(--glass-border);
+}
+
+.card-base {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.card-base:hover {
+  background: var(--card-hover);
+  border-color: var(--border-accent);
+  transform: translateY(-6px);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--accent);
+  color: #06231D;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 700;
+  font-size: clamp(0.875rem, 1.5vw, 1rem);
+  padding: 0.875rem 2rem;
+  border-radius: 9999px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.btn-primary:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 30px rgba(227, 239, 38, 0.5);
+}
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: transparent;
+  color: var(--text-primary);
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 600;
+  font-size: clamp(0.875rem, 1.5vw, 1rem);
+  padding: 0.875rem 2rem;
+  border-radius: 9999px;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  text-decoration: none;
+}
+.btn-ghost:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, #E3EF26 0%, #a8e6cf 50%, #E3EF26 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  background-size: 200% 200%;
+  animation: gradientShift 4s ease infinite;
+}
+
+@keyframes gradientShift {
+  0%, 100% { background-position:   0% 50%; }
+  50%       { background-position: 100% 50%; }
+}
+
+.tag {
+  display: inline-block;
+  background: rgba(227, 239, 38, 0.12);
+  border: 1px solid rgba(227, 239, 38, 0.3);
+  color: var(--accent);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.3rem 0.85rem;
+  border-radius: 9999px;
+}
+
+.section-label {
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 700;
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 1rem;
+}
+
+.divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border), transparent);
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* ── Noise texture overlay ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.04;
+}
+
+/* ── Lenis ── */
+html.lenis { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: hidden; }
+.lenis.lenis-scrolling iframe { pointer-events: none; }
