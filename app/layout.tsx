@@ -5,7 +5,12 @@ import SmoothScroll from '@/components/SmoothScroll'
 import ScrollProgress from '@/components/ScrollProgress'
 import Navbar from '@/components/Navbar'
 
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: 'V-Fiesta 5.0 | IEEE PIE Kerala Section',
   description:
     'The flagship annual techno-cultural fest of IEEE Power & Energy Society, Kerala Section. Join us for two days of innovation, workshops, competitions, and more at V-Fiesta 5.0.',
