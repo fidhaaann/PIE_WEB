@@ -23,7 +23,7 @@ export default function Contact() {
         <AnimateIn>
           <p className="section-label">Get in Touch</p>
           <h2
-            className="font-display font-extrabold text-[var(--text-primary)] mb-4"
+            className="font-display text-[var(--text-primary)] mb-4"
             style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)' }}
           >
             We&apos;d love to
@@ -67,7 +67,7 @@ export default function Contact() {
                   </div>
                   <div>
                     <p className="font-body text-xs text-[var(--text-muted)] uppercase tracking-widest">{item.label}</p>
-                    <p className="font-display font-600 text-sm text-[var(--text-primary)] mt-0.5 group-hover:text-[var(--accent)] transition-colors">
+                    <p className="font-body font-medium text-sm text-[var(--text-primary)] mt-0.5 group-hover:text-[var(--accent)] transition-colors">
                       {item.value}
                     </p>
                   </div>
@@ -103,13 +103,13 @@ export default function Contact() {
               <div className="card-base overflow-hidden rounded-2xl h-48 flex items-center justify-center">
                 <div className="text-center">
                   <MapPin size={32} className="text-[var(--accent)] mx-auto mb-2" />
-                  <p className="font-display font-700 text-sm text-[var(--text-primary)]">Rajagiri Engineering</p>
+                  <p className="font-body font-medium text-sm text-[var(--text-primary)]">Rajagiri Engineering</p>
                   <p className="font-body text-xs text-[var(--text-muted)]">Kakkanad, Kochi, Kerala</p>
                   <a
                     href="https://maps.google.com"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-block mt-3 text-xs font-display font-700 text-[var(--accent)] hover:underline"
+                    className="inline-block mt-3 text-xs font-body font-medium text-[var(--accent)] hover:underline"
                   >
                     Open in Maps →
                   </a>
@@ -121,7 +121,7 @@ export default function Contact() {
           {/* Right: form */}
           <AnimateIn type="slideRight">
             <form onSubmit={handleSubmit} className="card-base p-8 rounded-3xl space-y-5">
-              <h3 className="font-display font-700 text-xl text-[var(--text-primary)]">Send a Message</h3>
+              <h3 className="font-display text-xl text-[var(--text-primary)]">Send a Message</h3>
 
               {[
                 { id: 'name',    label: 'Your Name',    type: 'text',  placeholder: 'e.g. Arjun Kumar' },

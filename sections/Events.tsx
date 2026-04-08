@@ -77,7 +77,7 @@ export default function Events() {
           <p className="section-label">Events &amp; Competitions</p>
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-12">
             <h2
-              className="font-display font-extrabold text-[var(--text-primary)]"
+              className="font-display text-[var(--text-primary)]"
               style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)' }}
             >
               Compete. Learn.
@@ -110,13 +110,13 @@ export default function Events() {
                   <div className="absolute inset-0 bg-gradient-to-t from-[#06231D] via-transparent to-transparent" />
                   {/* Category badge */}
                   <div
-                    className="absolute top-4 left-4 text-xs font-display font-700 px-3 py-1 rounded-full"
+                    className="absolute top-4 left-4 text-xs font-body font-medium px-3 py-1 rounded-full"
                     style={{ background: `${ev.color}22`, border: `1px solid ${ev.color}50`, color: ev.color }}
                   >
                     {ev.category}
                   </div>
                   {/* Prize */}
-                  <div className="absolute bottom-4 right-4 glass px-3 py-1 rounded-lg text-xs font-display font-700 text-[var(--accent)]">
+                  <div className="absolute bottom-4 right-4 glass px-3 py-1 rounded-lg text-xs font-body font-medium text-[var(--accent)]">
                     {ev.prize}
                   </div>
                 </div>
@@ -124,7 +124,7 @@ export default function Events() {
                 {/* Content */}
                 <div className="p-6 flex flex-col flex-1">
                   <div className="flex items-start justify-between gap-3 mb-3">
-                    <h3 className="font-display font-700 text-lg text-[var(--text-primary)] leading-tight">
+                    <h3 className="font-display text-lg text-[var(--text-primary)] leading-tight">
                       {ev.title}
                     </h3>
                     <span className="text-xs font-body text-[var(--text-muted)] whitespace-nowrap mt-0.5">{ev.date}</span>
@@ -134,7 +134,7 @@ export default function Events() {
                   </p>
                   <div className="mt-5 flex items-center justify-between">
                     <div className="h-px flex-1 bg-[var(--border)]" />
-                    <button className="ml-4 flex items-center gap-1.5 text-xs font-display font-700 text-[var(--accent)] hover:gap-3 transition-all">
+                    <button className="ml-4 flex items-center gap-1.5 text-xs font-body font-medium text-[var(--accent)] hover:gap-3 transition-all">
                       Learn more <ArrowUpRight size={13} />
                     </button>
                   </div>

@@ -67,7 +67,7 @@ export default function Hero() {
       {/* Main title – character stagger */}
       <div className="relative z-10 text-center px-5">
         <div
-          className="font-display font-extrabold leading-none tracking-tight"
+          className="hero-display"
           style={{ fontSize: 'clamp(3.5rem, 14vw, 11rem)' }}
         >
           {CHARS.map((char, i) => (
@@ -137,7 +137,7 @@ export default function Hero() {
           { value: '5th',   label: 'Edition' },
         ].map((stat) => (
           <div key={stat.label} className="glass px-6 py-4 rounded-2xl text-center min-w-[110px]">
-            <div className="font-display font-extrabold text-2xl text-[var(--accent)]">{stat.value}</div>
+            <div className="font-body font-medium text-2xl text-[var(--accent)]">{stat.value}</div>
             <div className="font-body text-xs text-[var(--text-muted)] mt-0.5">{stat.label}</div>
           </div>
         ))}

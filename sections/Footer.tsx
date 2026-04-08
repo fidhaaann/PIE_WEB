@@ -19,8 +19,8 @@ export default function Footer() {
                 <Zap size={16} className="text-[#06231D]" />
               </div>
               <div>
-                <span className="font-display font-800 text-sm text-[var(--text-primary)] block">IEEE PIE</span>
-                <span className="font-display font-700 text-xs text-[var(--accent)]">Kerala Section</span>
+                <span className="font-display text-sm text-[var(--text-primary)] block">IEEE PIE</span>
+                <span className="font-body font-medium text-xs text-[var(--accent)]">Kerala Section</span>
               </div>
             </div>
             <p className="font-body text-xs text-[var(--text-secondary)] max-w-xs leading-relaxed">
@@ -46,7 +46,7 @@ export default function Footer() {
 
           {/* Nav */}
           <div>
-            <p className="font-display font-700 text-xs uppercase tracking-widest text-[var(--text-muted)] mb-5">Navigation</p>
+            <p className="font-body font-medium text-xs uppercase tracking-widest text-[var(--text-muted)] mb-5">Navigation</p>
             <ul className="space-y-3">
               {navLinks.map((link) => (
                 <li key={link}>
@@ -63,7 +63,7 @@ export default function Footer() {
 
           {/* Info */}
           <div>
-            <p className="font-display font-700 text-xs uppercase tracking-widest text-[var(--text-muted)] mb-5">Event Info</p>
+            <p className="font-body font-medium text-xs uppercase tracking-widest text-[var(--text-muted)] mb-5">Event Info</p>
             <ul className="space-y-3">
               {[
                 { label: 'Date',  value: 'June 14–15, 2026' },
