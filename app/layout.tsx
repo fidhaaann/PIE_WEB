@@ -1,24 +1,9 @@
 import type { Metadata } from 'next'
-import { DM_Sans, Inter } from 'next/font/google'
 import './globals.css'
 import { ThemeProvider } from '@/components/ThemeProvider'
 import SmoothScroll from '@/components/SmoothScroll'
 import ScrollProgress from '@/components/ScrollProgress'
 import Navbar from '@/components/Navbar'
-
-const dmSans = DM_Sans({
-  subsets: ['latin'],
-  variable: '--font-dm-sans',
-  weight: ['300', '400', '500', '600', '700', '800'],
-  display: 'swap',
-})
-
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-inter',
-  weight: ['300', '400', '500', '600'],
-  display: 'swap',
-})
 
 export const metadata: Metadata = {
   title: 'V-Fiesta 5.0 | IEEE PIE Kerala Section',
@@ -53,7 +38,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${dmSans.variable} ${inter.variable}`} suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <body className="font-body">
         <ThemeProvider>
           <SmoothScroll>
