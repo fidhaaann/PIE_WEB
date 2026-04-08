@@ -84,21 +84,21 @@ export default function Speakers() {
   return (
     <section id="speakers" className="section-pad">
       <div className="max-w-7xl mx-auto">
-        <AnimateIn>
+        <AnimateIn className="section-intro">
           <p className="section-label">Who You&apos;ll Hear</p>
           <h2
-            className="font-display text-[var(--text-primary)] mb-4"
+            className="font-display text-[var(--text-primary)] section-title"
             style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)' }}
           >
             World-class
             <span className="text-[var(--accent)]"> speakers.</span>
           </h2>
-          <p className="font-body text-[var(--text-secondary)] max-w-lg mb-12 text-sm md:text-base">
+          <p className="font-body section-copy">
             Learn from researchers, entrepreneurs, and engineers shaping the future of power &amp; energy.
           </p>
         </AnimateIn>
 
-        <StaggerContainer className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-5">
+        <StaggerContainer className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-5">
           {speakers.map((sp) => (
             <StaggerItem key={sp.id}>
               <motion.button
@@ -107,7 +107,7 @@ export default function Speakers() {
                 whileHover={{ y: -6 }}
                 transition={{ type: 'spring', stiffness: 300, damping: 20 }}
               >
-                <div className="relative h-36 overflow-hidden">
+                <div className="relative h-44 sm:h-36 overflow-hidden">
                   <Image
                     src={sp.img}
                     alt={sp.name}
@@ -145,13 +145,13 @@ export default function Speakers() {
               onClick={() => setSelected(null)}
             />
             <motion.div
-              className="fixed inset-0 z-[201] flex items-center justify-center p-5"
+              className="fixed inset-0 z-[201] flex items-center justify-center p-3 sm:p-5"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
             >
               <motion.div
-                className="glass rounded-3xl max-w-lg w-full p-8 relative"
+                className="glass rounded-2xl sm:rounded-3xl max-w-lg w-full p-5 sm:p-8 relative max-h-[88vh] overflow-y-auto"
                 initial={{ scale: 0.9, y: 20 }}
                 animate={{ scale: 1, y: 0 }}
                 exit={{ scale: 0.9, y: 20 }}
@@ -159,19 +159,19 @@ export default function Speakers() {
               >
                 <button
                   onClick={() => setSelected(null)}
-                  className="absolute top-5 right-5 p-2 rounded-xl hover:bg-white/10 transition-colors text-[var(--text-secondary)]"
+                  className="absolute top-3 right-3 sm:top-5 sm:right-5 p-2 rounded-xl hover:bg-white/10 transition-colors text-[var(--text-secondary)]"
                   aria-label="Close"
                 >
                   <X size={20} />
                 </button>
-                <div className="flex items-center gap-5 mb-6">
-                  <div className="relative w-20 h-20 rounded-2xl overflow-hidden flex-shrink-0">
+                <div className="flex items-center gap-3 sm:gap-5 mb-5 sm:mb-6 pr-8 sm:pr-10">
+                  <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden flex-shrink-0">
                     <Image src={selected.img} alt={selected.name} fill className="object-cover" sizes="80px" />
                   </div>
                   <div>
                     <div className="tag mb-2">{selected.tag}</div>
                     <h3 className="font-display text-xl text-[var(--text-primary)]">{selected.name}</h3>
-                    <p className="font-body text-sm text-[var(--text-secondary)]">{selected.role}</p>
+                    <p className="font-body text-xs sm:text-sm text-[var(--text-secondary)]">{selected.role}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2 mb-4">
@@ -179,11 +179,11 @@ export default function Speakers() {
                   <p className="font-body font-medium text-sm text-[var(--accent)]">Topic: {selected.topic}</p>
                 </div>
                 <p className="font-body text-sm text-[var(--text-secondary)] leading-relaxed">{selected.bio}</p>
-                <div className="flex gap-3 mt-6">
-                  <a href={selected.linkedin} className="btn-ghost py-2 px-4 text-xs flex items-center gap-1.5">
+                <div className="flex flex-col sm:flex-row gap-3 mt-6">
+                  <a href={selected.linkedin} className="btn-ghost py-2 px-4 text-xs flex items-center justify-center gap-1.5">
                     <Linkedin size={14} /> LinkedIn
                   </a>
-                  <a href={selected.twitter} className="btn-ghost py-2 px-4 text-xs flex items-center gap-1.5">
+                  <a href={selected.twitter} className="btn-ghost py-2 px-4 text-xs flex items-center justify-center gap-1.5">
                     <Twitter size={14} /> Twitter
                   </a>
                 </div>

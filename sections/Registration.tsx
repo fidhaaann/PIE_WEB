@@ -32,43 +32,43 @@ export default function Registration() {
     <section id="register" className="section-pad relative overflow-hidden">
       {/* Bg accent */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] rounded-full bg-[var(--accent)] opacity-[0.04] blur-[100px]" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[320px] h-[220px] md:w-[600px] md:h-[400px] rounded-full bg-[var(--accent)] opacity-[0.04] blur-[70px] md:blur-[100px]" />
       </div>
 
       <div className="max-w-5xl mx-auto relative z-10">
         {/* Top urgency badge */}
         <AnimateIn className="flex justify-center mb-8">
-          <div className="flex items-center gap-2 px-4 py-2 rounded-full border border-[var(--accent)]/40 bg-[var(--accent)]/8">
+          <div className="flex items-center gap-2 px-3 py-2 md:px-4 rounded-full border border-[var(--accent)]/40 bg-[var(--accent)]/8 text-center">
             <span className="w-2 h-2 rounded-full bg-[var(--accent)] animate-pulse" />
-            <span className="font-body font-medium text-xs text-[var(--accent)] uppercase tracking-widest">
+            <span className="font-body font-medium text-[0.65rem] md:text-xs text-[var(--accent)] uppercase tracking-[0.18em] md:tracking-widest">
               Registrations Open · Limited Seats
             </span>
           </div>
         </AnimateIn>
 
-        <AnimateIn>
+        <AnimateIn className="section-intro">
           <h2
-            className="font-display text-center text-[var(--text-primary)]"
+            className="font-display text-center text-[var(--text-primary)] section-title"
             style={{ fontSize: 'clamp(2.2rem, 6vw, 4.5rem)' }}
           >
-            Secure your spot
+            Secure your <span className="editorial-italic">spot</span>
             <br />
             <span className="text-[var(--accent)]">at V-Fiesta 5.0</span>
           </h2>
-          <p className="font-body text-center text-[var(--text-secondary)] mt-4 mb-12 max-w-xl mx-auto">
+          <p className="font-body section-copy text-center max-w-xl mx-auto">
             Join 2000+ engineers, innovators and dreamers for two days of non-stop action. Early bird ends soon!
           </p>
         </AnimateIn>
 
         {/* Countdown */}
         <AnimateIn type="scaleUp">
-          <div className="flex justify-center gap-4 md:gap-6 mb-14">
+          <div className="grid grid-cols-2 sm:flex sm:flex-wrap justify-center gap-3 md:gap-6 mb-12 md:mb-14 max-w-xs sm:max-w-none mx-auto">
             <CountdownBox value={days}    label="Days"    />
-            <div className="font-body font-medium text-3xl text-[var(--text-muted)] self-start mt-4">:</div>
+            <div className="hidden md:block font-body font-medium text-3xl text-[var(--text-muted)] self-start mt-4">:</div>
             <CountdownBox value={hours}   label="Hours"   />
-            <div className="font-body font-medium text-3xl text-[var(--text-muted)] self-start mt-4">:</div>
+            <div className="hidden md:block font-body font-medium text-3xl text-[var(--text-muted)] self-start mt-4">:</div>
             <CountdownBox value={minutes} label="Minutes" />
-            <div className="font-body font-medium text-3xl text-[var(--text-muted)] self-start mt-4">:</div>
+            <div className="hidden md:block font-body font-medium text-3xl text-[var(--text-muted)] self-start mt-4">:</div>
             <CountdownBox value={seconds} label="Seconds" />
           </div>
         </AnimateIn>
@@ -100,13 +100,13 @@ export default function Registration() {
             href="https://forms.google.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="btn-primary text-lg px-10 py-5 w-full sm:w-auto justify-center"
+            className="btn-primary btn-register-dark text-base md:text-lg px-8 md:px-10 py-4 md:py-5 w-full sm:w-auto justify-center"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.97 }}
           >
             Register Now — Free <ArrowRight size={18} />
           </motion.a>
-          <a href="#events" className="btn-ghost text-base px-8 py-5 w-full sm:w-auto justify-center">
+          <a href="#events" className="btn-ghost text-base px-8 py-4 md:py-5 w-full sm:w-auto justify-center">
             View All Events
           </a>
         </AnimateIn>

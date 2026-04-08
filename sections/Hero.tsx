@@ -1,23 +1,53 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
-import { motion } from 'framer-motion'
-import { ArrowDown, Zap } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
+import { AnimatePresence, motion, useScroll, useTransform } from 'framer-motion'
+import { ArrowDown } from 'lucide-react'
 
-const CHARS = 'V-FIESTA 5.0'.split('')
+const HERO_WORDS = [
+  { text: 'Build', className: 'font-display text-[var(--text-primary)]' },
+  { text: 'brighter', className: 'editorial-italic text-[var(--accent)]' },
+  { text: 'energy futures.', className: 'font-body font-medium text-[var(--text-primary)]' },
+]
+
+const HERO_INFO = [
+  {
+    label: 'Participants',
+    value: '2000+ curious minds',
+    note: 'From campuses across Kerala and beyond.',
+  },
+  {
+    label: 'Events',
+    value: '25+ high-energy experiences',
+    note: 'Competitions, workshops, talks, and live showcases.',
+  },
+  {
+    label: 'Speakers',
+    value: '50+ voices shaping tomorrow',
+    note: 'Researchers, founders, and engineering leaders.',
+  },
+  {
+    label: 'Edition',
+    value: '5th landmark chapter',
+    note: 'A legacy event by IEEE PIE Kerala Section.',
+  },
+]
 
 export default function Hero() {
   const blobRef = useRef<HTMLDivElement>(null)
+  const contentRef = useRef<HTMLDivElement>(null)
+  const [activeInfo, setActiveInfo] = useState(0)
+
+  const { scrollYProgress } = useScroll()
+  const blobY = useTransform(scrollYProgress, [0, 1], [0, 170])
+  const contentY = useTransform(scrollYProgress, [0, 1], [0, -56])
 
   useEffect(() => {
-    const move = (e: MouseEvent) => {
-      if (!blobRef.current) return
-      const x = (e.clientX / window.innerWidth - 0.5) * 40
-      const y = (e.clientY / window.innerHeight - 0.5) * 40
-      blobRef.current.style.transform = `translate(${x}px, ${y}px)`
-    }
-    window.addEventListener('mousemove', move)
-    return () => window.removeEventListener('mousemove', move)
+    const timer = window.setInterval(() => {
+      setActiveInfo((prev) => (prev + 1) % HERO_INFO.length)
+    }, 3200)
+
+    return () => window.clearInterval(timer)
   }, [])
 
   const scrollDown = () => {
@@ -27,17 +57,18 @@ export default function Hero() {
   return (
     <section
       id="home"
-      className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden"
+      className="relative min-h-screen flex items-center overflow-hidden"
     >
       {/* Ambient blobs */}
-      <div
+      <motion.div
         ref={blobRef}
+        style={{ y: blobY }}
         className="absolute inset-0 pointer-events-none transition-transform duration-700 ease-out"
       >
-        <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] rounded-full bg-[var(--accent)] opacity-[0.06] blur-[120px]" />
-        <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] rounded-full bg-forest-500 opacity-[0.12] blur-[100px]" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full bg-[#076653] opacity-[0.08] blur-[140px]" />
-      </div>
+        <div className="absolute top-1/4 left-1/4 w-[260px] h-[260px] md:w-[500px] md:h-[500px] rounded-full bg-[var(--accent)] opacity-[0.05] md:opacity-[0.06] blur-[70px] md:blur-[120px]" />
+        <div className="absolute bottom-1/4 right-1/4 w-[220px] h-[220px] md:w-[400px] md:h-[400px] rounded-full bg-forest-500 opacity-[0.08] md:opacity-[0.12] blur-[60px] md:blur-[100px]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[340px] h-[340px] md:w-[700px] md:h-[700px] rounded-full bg-[#076653] opacity-[0.06] md:opacity-[0.08] blur-[80px] md:blur-[140px]" />
+      </motion.div>
 
       {/* Grid overlay */}
       <div
@@ -51,96 +82,106 @@ export default function Hero() {
         }}
       />
 
-      {/* Badge */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="relative z-10 mb-8"
-      >
-        <div className="flex items-center gap-2 tag">
-          <Zap size={12} />
-          <span>IEEE Power &amp; Energy Society · Kerala Section</span>
-        </div>
-      </motion.div>
-
-      {/* Main title – character stagger */}
-      <div className="relative z-10 text-center px-5">
-        <div
-          className="hero-display"
-          style={{ fontSize: 'clamp(3.5rem, 14vw, 11rem)' }}
-        >
-          {CHARS.map((char, i) => (
-            <motion.span
-              key={i}
-              initial={{ opacity: 0, y: 60, rotateX: -40 }}
-              animate={{ opacity: 1, y: 0, rotateX: 0 }}
-              transition={{
-                delay: 0.3 + i * 0.05,
-                duration: 0.6,
-                ease: [0.22, 1, 0.36, 1],
-              }}
-              className={`inline-block ${char === ' ' ? 'w-6 md:w-12' : ''} ${
-                char === '5' || char === '.' || char === '0'
-                  ? 'text-[var(--accent)]'
-                  : 'text-[var(--text-primary)]'
-              }`}
+      <motion.div ref={contentRef} style={{ y: contentY }} className="relative z-10 w-full px-5 md:px-10">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12 items-end">
+          <div className="lg:col-span-3 text-left">
+            <motion.h1
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
+              className="flex flex-wrap items-baseline gap-x-3 gap-y-2 mb-4"
+              style={{ fontSize: 'clamp(2rem, 6vw, 4.4rem)' }}
             >
-              {char === ' ' ? '\u00A0' : char}
-            </motion.span>
-          ))}
-        </div>
+              {HERO_WORDS.map((word, i) => (
+                <motion.span
+                  key={word.text}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 + i * 0.12, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                  className={word.className}
+                >
+                  {word.text}
+                </motion.span>
+              ))}
+            </motion.h1>
 
-        {/* Tagline */}
-        <motion.p
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.0, duration: 0.6 }}
-          className="font-body text-[var(--text-secondary)] mt-6"
-          style={{ fontSize: 'clamp(1rem, 2.5vw, 1.4rem)' }}
-        >
-          Innovate · Inspire · Impact&nbsp;&nbsp;|&nbsp;&nbsp;
-          <span className="text-[var(--accent)]">June 14–15, 2026</span>
-          &nbsp;·&nbsp;Kochi, Kerala
-        </motion.p>
+            <motion.p
+              initial={{ opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5, duration: 0.6 }}
+              className="hero-display gradient-text"
+              style={{ fontSize: 'clamp(2.6rem, 11vw, 8rem)', lineHeight: 0.92 }}
+            >
+              V-FIESTA 5.0
+            </motion.p>
 
-        {/* CTA buttons */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.2, duration: 0.6 }}
-          className="flex flex-wrap gap-4 justify-center mt-10"
-        >
-          <a href="#register" className="btn-primary text-base px-8 py-4">
-            Register Now
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </a>
-          <a href="#events" className="btn-ghost text-base px-8 py-4">
-            Explore Events
-          </a>
-        </motion.div>
-      </div>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.75, duration: 0.6 }}
+              className="font-body text-[var(--text-secondary)] mt-5 max-w-[36ch]"
+              style={{ fontSize: 'clamp(0.95rem, 2vw, 1.2rem)' }}
+            >
+              Innovate · Inspire · Impact <span className="text-[var(--accent)]">June 14–15, 2026</span> · Kochi, Kerala
+            </motion.p>
 
-      {/* Floating stats */}
-      <motion.div
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1.5, duration: 0.7 }}
-        className="relative z-10 mt-16 flex flex-wrap justify-center gap-6 px-5"
-      >
-        {[
-          { value: '2000+', label: 'Participants' },
-          { value: '25+',   label: 'Events' },
-          { value: '50+',   label: 'Speakers' },
-          { value: '5th',   label: 'Edition' },
-        ].map((stat) => (
-          <div key={stat.label} className="glass px-6 py-4 rounded-2xl text-center min-w-[110px]">
-            <div className="font-body font-medium text-2xl text-[var(--accent)]">{stat.value}</div>
-            <div className="font-body text-xs text-[var(--text-muted)] mt-0.5">{stat.label}</div>
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.95, duration: 0.6 }}
+              className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-8 w-full max-w-md"
+            >
+              <a href="#register" className="btn-primary btn-register-dark text-base px-8 py-4 justify-center w-full sm:w-auto">
+                Register Now
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </a>
+              <a href="#events" className="btn-ghost text-base px-8 py-4 justify-center w-full sm:w-auto">
+                Explore Events
+              </a>
+            </motion.div>
           </div>
-        ))}
+
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.1, duration: 0.7 }}
+            className="lg:col-span-2"
+          >
+            <div className="glass accent-stroke rounded-2xl p-5 md:p-7 h-[230px] md:h-[260px] w-full max-w-[560px] flex flex-col justify-between mx-auto lg:mx-0 overflow-hidden">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={HERO_INFO[activeInfo].label}
+                  initial={{ opacity: 0, y: 18 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -18 }}
+                  transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+                  className="min-h-0"
+                >
+                  <p className="font-body text-[0.68rem] uppercase tracking-[0.18em] text-[var(--text-muted)]">
+                    {HERO_INFO[activeInfo].label}
+                  </p>
+                  <p className="font-display text-[var(--accent)] mt-3" style={{ fontSize: 'clamp(1.45rem, 4vw, 2.35rem)', lineHeight: 1.08 }}>
+                    {HERO_INFO[activeInfo].value}
+                  </p>
+                  <p className="font-body text-sm md:text-base text-[var(--text-secondary)] mt-3 leading-relaxed max-w-[30ch] line-clamp-2">
+                    {HERO_INFO[activeInfo].note}
+                  </p>
+                </motion.div>
+              </AnimatePresence>
+
+              <div className="mt-6 flex items-center gap-1.5">
+                {HERO_INFO.map((item, idx) => (
+                  <span
+                    key={item.label}
+                    className={`h-1 rounded-full transition-all duration-500 ${idx === activeInfo ? 'w-8 bg-[var(--accent)]' : 'w-3 bg-[var(--border)]'}`}
+                  />
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        </div>
       </motion.div>
 
       {/* Scroll cue */}

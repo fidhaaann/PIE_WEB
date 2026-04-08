@@ -1,10 +1,10 @@
 'use client'
 
+import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
-import { motion } from 'framer-motion'
+import { AnimatePresence, motion, useScroll, useTransform } from 'framer-motion'
 import { ArrowUpRight } from 'lucide-react'
 import AnimateIn from '@/components/AnimateIn'
-import { StaggerContainer, StaggerItem } from '@/components/StaggerContainer'
 
 const events = [
   {
@@ -70,79 +70,131 @@ const events = [
 ]
 
 export default function Events() {
+  const sectionRef = useRef<HTMLElement>(null)
+  const [spotlightIndex, setSpotlightIndex] = useState(0)
+  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start end', 'end start'] })
+  const accentY = useTransform(scrollYProgress, [0, 1], [24, -32])
+
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      setSpotlightIndex((prev) => (prev + 1) % events.length)
+    }, 4200)
+
+    return () => window.clearInterval(timer)
+  }, [])
+
+  const spotlight = events[spotlightIndex]
+
   return (
-    <section id="events" className="section-pad">
+    <section ref={sectionRef} id="events" className="section-pad relative overflow-hidden">
+      <motion.div
+        style={{ y: accentY }}
+        className="pointer-events-none absolute left-0 top-12 w-[220px] h-[220px] md:w-[340px] md:h-[340px] rounded-full bg-[var(--accent)] opacity-[0.05] blur-[90px]"
+      />
       <div className="max-w-7xl mx-auto">
-        <AnimateIn>
+        <AnimateIn className="section-intro">
           <p className="section-label">Events &amp; Competitions</p>
-          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-12">
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
             <h2
-              className="font-display text-[var(--text-primary)]"
+              className="font-display text-[var(--text-primary)] section-title"
               style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)' }}
             >
               Compete. Learn.
               <br />
               <span className="text-[var(--accent)]">Conquer.</span>
             </h2>
-            <p className="font-body text-[var(--text-secondary)] max-w-sm text-sm md:text-base">
+            <p className="font-body section-copy md:max-w-sm">
               Six high-stakes events across two action-packed days. Total prize pool: <strong className="text-[var(--text-primary)]">₹1,25,000+</strong>
             </p>
           </div>
         </AnimateIn>
 
-        <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {events.map((ev) => (
-            <StaggerItem key={ev.id}>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-7">
+          <motion.article
+            className="lg:col-span-4 card-base accent-stroke p-5 md:p-6 lg:sticky lg:top-24 h-[560px] md:h-[590px] flex flex-col overflow-hidden"
+            initial={{ opacity: 0, y: 18 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.4 }}
+          >
+            <AnimatePresence mode="wait">
               <motion.div
-                className="card-base overflow-hidden group cursor-pointer flex flex-col h-full"
-                whileHover={{ y: -8 }}
-                transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                key={spotlight.id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+                className="min-h-[380px]"
               >
-                {/* Image */}
-                <div className="relative h-48 overflow-hidden">
-                  <Image
-                    src={ev.img}
-                    alt={ev.title}
-                    fill
-                    className="object-cover transition-transform duration-700 group-hover:scale-110"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#06231D] via-transparent to-transparent" />
-                  {/* Category badge */}
-                  <div
-                    className="absolute top-4 left-4 text-xs font-body font-medium px-3 py-1 rounded-full"
-                    style={{ background: `${ev.color}22`, border: `1px solid ${ev.color}50`, color: ev.color }}
-                  >
-                    {ev.category}
-                  </div>
-                  {/* Prize */}
-                  <div className="absolute bottom-4 right-4 glass px-3 py-1 rounded-lg text-xs font-body font-medium text-[var(--accent)]">
-                    {ev.prize}
-                  </div>
+                <p className="font-body text-[0.66rem] uppercase tracking-[0.18em] text-[var(--text-muted)]">Feature Spotlight</p>
+                <div className="flex items-center justify-between gap-2 mt-1">
+                  <span className="text-[0.68rem] font-body text-[var(--text-muted)]">{spotlight.date}</span>
+                  <span className="text-[0.68rem] font-body text-[var(--accent)]">{spotlight.prize}</span>
                 </div>
+                <h3 className="font-display text-2xl text-[var(--text-primary)] mt-2 leading-tight h-[58px] overflow-hidden">{spotlight.title}</h3>
+                <p className="font-body text-sm text-[var(--text-secondary)] mt-3 leading-relaxed h-[68px] overflow-hidden">{spotlight.desc}</p>
 
-                {/* Content */}
-                <div className="p-6 flex flex-col flex-1">
-                  <div className="flex items-start justify-between gap-3 mb-3">
-                    <h3 className="font-display text-lg text-[var(--text-primary)] leading-tight">
-                      {ev.title}
-                    </h3>
-                    <span className="text-xs font-body text-[var(--text-muted)] whitespace-nowrap mt-0.5">{ev.date}</span>
+                <div className="relative mt-5 rounded-2xl overflow-hidden h-44">
+                  <Image src={spotlight.img} alt={spotlight.title} fill className="object-cover" sizes="(max-width: 1024px) 100vw, 30vw" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#06231D] via-transparent to-transparent" />
+                </div>
+              </motion.div>
+            </AnimatePresence>
+
+            <div className="grid grid-cols-3 gap-3 mt-auto">
+              <div className="glass rounded-xl p-3 text-center">
+                <p className="font-display text-lg text-[var(--accent)]">{events.length}</p>
+                <p className="font-body text-[0.66rem] text-[var(--text-muted)] uppercase tracking-[0.14em]">Events</p>
+              </div>
+              <div className="glass rounded-xl p-3 text-center">
+                <p className="font-display text-lg text-[var(--accent)]">2</p>
+                <p className="font-body text-[0.66rem] text-[var(--text-muted)] uppercase tracking-[0.14em]">Days</p>
+              </div>
+              <div className="glass rounded-xl p-3 text-center">
+                <p className="font-display text-lg text-[var(--accent)]">₹1.25L+</p>
+                <p className="font-body text-[0.66rem] text-[var(--text-muted)] uppercase tracking-[0.14em]">Prizes</p>
+              </div>
+            </div>
+          </motion.article>
+
+          <div className="lg:col-span-8 space-y-4">
+            {events.map((ev, i) => (
+              <motion.article
+                key={ev.id}
+                className="card-base accent-stroke p-4 md:p-5"
+                whileHover={{ y: -4 }}
+                whileInView={{ opacity: [0, 1], y: [14, 0] }}
+                viewport={{ once: true, amount: 0.2 }}
+                transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+              >
+                <div className="grid grid-cols-[auto,1fr] md:grid-cols-[auto,112px,1fr,auto] gap-4 items-start">
+                  <div className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-[var(--accent)]/14 border border-[var(--border-accent)] flex items-center justify-center text-[0.72rem] font-body font-medium text-[var(--accent)]">
+                    {String(i + 1).padStart(2, '0')}
                   </div>
-                  <p className="font-body text-sm text-[var(--text-secondary)] leading-relaxed flex-1">
-                    {ev.desc}
-                  </p>
-                  <div className="mt-5 flex items-center justify-between">
-                    <div className="h-px flex-1 bg-[var(--border)]" />
-                    <button className="ml-4 flex items-center gap-1.5 text-xs font-body font-medium text-[var(--accent)] hover:gap-3 transition-all">
-                      Learn more <ArrowUpRight size={13} />
+
+                  <div className="hidden md:block relative w-28 h-20 rounded-xl overflow-hidden">
+                    <Image src={ev.img} alt={ev.title} fill className="object-cover" sizes="112px" />
+                  </div>
+
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <p className="font-display text-lg text-[var(--text-primary)] leading-tight">{ev.title}</p>
+                      <span className="text-[0.63rem] font-body uppercase tracking-[0.15em] text-[var(--text-muted)]">{ev.category}</span>
+                    </div>
+                    <p className="font-body text-sm text-[var(--text-secondary)] mt-2 leading-relaxed">{ev.desc}</p>
+                  </div>
+
+                  <div className="col-span-2 md:col-span-1 flex md:flex-col items-center md:items-end justify-between md:justify-start gap-2 md:gap-1">
+                    <span className="text-[0.68rem] font-body text-[var(--text-muted)] border border-[var(--border)] rounded-full px-2.5 py-1">{ev.date}</span>
+                    <span className="text-[0.72rem] font-body text-[var(--accent)]">{ev.prize}</span>
+                    <button className="hidden md:flex items-center gap-1.5 text-xs font-body font-medium text-[var(--accent)] hover:gap-3 transition-all mt-1">
+                      Details <ArrowUpRight size={13} />
                     </button>
                   </div>
                 </div>
-              </motion.div>
-            </StaggerItem>
-          ))}
-        </StaggerContainer>
+              </motion.article>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   )

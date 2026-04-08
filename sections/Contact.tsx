@@ -20,18 +20,18 @@ export default function Contact() {
   return (
     <section id="contact" className="section-pad">
       <div className="max-w-7xl mx-auto">
-        <AnimateIn>
+        <AnimateIn className="section-intro">
           <p className="section-label">Get in Touch</p>
           <h2
-            className="font-display text-[var(--text-primary)] mb-4"
+            className="font-display text-[var(--text-primary)] section-title"
             style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)' }}
           >
             We&apos;d love to
-            <span className="text-[var(--accent)]"> hear from you.</span>
+            <span className="editorial-italic text-[var(--accent)]"> hear from you.</span>
           </h2>
         </AnimateIn>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mt-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-12 mt-10 md:mt-12">
           {/* Left: info */}
           <AnimateIn type="slideLeft">
             <div className="space-y-8">
@@ -120,7 +120,7 @@ export default function Contact() {
 
           {/* Right: form */}
           <AnimateIn type="slideRight">
-            <form onSubmit={handleSubmit} className="card-base p-8 rounded-3xl space-y-5">
+            <form onSubmit={handleSubmit} className="card-base p-5 sm:p-8 rounded-3xl space-y-5">
               <h3 className="font-display text-xl text-[var(--text-primary)]">Send a Message</h3>
 
               {[

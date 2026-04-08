@@ -71,7 +71,7 @@ const config: Config = {
       },
       backgroundImage: {
         'gradient-dark':  'linear-gradient(135deg, #06231D 0%, #0C342C 50%, #076653 100%)',
-        'gradient-light': 'linear-gradient(135deg, #0C342C 0%, #076653 60%, #1a8a72 100%)',
+        'gradient-light': 'linear-gradient(135deg, #0C342C 0%, #076653 60%, #0a5544 100%)',
         'lime-glow':      'radial-gradient(ellipse at center, rgba(227,239,38,0.15) 0%, transparent 70%)',
       },
       boxShadow: {
