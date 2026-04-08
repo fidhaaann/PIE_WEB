@@ -12,7 +12,7 @@ interface StaggerProps {
 
 export function StaggerContainer({ children, className, delay = 0 }: StaggerProps) {
   const ref = useRef(null)
-  const inView = useInView(ref, { once: true, margin: '-60px' })
+  const inView = useInView(ref, { once: true, margin: '-40px 0px' })
 
   return (
     <motion.div

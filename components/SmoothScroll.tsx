@@ -6,6 +6,10 @@ export default function SmoothScroll({ children }: { children: ReactNode }) {
   const lenisRef = useRef<unknown>(null)
 
   useEffect(() => {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const isTouchDevice = window.matchMedia('(pointer: coarse)').matches
+    if (prefersReducedMotion || isTouchDevice) return
+
     let lenis: {
       raf: (time: number) => void
       destroy: () => void

@@ -30,7 +30,7 @@ export default function AnimateIn({
   once = true,
 }: AnimateInProps) {
   const ref = useRef(null)
-  const inView = useInView(ref, { once, margin: '-60px' })
+  const inView = useInView(ref, { once, margin: '-40px 0px' })
   const variant = variantMap[type]
 
   return (
