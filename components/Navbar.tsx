@@ -48,10 +48,10 @@ export default function Navbar() {
               <Zap size={16} className="text-[#06231D]" />
             </div>
             <div>
-              <span className="font-display font-800 text-sm tracking-tight text-[var(--text-primary)] block leading-none">
+              <span className="font-display text-sm tracking-tight text-[var(--text-primary)] block leading-none">
                 IEEE PIE
               </span>
-              <span className="font-display font-700 text-xs text-[var(--accent)] leading-none">
+              <span className="font-body font-medium text-xs text-[var(--accent)] leading-none">
                 Kerala Section
               </span>
             </div>
@@ -106,7 +106,7 @@ export default function Navbar() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: i * 0.06 }}
                 onClick={() => handleNav(link.href)}
-                className="text-left font-display text-xl font-600 text-[var(--text-primary)] hover:text-[var(--accent)] transition-colors"
+                className="text-left font-body font-medium text-xl text-[var(--text-primary)] hover:text-[var(--accent)] transition-colors"
               >
                 {link.label}
               </motion.button>
