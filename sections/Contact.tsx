@@ -132,6 +132,7 @@ export default function Contact() {
                     {field.label}
                   </label>
                   <input
+                    suppressHydrationWarning
                     id={field.id}
                     type={field.type}
                     placeholder={field.placeholder}
@@ -148,6 +149,7 @@ export default function Contact() {
                   Message
                 </label>
                 <textarea
+                  suppressHydrationWarning
                   id="message"
                   rows={4}
                   placeholder="Your message or query..."

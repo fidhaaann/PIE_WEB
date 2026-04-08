@@ -54,7 +54,7 @@ export default function Navbar() {
         initial={{ y: -80, opacity: 0 }}
         animate={{ y: showNav ? 0 : -110, opacity: showNav ? 1 : 0 }}
         transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-        className="fixed top-0 left-0 right-0 z-[100] py-3 md:py-4 pointer-events-auto"
+        className="fixed top-2 md:top-0 left-0 right-0 z-[100] py-3 md:py-4 pt-[env(safe-area-inset-top)] md:pt-4 pointer-events-auto"
       >
         <div className="max-w-7xl mx-auto px-4 md:px-5">
           <div
