@@ -14,10 +14,14 @@ export default function SmoothScroll({ children }: { children: ReactNode }) {
       raf: (time: number) => void
       destroy: () => void
     } | null = null
+    let scrollTriggerUpdate: (() => void) | null = null
     let rafId: number
 
     const init = async () => {
       const Lenis = (await import('@studio-freight/lenis')).default
+      const { ScrollTrigger } = await import('gsap/ScrollTrigger')
+      scrollTriggerUpdate = () => ScrollTrigger.update()
+
       lenis = new Lenis({
         duration: 1.2,
         easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -27,6 +31,7 @@ export default function SmoothScroll({ children }: { children: ReactNode }) {
 
       const raf = (time: number) => {
         lenis?.raf(time)
+        scrollTriggerUpdate?.()
         rafId = requestAnimationFrame(raf)
       }
       rafId = requestAnimationFrame(raf)

@@ -98,8 +98,12 @@ export default function Highlights() {
               className="w-full rounded-2xl overflow-hidden shadow-card bg-[#06231D]"
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
+              animate={{ y: [-3, 3] }}
               viewport={{ once: true, margin: '-80px' }}
-              transition={{ delay: i * 0.1, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+              transition={{
+                opacity: { delay: i * 0.1, duration: 0.5, ease: [0.22, 1, 0.36, 1] },
+                y: { duration: 3.8 + i * 0.18, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut', delay: i * 0.2 },
+              }}
             >
               <div className="relative h-44">
                 <Image src={item.img} alt={item.title} fill className="object-cover" sizes="100vw" />
@@ -119,15 +123,20 @@ export default function Highlights() {
             <motion.div
               key={item.id}
               className="absolute w-[320px] rounded-2xl overflow-hidden shadow-card bg-[#06231D]"
-              initial={{ opacity: 0, y: 50, rotate: item.rotate }}
-              whileInView={{ opacity: 1, y: 0, rotate: item.rotate }}
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              animate={{ y: [-8, 8] }}
               viewport={{ once: true, margin: '-80px' }}
-              transition={{ delay: i * 0.15, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+              transition={{
+                opacity: { delay: i * 0.15, duration: 0.7, ease: [0.22, 1, 0.36, 1] },
+                y: { duration: 4.8 + i * 0.25, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut', delay: i * 0.22 },
+              }}
               whileHover={{ scale: 1.05, rotate: 0, zIndex: 20, transition: { duration: 0.25 } }}
               style={{
                 zIndex: item.z,
                 left: `${10 + i * 18}%`,
                 top: `${i % 2 === 0 ? 0 : 60}px`,
+                rotate: item.rotate,
                 cursor: 'pointer',
               }}
             >

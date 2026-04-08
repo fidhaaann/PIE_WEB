@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Menu, X } from 'lucide-react'
-import pieLogo from '@/photo/pie_logo-Photoroom.png'
+import pieLogo from '@/photo/pielogo-Photoroom.png'
 
 const navLinks = [
   { label: 'About', href: '#about' },
@@ -19,10 +19,26 @@ const navLinks = [
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
+  const [showNav, setShowNav] = useState(true)
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40)
+    let lastScrollY = window.scrollY
+
+    const onScroll = () => {
+      const currentScrollY = window.scrollY
+      setScrolled(currentScrollY > 40)
+
+      if (currentScrollY > lastScrollY && currentScrollY > 80) {
+        setShowNav(false)
+      } else {
+        setShowNav(true)
+      }
+
+      lastScrollY = currentScrollY
+    }
+
     window.addEventListener('scroll', onScroll, { passive: true })
+    onScroll()
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
@@ -36,9 +52,9 @@ export default function Navbar() {
     <>
       <motion.header
         initial={{ y: -80, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-        className="fixed top-0 left-0 right-0 z-[100] py-3 md:py-4"
+        animate={{ y: showNav ? 0 : -110, opacity: showNav ? 1 : 0 }}
+        transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+        className="fixed top-0 left-0 right-0 z-[100] py-3 md:py-4 pointer-events-auto"
       >
         <div className="max-w-7xl mx-auto px-4 md:px-5">
           <div
@@ -52,7 +68,7 @@ export default function Navbar() {
               <Image
                 src={pieLogo}
                 alt="IEEE PIE Kerala Section logo"
-                className="h-10 sm:h-12 md:h-14 w-auto"
+                className="h-8 sm:h-9 md:h-10 w-auto"
                 priority
               />
             </Link>

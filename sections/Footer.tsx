@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import { Instagram, Linkedin, Twitter, ArrowUp } from 'lucide-react'
-import pieLogo from '@/photo/pie_logo-Photoroom.png'
+import pieLogo from '@/photo/pielogo-Photoroom.png'
 
 const navLinks = [
   { label: 'About', href: '#about' },
@@ -27,7 +27,7 @@ export default function Footer() {
               <Image
                 src={pieLogo}
                 alt="IEEE PIE Kerala Section logo"
-                className="h-16 sm:h-20 md:h-16 w-auto"
+                className="h-14 sm:h-18 md:h-20 w-auto"
               />
             </div>
             <p className="font-body text-xs text-[var(--text-secondary)] max-w-xs leading-relaxed">

@@ -1,11 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
-import { motion, AnimatePresence } from 'framer-motion'
-import { X, Linkedin, Twitter, Globe } from 'lucide-react'
+import { motion, AnimatePresence, useMotionValueEvent, useScroll } from 'framer-motion'
+import { X, Linkedin, Twitter } from 'lucide-react'
 import AnimateIn from '@/components/AnimateIn'
-import { StaggerContainer, StaggerItem } from '@/components/StaggerContainer'
 
 const speakers = [
   {
@@ -78,8 +77,87 @@ const speakers = [
 
 type Speaker = typeof speakers[0]
 
+const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value))
+const lerp = (from: number, to: number, t: number) => from + (to - from) * t
+const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3)
+
+const SCATTER_LAYOUT = [
+  { x: 10, y: 10, rotate: -14 },
+  { x: 38, y: 8, rotate: 10 },
+  { x: 66, y: 12, rotate: -10 },
+  { x: 14, y: 48, rotate: 12 },
+  { x: 42, y: 46, rotate: -8 },
+  { x: 70, y: 50, rotate: 8 },
+]
+
+const FINAL_LAYOUT = [
+  { x: 10, y: 12, rotate: -4 },
+  { x: 38, y: 12, rotate: 3 },
+  { x: 66, y: 12, rotate: -3 },
+  { x: 14, y: 60, rotate: 4 },
+  { x: 42, y: 60, rotate: -2 },
+  { x: 70, y: 60, rotate: 2 },
+]
+
 export default function Speakers() {
   const [selected, setSelected] = useState<Speaker | null>(null)
+  const desktopStoryRef = useRef<HTMLDivElement>(null)
+  const [storyProgress, setStoryProgress] = useState(0)
+  const rafRef = useRef<number | null>(null)
+
+  const { scrollYProgress } = useScroll({ target: desktopStoryRef, offset: ['start start', 'end end'] })
+
+  useMotionValueEvent(scrollYProgress, 'change', (latest) => {
+    if (rafRef.current !== null) {
+      cancelAnimationFrame(rafRef.current)
+    }
+
+    rafRef.current = requestAnimationFrame(() => {
+      setStoryProgress(latest)
+      rafRef.current = null
+    })
+  })
+
+  useEffect(() => {
+    return () => {
+      if (rafRef.current !== null) {
+        cancelAnimationFrame(rafRef.current)
+      }
+    }
+  }, [])
+
+  const renderSpeakerCard = (sp: Speaker, index: number, cardWidthClass: string) => (
+    <motion.button
+      key={sp.id}
+      onClick={() => setSelected(sp)}
+      className={`group text-left glass border border-[rgba(255,255,255,0.08)] backdrop-blur-xl rounded-[18px] overflow-hidden h-[266px] flex flex-col transform-gpu shadow-[0_14px_32px_rgba(0,0,0,0.18)] ${cardWidthClass}`}
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.2 }}
+      transition={{ duration: 0.45, delay: index * 0.06, ease: [0.22, 1, 0.36, 1] }}
+      whileHover={{ y: -5 }}
+    >
+      <div className="relative h-36 overflow-hidden">
+        <Image
+          src={sp.img}
+          alt={sp.name}
+          fill
+          className="object-cover"
+          sizes="280px"
+        />
+        <div className="absolute inset-0 bg-[#06231D]/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+          <span className="text-xs font-body font-medium text-[var(--text-primary)] px-3 py-1 rounded-full bg-white/10 border border-white/10 backdrop-blur-md">
+            View Bio
+          </span>
+        </div>
+      </div>
+      <div className="p-4 flex-1">
+        <div className="tag text-[0.65rem] mb-2">{sp.tag}</div>
+        <p className="font-body font-medium text-sm text-[var(--text-primary)] leading-tight">{sp.name}</p>
+        <p className="font-body text-[0.7rem] text-[var(--text-muted)] mt-0.5 leading-tight">{sp.role}</p>
+      </div>
+    </motion.button>
+  )
 
   return (
     <section id="speakers" className="section-pad">
@@ -98,39 +176,77 @@ export default function Speakers() {
           </p>
         </AnimateIn>
 
-        <StaggerContainer className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-5">
-          {speakers.map((sp) => (
-            <StaggerItem key={sp.id}>
-              <motion.button
-                onClick={() => setSelected(sp)}
-                className="group w-full text-left card-base overflow-hidden"
-                whileHover={{ y: -6 }}
-                transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-              >
-                <div className="relative h-44 sm:h-36 overflow-hidden">
-                  <Image
-                    src={sp.img}
-                    alt={sp.name}
-                    fill
-                    className="object-cover"
-                    sizes="200px"
-                  />
-                  {/* Hover overlay */}
-                  <div className="absolute inset-0 bg-[#06231D]/70 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                    <span className="text-xs font-body font-medium text-[var(--accent)] px-3 py-1 border border-[var(--accent)]/40 rounded-full">
-                      View Bio
-                    </span>
-                  </div>
-                </div>
-                <div className="p-4">
-                  <div className="tag text-[0.65rem] mb-2">{sp.tag}</div>
-                  <p className="font-body font-medium text-sm text-[var(--text-primary)] leading-tight">{sp.name}</p>
-                  <p className="font-body text-[0.7rem] text-[var(--text-muted)] mt-0.5 leading-tight">{sp.role}</p>
-                </div>
-              </motion.button>
-            </StaggerItem>
-          ))}
-        </StaggerContainer>
+        <div className="lg:hidden overflow-x-auto pb-3 -mx-1 px-1">
+          <div className="flex gap-4 min-w-max pr-2">
+            {speakers.map((sp, i) => renderSpeakerCard(sp, i, 'w-[240px] sm:w-[250px] shrink-0'))}
+          </div>
+        </div>
+
+        <div ref={desktopStoryRef} className="hidden lg:block mt-0">
+          <div className="h-[220vh]">
+            <div className="sticky top-20 h-[94vh] overflow-visible">
+              <div className="absolute inset-0">
+                {speakers.map((sp, i) => {
+                  const revealStart = i * 0.09
+                  const revealEnd = revealStart + 0.16
+                  const t = clamp((storyProgress - revealStart) / (revealEnd - revealStart), 0, 1)
+                  const eased = easeOutCubic(t)
+
+                  const from = SCATTER_LAYOUT[i]
+                  const to = FINAL_LAYOUT[i]
+
+                  const x = lerp(from.x, to.x, eased)
+                  const y = lerp(from.y, to.y, eased)
+                  const rotate = lerp(from.rotate, to.rotate, eased)
+                  const opacity = clamp((t - 0.03) / 0.26, 0, 1)
+                  const blur = lerp(8, 0, eased)
+                  const scale = lerp(0.92, 1, eased)
+
+                  return (
+                    <motion.button
+                      key={sp.id}
+                      onClick={() => setSelected(sp)}
+                      className="group absolute w-[252px] xl:w-[272px] h-[286px] text-left glass border border-[rgba(255,255,255,0.08)] backdrop-blur-xl rounded-[18px] shadow-[0_14px_32px_rgba(0,0,0,0.18)] overflow-hidden flex flex-col transform-gpu"
+                      style={{
+                        left: `${x}%`,
+                        top: `${y}%`,
+                        rotate: `${rotate}deg`,
+                        opacity,
+                        scale,
+                        filter: `blur(${blur}px)`,
+                        zIndex: 20 + i,
+                        transform: 'translate(-50%, -50%)',
+                      }}
+                      whileHover={{ y: -5, rotate: 0, scale: 1.02 }}
+                      transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+                    >
+                      <div className="relative h-40 overflow-hidden">
+                        <Image
+                          src={sp.img}
+                          alt={sp.name}
+                          fill
+                          className="object-cover"
+                          sizes="272px"
+                        />
+                        <div className="absolute inset-0 bg-[#06231D]/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                          <span className="text-xs font-body font-medium text-[var(--text-primary)] px-3 py-1 rounded-full bg-white/10 border border-white/10 backdrop-blur-md">
+                            View Bio
+                          </span>
+                        </div>
+                      </div>
+                      <div className="p-4 flex-1">
+                        <div className="tag text-[0.68rem] mb-2">{sp.tag}</div>
+                        <p className="font-body font-medium text-[0.95rem] text-[var(--text-primary)] leading-tight">{sp.name}</p>
+                        <p className="font-body text-xs text-[var(--text-muted)] mt-1 leading-tight">{sp.role}</p>
+                      </div>
+                    </motion.button>
+                  )
+                })}
+              </div>
+
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Modal */}

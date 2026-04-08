@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { AnimatePresence, motion, useScroll, useTransform } from 'framer-motion'
+import { motion, useScroll, useTransform } from 'framer-motion'
 import { ArrowDown } from 'lucide-react'
 
 const HERO_WORDS = [
@@ -10,45 +10,55 @@ const HERO_WORDS = [
   { text: 'energy futures.', className: 'font-body font-medium text-[var(--text-primary)]' },
 ]
 
-const HERO_INFO = [
-  {
-    label: 'Participants',
-    value: '2000+ curious minds',
-    note: 'From campuses across Kerala and beyond.',
-  },
-  {
-    label: 'Events',
-    value: '25+ high-energy experiences',
-    note: 'Competitions, workshops, talks, and live showcases.',
-  },
-  {
-    label: 'Speakers',
-    value: '50+ voices shaping tomorrow',
-    note: 'Researchers, founders, and engineering leaders.',
-  },
-  {
-    label: 'Edition',
-    value: '5th landmark chapter',
-    note: 'A legacy event by IEEE PIE Kerala Section.',
-  },
+const TERMINAL_LINES = [
+  '$ whoami',
+  'IEEE PIE Kerala Section',
+  '$ event --name v-fiesta-5.0',
+  'Innovate · Inspire · Impact',
+  '$ status --participants',
+  '2000+ curious minds registered',
+  '$ schedule --days',
+  'June 14–15, 2026 | Kochi, Kerala',
+  '$ prizes --pool',
+  '₹1,25,000+ across competitions',
+  '$ focus --mode',
+  'Hackathons, quizzes, expos, workshops',
 ]
 
 export default function Hero() {
   const blobRef = useRef<HTMLDivElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
-  const [activeInfo, setActiveInfo] = useState(0)
+  const [visibleLineCount, setVisibleLineCount] = useState(1)
+  const [typingLine, setTypingLine] = useState(0)
+  const [typingCharCount, setTypingCharCount] = useState(0)
 
   const { scrollYProgress } = useScroll()
   const blobY = useTransform(scrollYProgress, [0, 1], [0, 170])
   const contentY = useTransform(scrollYProgress, [0, 1], [0, -56])
 
   useEffect(() => {
-    const timer = window.setInterval(() => {
-      setActiveInfo((prev) => (prev + 1) % HERO_INFO.length)
-    }, 3200)
+    const currentLine = TERMINAL_LINES[typingLine] ?? ''
+    const isTypingCommand = currentLine.startsWith('$')
+    const delay = isTypingCommand ? 55 : 24
 
-    return () => window.clearInterval(timer)
-  }, [])
+    if (typingCharCount < currentLine.length) {
+      const timer = window.setTimeout(() => {
+        setTypingCharCount((prev) => prev + 1)
+      }, delay)
+
+      return () => window.clearTimeout(timer)
+    }
+
+    if (visibleLineCount < TERMINAL_LINES.length) {
+      const timer = window.setTimeout(() => {
+        setVisibleLineCount((prev) => prev + 1)
+        setTypingLine((prev) => prev + 1)
+        setTypingCharCount(0)
+      }, 650)
+
+      return () => window.clearTimeout(timer)
+    }
+  }, [typingCharCount, typingLine, visibleLineCount])
 
   const scrollDown = () => {
     document.querySelector('#about')?.scrollIntoView({ behavior: 'smooth' })
@@ -149,35 +159,50 @@ export default function Hero() {
             transition={{ delay: 1.1, duration: 0.7 }}
             className="lg:col-span-2"
           >
-            <div className="glass accent-stroke rounded-2xl p-5 md:p-7 h-[230px] md:h-[260px] w-full max-w-[560px] flex flex-col justify-between mx-auto lg:mx-0 overflow-hidden">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={HERO_INFO[activeInfo].label}
-                  initial={{ opacity: 0, y: 18 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -18 }}
-                  transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-                  className="min-h-0"
-                >
-                  <p className="font-body text-[0.68rem] uppercase tracking-[0.18em] text-[var(--text-muted)]">
-                    {HERO_INFO[activeInfo].label}
-                  </p>
-                  <p className="font-display text-[var(--accent)] mt-3" style={{ fontSize: 'clamp(1.45rem, 4vw, 2.35rem)', lineHeight: 1.08 }}>
-                    {HERO_INFO[activeInfo].value}
-                  </p>
-                  <p className="font-body text-sm md:text-base text-[var(--text-secondary)] mt-3 leading-relaxed max-w-[30ch] line-clamp-2">
-                    {HERO_INFO[activeInfo].note}
-                  </p>
-                </motion.div>
-              </AnimatePresence>
+            <div className="glass accent-stroke rounded-[28px] p-4 md:p-6 w-full max-w-[560px] mx-auto lg:mx-0 overflow-hidden">
+              <div className="rounded-[22px] border border-[var(--border)] bg-[linear-gradient(180deg,rgba(8,36,29,0.96),rgba(6,35,29,0.98))] shadow-card overflow-hidden">
+                <div className="flex items-center justify-between gap-3 px-4 md:px-5 py-3 border-b border-[var(--border)] bg-[rgba(255,255,255,0.02)]">
+                  <div className="flex items-center gap-2">
+                    <span className="w-3 h-3 rounded-full bg-[#ff5f57]" />
+                    <span className="w-3 h-3 rounded-full bg-[#febc2e]" />
+                    <span className="w-3 h-3 rounded-full bg-[#28c840]" />
+                  </div>
+                  <p className="font-body text-[0.66rem] uppercase tracking-[0.18em] text-[var(--text-muted)]">v-fiesta terminal</p>
+                  <div className="w-16" />
+                </div>
 
-              <div className="mt-6 flex items-center gap-1.5">
-                {HERO_INFO.map((item, idx) => (
-                  <span
-                    key={item.label}
-                    className={`h-1 rounded-full transition-all duration-500 ${idx === activeInfo ? 'w-8 bg-[var(--accent)]' : 'w-3 bg-[var(--border)]'}`}
-                  />
-                ))}
+                <div className="px-4 md:px-5 py-4 md:py-5 min-h-[300px] md:min-h-[330px] font-mono text-sm md:text-[0.95rem] leading-relaxed text-[var(--text-secondary)]">
+                  <div className="mb-4 flex items-center gap-2 text-[var(--accent)]">
+                    <span className="inline-block h-2.5 w-2.5 rounded-full bg-[var(--accent)] shadow-[0_0_12px_rgba(227,239,38,0.5)]" />
+                    <span className="font-body text-[0.65rem] uppercase tracking-[0.18em] text-[var(--text-muted)]">Live event feed</span>
+                  </div>
+
+                  <div className="space-y-2">
+                    {TERMINAL_LINES.slice(0, visibleLineCount).map((line, index) => {
+                      const isActiveLine = index === typingLine
+                      const text = isActiveLine ? line.slice(0, typingCharCount) : line
+                      const isCommand = text.startsWith('$')
+                      const isOutput = !isCommand && index > 0 && TERMINAL_LINES[index - 1].startsWith('$')
+
+                      return (
+                        <div key={line} className="flex gap-3">
+                          <span className={`shrink-0 ${isOutput ? 'opacity-0' : 'text-[var(--accent)]'}`}>
+                            {isCommand ? '$' : '>'}
+                          </span>
+                          <span className={`${isCommand ? 'text-[var(--accent)]' : 'text-[var(--text-primary)]'} whitespace-pre-wrap`}>
+                            {isCommand ? text.slice(1) : text}
+                            {isActiveLine ? <span className="terminal-cursor" /> : null}
+                          </span>
+                        </div>
+                      )
+                    })}
+                  </div>
+
+                  <div className="mt-6 flex items-center gap-2 text-[0.68rem] uppercase tracking-[0.2em] text-[var(--text-muted)]">
+                    <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)] animate-pulse" />
+                    system ready
+                  </div>
+                </div>
               </div>
             </div>
           </motion.div>

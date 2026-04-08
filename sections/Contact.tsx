@@ -160,7 +160,8 @@ export default function Contact() {
 
               <motion.button
                 type="submit"
-                className="btn-primary w-full justify-center py-4"
+                className="btn-primary w-full justify-center py-4 text-[#06231D]"
+                style={{ color: '#06231D' }}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >

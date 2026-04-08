@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
-import { AnimatePresence, motion, useScroll, useTransform } from 'framer-motion'
+import { motion, useScroll, useTransform } from 'framer-motion'
 import { ArrowUpRight } from 'lucide-react'
 import AnimateIn from '@/components/AnimateIn'
 
@@ -71,19 +71,10 @@ const events = [
 
 export default function Events() {
   const sectionRef = useRef<HTMLElement>(null)
-  const [spotlightIndex, setSpotlightIndex] = useState(0)
+  const [isTrainPaused, setIsTrainPaused] = useState(false)
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start end', 'end start'] })
   const accentY = useTransform(scrollYProgress, [0, 1], [24, -32])
-
-  useEffect(() => {
-    const timer = window.setInterval(() => {
-      setSpotlightIndex((prev) => (prev + 1) % events.length)
-    }, 4200)
-
-    return () => window.clearInterval(timer)
-  }, [])
-
-  const spotlight = events[spotlightIndex]
+  const trainEvents = [...events, ...events]
 
   return (
     <section ref={sectionRef} id="events" className="section-pad relative overflow-hidden">
@@ -109,90 +100,64 @@ export default function Events() {
           </div>
         </AnimateIn>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-7">
-          <motion.article
-            className="lg:col-span-4 card-base accent-stroke p-5 md:p-6 lg:sticky lg:top-24 h-[560px] md:h-[590px] flex flex-col overflow-hidden"
-            initial={{ opacity: 0, y: 18 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.4 }}
-          >
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={spotlight.id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-                className="min-h-[380px]"
-              >
-                <p className="font-body text-[0.66rem] uppercase tracking-[0.18em] text-[var(--text-muted)]">Feature Spotlight</p>
-                <div className="flex items-center justify-between gap-2 mt-1">
-                  <span className="text-[0.68rem] font-body text-[var(--text-muted)]">{spotlight.date}</span>
-                  <span className="text-[0.68rem] font-body text-[var(--accent)]">{spotlight.prize}</span>
-                </div>
-                <h3 className="font-display text-2xl text-[var(--text-primary)] mt-2 leading-tight h-[58px] overflow-hidden">{spotlight.title}</h3>
-                <p className="font-body text-sm text-[var(--text-secondary)] mt-3 leading-relaxed h-[68px] overflow-hidden">{spotlight.desc}</p>
-
-                <div className="relative mt-5 rounded-2xl overflow-hidden h-44">
-                  <Image src={spotlight.img} alt={spotlight.title} fill className="object-cover" sizes="(max-width: 1024px) 100vw, 30vw" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#06231D] via-transparent to-transparent" />
-                </div>
-              </motion.div>
-            </AnimatePresence>
-
-            <div className="grid grid-cols-3 gap-3 mt-auto">
-              <div className="glass rounded-xl p-3 text-center">
-                <p className="font-display text-lg text-[var(--accent)]">{events.length}</p>
-                <p className="font-body text-[0.66rem] text-[var(--text-muted)] uppercase tracking-[0.14em]">Events</p>
+        <div className="grid grid-cols-1 gap-6 lg:gap-7">
+          <div className="w-full">
+            <div className="flex items-end justify-between gap-4 mb-4">
+              <div>
+                <p className="font-body text-[0.66rem] uppercase tracking-[0.18em] text-[var(--text-muted)]">Competition Train</p>
+                <h3 className="font-display text-xl md:text-2xl text-[var(--text-primary)] mt-1">Hover any card to pause and inspect it.</h3>
               </div>
-              <div className="glass rounded-xl p-3 text-center">
-                <p className="font-display text-lg text-[var(--accent)]">2</p>
-                <p className="font-body text-[0.66rem] text-[var(--text-muted)] uppercase tracking-[0.14em]">Days</p>
-              </div>
-              <div className="glass rounded-xl p-3 text-center">
-                <p className="font-display text-lg text-[var(--accent)]">₹1.25L+</p>
-                <p className="font-body text-[0.66rem] text-[var(--text-muted)] uppercase tracking-[0.14em]">Prizes</p>
-              </div>
+              <p className="hidden md:block font-body text-xs text-[var(--text-muted)] text-right max-w-[16rem]">
+                The lineup loops to the right automatically until you hover a card.
+              </p>
             </div>
-          </motion.article>
 
-          <div className="lg:col-span-8 space-y-4">
-            {events.map((ev, i) => (
-              <motion.article
-                key={ev.id}
-                className="card-base accent-stroke p-4 md:p-5"
-                whileHover={{ y: -4 }}
-                whileInView={{ opacity: [0, 1], y: [14, 0] }}
-                viewport={{ once: true, amount: 0.2 }}
-                transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+            <div
+              className="relative overflow-hidden rounded-[28px] border border-[var(--border)] bg-[linear-gradient(160deg,rgba(14,54,44,0.92),rgba(8,36,29,0.94))] p-4 md:p-5"
+              onMouseEnter={() => setIsTrainPaused(true)}
+              onMouseLeave={() => setIsTrainPaused(false)}
+            >
+              <div className="pointer-events-none absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-[#06231D] to-transparent z-10" />
+              <div className="pointer-events-none absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-[#06231D] to-transparent z-10" />
+
+              <motion.div
+                className="train-track flex w-max gap-4 md:gap-5"
+                style={{ animationPlayState: isTrainPaused ? 'paused' : 'running' }}
               >
-                <div className="grid grid-cols-[auto,1fr] md:grid-cols-[auto,112px,1fr,auto] gap-4 items-start">
-                  <div className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-[var(--accent)]/14 border border-[var(--border-accent)] flex items-center justify-center text-[0.72rem] font-body font-medium text-[var(--accent)]">
-                    {String(i + 1).padStart(2, '0')}
-                  </div>
-
-                  <div className="hidden md:block relative w-28 h-20 rounded-xl overflow-hidden">
-                    <Image src={ev.img} alt={ev.title} fill className="object-cover" sizes="112px" />
-                  </div>
-
-                  <div className="min-w-0">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <p className="font-display text-lg text-[var(--text-primary)] leading-tight">{ev.title}</p>
-                      <span className="text-[0.63rem] font-body uppercase tracking-[0.15em] text-[var(--text-muted)]">{ev.category}</span>
+                {trainEvents.map((ev, i) => (
+                  <motion.article
+                    key={`${ev.id}-${i}`}
+                    className="group relative flex-shrink-0 w-[280px] md:w-[304px] h-[380px] overflow-hidden rounded-[24px] border border-[var(--border)] bg-[linear-gradient(180deg,rgba(14,54,44,0.98),rgba(6,35,29,0.98))] shadow-card"
+                    whileHover={{ y: -6 }}
+                    transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+                  >
+                    <div className="relative h-[168px]">
+                      <Image src={ev.img} alt={ev.title} fill className="object-cover" sizes="304px" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#06231D] via-[#06231D]/24 to-transparent" />
                     </div>
-                    <p className="font-body text-sm text-[var(--text-secondary)] mt-2 leading-relaxed">{ev.desc}</p>
-                  </div>
 
-                  <div className="col-span-2 md:col-span-1 flex md:flex-col items-center md:items-end justify-between md:justify-start gap-2 md:gap-1">
-                    <span className="text-[0.68rem] font-body text-[var(--text-muted)] border border-[var(--border)] rounded-full px-2.5 py-1">{ev.date}</span>
-                    <span className="text-[0.72rem] font-body text-[var(--accent)]">{ev.prize}</span>
-                    <button className="hidden md:flex items-center gap-1.5 text-xs font-body font-medium text-[var(--accent)] hover:gap-3 transition-all mt-1">
-                      Details <ArrowUpRight size={13} />
-                    </button>
-                  </div>
-                </div>
-              </motion.article>
-            ))}
+                    <div className="relative flex h-[212px] flex-col p-4 md:p-5">
+                      <div className="flex-1 flex items-center justify-center text-center">
+                        <div>
+                          <p className="font-body text-[0.68rem] uppercase tracking-[0.18em] text-[var(--accent)]">Event</p>
+                          <h4 className="font-display text-2xl text-[var(--text-primary)] mt-3 leading-tight">{ev.title}</h4>
+                        </div>
+                      </div>
+
+                      <div className="mt-auto pt-4 border-t border-[var(--border)] overflow-hidden">
+                        <div className="max-h-0 opacity-0 translate-y-2 transition-all duration-300 group-hover:max-h-32 group-hover:opacity-100 group-hover:translate-y-0">
+                          <p className="font-body text-sm text-[var(--text-secondary)] leading-relaxed">{ev.desc}</p>
+                        </div>
+                        <div className="mt-3 flex items-center justify-between">
+                          <span className="font-body text-[0.68rem] uppercase tracking-[0.16em] text-[var(--text-muted)]">Hover to pause</span>
+                          <ArrowUpRight size={14} className="text-[var(--accent)]" />
+                        </div>
+                      </div>
+                    </div>
+                  </motion.article>
+                ))}
+              </motion.div>
+            </div>
           </div>
         </div>
       </div>

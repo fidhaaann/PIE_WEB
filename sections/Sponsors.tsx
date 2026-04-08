@@ -100,7 +100,7 @@ export default function Sponsors() {
             <p className="font-body text-sm text-[var(--text-secondary)] mb-4">
               Get your brand in front of 2000+ engineering students and professionals.
             </p>
-            <a href="mailto:pie@ieee.org" className="btn-primary py-2.5 px-6 text-sm w-full sm:w-auto justify-center">
+            <a href="mailto:pie@ieee.org" className="btn-primary py-2.5 px-6 text-sm w-full sm:w-auto justify-center text-[#06231D]" style={{ color: '#06231D' }}>
               Get in Touch
             </a>
           </div>
