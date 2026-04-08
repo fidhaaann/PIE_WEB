@@ -1,7 +1,7 @@
 'use client'
 
-import { motion, useInView } from 'framer-motion'
-import { useRef, ReactNode } from 'react'
+import { motion, useInView, useReducedMotion } from 'framer-motion'
+import { useEffect, useRef, useState, ReactNode } from 'react'
 import { fadeUp, slideLeft, slideRight, scaleUp } from '@/lib/animations'
 import { Variants } from 'framer-motion'
 
@@ -30,16 +30,49 @@ export default function AnimateIn({
   once = true,
 }: AnimateInProps) {
   const ref = useRef(null)
+  const prefersReducedMotion = useReducedMotion()
+  const [isMobileLike, setIsMobileLike] = useState(false)
   const inView = useInView(ref, { once, margin: '-40px 0px' })
   const variant = variantMap[type]
+
+  useEffect(() => {
+    const media = window.matchMedia('(max-width: 900px), (pointer: coarse)')
+    const update = () => setIsMobileLike(media.matches)
+    update()
+    media.addEventListener('change', update)
+    return () => media.removeEventListener('change', update)
+  }, [])
+
+  const useLightMotion = Boolean(prefersReducedMotion) || isMobileLike
+
+  const hiddenState =
+    type === 'slideLeft'
+      ? { opacity: 0, x: -14 }
+      : type === 'slideRight'
+        ? { opacity: 0, x: 14 }
+        : type === 'scaleUp'
+          ? { opacity: 0, scale: 0.985 }
+          : { opacity: 0, y: 14 }
+
+  const visibleState = {
+    opacity: 1,
+    x: 0,
+    y: 0,
+    scale: 1,
+    transition: {
+      delay,
+      duration: useLightMotion ? 0.34 : 0.46,
+      ease: [0.22, 1, 0.36, 1] as const,
+    },
+  }
 
   return (
     <motion.div
       ref={ref}
-      variants={variant}
-      initial="hidden"
-      animate={inView ? 'visible' : 'hidden'}
-      transition={{ delay }}
+      variants={useLightMotion ? undefined : variant}
+      initial={useLightMotion ? hiddenState : 'hidden'}
+      animate={inView ? (useLightMotion ? visibleState : 'visible') : (useLightMotion ? hiddenState : 'hidden')}
+      transition={useLightMotion ? undefined : { delay }}
       className={className}
     >
       {children}
