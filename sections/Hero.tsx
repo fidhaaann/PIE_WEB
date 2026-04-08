@@ -87,7 +87,7 @@ export default function Hero() {
   return (
     <section
       id="home"
-      className="relative min-h-screen flex items-center overflow-hidden pt-[calc(env(safe-area-inset-top)+5.5rem)] md:pt-0"
+      className="relative min-h-[100svh] md:min-h-screen flex items-center overflow-hidden pt-[calc(env(safe-area-inset-top)+5.5rem)] md:pt-0"
     >
       {/* Ambient blobs */}
       <motion.div

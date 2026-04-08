@@ -41,6 +41,8 @@ body {
     radial-gradient(900px 600px at 90% 20%, rgba(12, 52, 44, 0.4), transparent 72%),
     linear-gradient(160deg, #06231D 0%, #0C342C 38%, #076653 72%, #0a5544 100%);
   background-attachment: scroll;
+  background-repeat: no-repeat;
+  background-size: cover;
   background-color: #06231D;
   color: var(--text-primary);
   font-family: 'Satoshi', system-ui, sans-serif;
@@ -49,6 +51,27 @@ body {
   overflow-x: hidden;
   min-height: 100vh;
   min-height: 100dvh;
+}
+
+/* Ensure full-page capture tools always see a painted root background. */
+html,
+body {
+  width: 100%;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-color: #06231D;
+}
+
+main {
+  background: inherit;
+  background-color: #06231D;
+  min-height: 100%;
 }
 
 @media (min-width: 1024px) {

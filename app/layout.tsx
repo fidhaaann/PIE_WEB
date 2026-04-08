@@ -49,7 +49,7 @@ export default function RootLayout({
           <SmoothScroll>
             <ScrollProgress />
             <Navbar />
-            <main>{children}</main>
+            <main className="app-main">{children}</main>
           </SmoothScroll>
         </ThemeProvider>
       </body>
