@@ -1,6 +1,5 @@
 'use client'
 
-import { motion } from 'framer-motion'
 import { Calendar, MapPin, HelpCircle, BookOpen, ArrowUpRight } from 'lucide-react'
 import { StaggerContainer, StaggerItem } from '@/components/StaggerContainer'
 import AnimateIn from '@/components/AnimateIn'

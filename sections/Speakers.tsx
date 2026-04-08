@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import { motion, AnimatePresence, useMotionValueEvent, useScroll } from 'framer-motion'
-import { X, Linkedin, Twitter } from 'lucide-react'
+import { X, ArrowUpRight } from 'lucide-react'
 import AnimateIn from '@/components/AnimateIn'
 
 const speakers = [
@@ -297,10 +297,10 @@ export default function Speakers() {
                 <p className="font-body text-sm text-[var(--text-secondary)] leading-relaxed">{selected.bio}</p>
                 <div className="flex flex-col sm:flex-row gap-3 mt-6">
                   <a href={selected.linkedin} className="btn-ghost py-2 px-4 text-xs flex items-center justify-center gap-1.5">
-                    <Linkedin size={14} /> LinkedIn
+                    <ArrowUpRight size={14} /> LinkedIn
                   </a>
                   <a href={selected.twitter} className="btn-ghost py-2 px-4 text-xs flex items-center justify-center gap-1.5">
-                    <Twitter size={14} /> Twitter
+                    <ArrowUpRight size={14} /> Twitter
                   </a>
                 </div>
               </motion.div>

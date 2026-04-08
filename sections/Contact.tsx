@@ -2,7 +2,7 @@
 
 import { useState, FormEvent } from 'react'
 import { motion } from 'framer-motion'
-import { Mail, Phone, MapPin, Send, Instagram, Linkedin, Twitter } from 'lucide-react'
+import { Mail, Phone, MapPin, Send, ArrowUpRight } from 'lucide-react'
 import AnimateIn from '@/components/AnimateIn'
 
 export default function Contact() {
@@ -79,9 +79,9 @@ export default function Contact() {
                 <p className="font-body text-xs text-[var(--text-muted)] uppercase tracking-widest mb-4">Follow Us</p>
                 <div className="flex gap-3">
                   {[
-                    { icon: Instagram, href: 'https://instagram.com', label: 'Instagram' },
-                    { icon: Linkedin,  href: 'https://linkedin.com',  label: 'LinkedIn' },
-                    { icon: Twitter,   href: 'https://twitter.com',   label: 'Twitter' },
+                    { icon: ArrowUpRight, href: 'https://instagram.com', label: 'Instagram' },
+                    { icon: ArrowUpRight, href: 'https://linkedin.com', label: 'LinkedIn' },
+                    { icon: ArrowUpRight, href: 'https://twitter.com', label: 'Twitter' },
                   ].map((soc) => (
                     <motion.a
                       key={soc.label}

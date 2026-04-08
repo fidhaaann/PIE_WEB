@@ -1,9 +1,9 @@
+/* ── Fontshare import ── */
+@import url('https://api.fontshare.com/v2/css?f[]=clash-display@700&f[]=cabinet-grotesk@700&f[]=satoshi@400,500&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* ── Fontshare import ── */
-@import url('https://api.fontshare.com/v2/css?f[]=clash-display@700&f[]=cabinet-grotesk@700&f[]=satoshi@400,500&display=swap');
 
 /* ── CSS Variables ── */
 :root {

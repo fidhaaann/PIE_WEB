@@ -1,7 +1,7 @@
 'use client'
 
 import Image from 'next/image'
-import { Instagram, Linkedin, Twitter, ArrowUp } from 'lucide-react'
+import { ArrowUpRight, ArrowUp } from 'lucide-react'
 import pieLogo from '@/photo/pielogo-Photoroom.png'
 
 const navLinks = [
@@ -35,9 +35,9 @@ export default function Footer() {
             </p>
             <div className="flex gap-3 mt-5">
               {[
-                { icon: Instagram, href: '#', label: 'Instagram' },
-                { icon: Linkedin,  href: '#', label: 'LinkedIn' },
-                { icon: Twitter,   href: '#', label: 'Twitter' },
+                { icon: ArrowUpRight, href: '#', label: 'Instagram' },
+                { icon: ArrowUpRight, href: '#', label: 'LinkedIn' },
+                { icon: ArrowUpRight, href: '#', label: 'Twitter' },
               ].map((s) => (
                 <a
                   key={s.label}

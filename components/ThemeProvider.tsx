@@ -10,12 +10,11 @@ const ThemeContext = createContext<{ theme: Theme; toggle: () => void }>({
 })
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setTheme] = useState<Theme>('dark')
-
-  useEffect(() => {
-    const stored = localStorage.getItem('vfiesta-theme') as Theme | null
-    if (stored) setTheme(stored)
-  }, [])
+  const [theme, setTheme] = useState<Theme>(() => {
+    if (typeof window === 'undefined') return 'dark'
+    const stored = localStorage.getItem('vfiesta-theme')
+    return stored === 'light' || stored === 'dark' ? stored : 'dark'
+  })
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', theme === 'dark')
