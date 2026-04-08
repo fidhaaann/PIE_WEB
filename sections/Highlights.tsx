@@ -57,7 +57,7 @@ export default function Highlights() {
         <AnimateIn>
           <p className="section-label">Past Editions</p>
           <h2
-            className="font-display font-extrabold text-[var(--text-primary)] mb-4"
+            className="font-display text-[var(--text-primary)] mb-4"
             style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)' }}
           >
             Relive the
@@ -73,7 +73,7 @@ export default function Highlights() {
           {highlights.map((item, i) => (
             <motion.div
               key={item.id}
-              className="absolute w-[260px] md:w-[320px] rounded-2xl overflow-hidden shadow-card"
+              className="absolute w-[260px] md:w-[320px] rounded-2xl overflow-hidden shadow-card bg-[#06231D]"
               initial={{ opacity: 0, y: 50, rotate: item.rotate }}
               whileInView={{ opacity: 1, y: 0, rotate: item.rotate }}
               viewport={{ once: true, margin: '-80px' }}
@@ -96,8 +96,8 @@ export default function Highlights() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#06231D] via-transparent to-transparent" />
               </div>
-              <div className="bg-[var(--card-bg)] border border-[var(--border)] p-4">
-                <p className="font-display font-700 text-sm text-[var(--text-primary)]">{item.title}</p>
+              <div className="bg-[#06231D] border border-[var(--border)] p-4">
+                <p className="font-body font-medium text-sm text-[var(--text-primary)]">{item.title}</p>
                 <p className="font-body text-xs text-[var(--text-secondary)] mt-1">{item.desc}</p>
               </div>
             </motion.div>
@@ -115,7 +115,7 @@ export default function Highlights() {
             {[...marqueeItems, ...marqueeItems].map((item, i) => (
               <span
                 key={i}
-                className="font-display font-700 text-sm uppercase tracking-widest text-[var(--text-muted)] flex items-center gap-8"
+                className="font-body font-medium text-sm uppercase tracking-widest text-[var(--text-muted)] flex items-center gap-8"
               >
                 {item}
                 <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] inline-block" />

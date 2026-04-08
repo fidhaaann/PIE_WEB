@@ -37,8 +37,8 @@ const config: Config = {
         },
       },
       fontFamily: {
-        display: ['var(--font-dm-sans)', 'system-ui', 'sans-serif'],
-        body:    ['var(--font-inter)', 'system-ui', 'sans-serif'],
+        display: ['Clash Display', 'system-ui', 'sans-serif'],
+        body:    ['Satoshi', 'system-ui', 'sans-serif'],
       },
       fontSize: {
         'fluid-sm':  ['clamp(0.875rem, 0.8rem + 0.375vw, 1rem)', { lineHeight: '1.6' }],
@@ -75,8 +75,8 @@ const config: Config = {
         'lime-glow':      'radial-gradient(ellipse at center, rgba(227,239,38,0.15) 0%, transparent 70%)',
       },
       boxShadow: {
-        'card':    '0 4px 24px rgba(0,0,0,0.25)',
-        'card-hover':'0 12px 48px rgba(0,0,0,0.4)',
+        'card':    '10px 10px 24px rgba(0,0,0,0.28), -10px -10px 24px rgba(255,255,255,0.05)',
+        'card-hover':'inset 6px 6px 14px rgba(0,0,0,0.28), inset -6px -6px 14px rgba(255,255,255,0.05)',
         'lime':    '0 0 30px rgba(227,239,38,0.4)',
         'lime-sm': '0 0 12px rgba(227,239,38,0.25)',
       },

@@ -43,7 +43,7 @@ export default function QuickLinks() {
         <AnimateIn>
           <p className="section-label">Quick Access</p>
           <h2
-            className="font-display font-extrabold text-[var(--text-primary)] mb-3"
+            className="font-display text-[var(--text-primary)] mb-3"
             style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)' }}
           >
             Everything you need,
@@ -68,13 +68,13 @@ export default function QuickLinks() {
                 >
                   <link.icon size={20} style={{ color: link.accent }} />
                 </div>
-                <h3 className="font-display font-700 text-lg text-[var(--text-primary)] mb-2">
+                <h3 className="font-display text-lg text-[var(--text-primary)] mb-2">
                   {link.title}
                 </h3>
                 <p className="font-body text-sm text-[var(--text-secondary)] flex-1 leading-relaxed">
                   {link.desc}
                 </p>
-                <div className="mt-5 flex items-center gap-1.5 text-xs font-600 font-display text-[var(--accent)] group-hover:gap-3 transition-all">
+                <div className="mt-5 flex items-center gap-1.5 text-xs font-body font-medium text-[var(--accent)] group-hover:gap-3 transition-all">
                   Explore
                   <ArrowUpRight size={14} />
                 </div>

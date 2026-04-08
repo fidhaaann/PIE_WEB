@@ -42,7 +42,7 @@ export default function Sponsors() {
         <AnimateIn>
           <p className="section-label">Our Supporters</p>
           <h2
-            className="font-display font-extrabold text-[var(--text-primary)] mb-4"
+            className="font-display text-[var(--text-primary)] mb-4"
             style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)' }}
           >
             Backed by
@@ -60,7 +60,7 @@ export default function Sponsors() {
                 <div className="flex items-center gap-3 mb-6">
                   <div className="h-px flex-1" style={{ background: `${tier.color}40` }} />
                   <span
-                    className="font-display font-700 text-sm uppercase tracking-widest"
+                    className="font-body font-medium text-sm uppercase tracking-widest"
                     style={{ color: tier.color }}
                   >
                     {tier.label}
@@ -83,7 +83,7 @@ export default function Sponsors() {
                       <div className="w-16 h-16 rounded-xl overflow-hidden relative">
                         <Image src={sp.img} alt={sp.name} fill className="object-cover" sizes="64px" />
                       </div>
-                      <span className="font-display font-700 text-xs text-[var(--text-secondary)]">{sp.name}</span>
+                      <span className="font-body font-medium text-xs text-[var(--text-secondary)]">{sp.name}</span>
                     </motion.div>
                   </StaggerItem>
                 ))}
@@ -95,7 +95,7 @@ export default function Sponsors() {
         {/* Become a sponsor CTA */}
         <AnimateIn className="mt-16 text-center">
           <div className="card-base inline-block px-8 py-6 rounded-3xl">
-            <p className="font-display font-700 text-lg text-[var(--text-primary)] mb-2">
+            <p className="font-display text-lg text-[var(--text-primary)] mb-2">
               Want to sponsor V-Fiesta 5.0?
             </p>
             <p className="font-body text-sm text-[var(--text-secondary)] mb-4">

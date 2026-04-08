@@ -87,7 +87,7 @@ export default function Speakers() {
         <AnimateIn>
           <p className="section-label">Who You&apos;ll Hear</p>
           <h2
-            className="font-display font-extrabold text-[var(--text-primary)] mb-4"
+            className="font-display text-[var(--text-primary)] mb-4"
             style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)' }}
           >
             World-class
@@ -117,14 +117,14 @@ export default function Speakers() {
                   />
                   {/* Hover overlay */}
                   <div className="absolute inset-0 bg-[#06231D]/70 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                    <span className="text-xs font-display font-700 text-[var(--accent)] px-3 py-1 border border-[var(--accent)]/40 rounded-full">
+                    <span className="text-xs font-body font-medium text-[var(--accent)] px-3 py-1 border border-[var(--accent)]/40 rounded-full">
                       View Bio
                     </span>
                   </div>
                 </div>
                 <div className="p-4">
                   <div className="tag text-[0.65rem] mb-2">{sp.tag}</div>
-                  <p className="font-display font-700 text-sm text-[var(--text-primary)] leading-tight">{sp.name}</p>
+                  <p className="font-body font-medium text-sm text-[var(--text-primary)] leading-tight">{sp.name}</p>
                   <p className="font-body text-[0.7rem] text-[var(--text-muted)] mt-0.5 leading-tight">{sp.role}</p>
                 </div>
               </motion.button>
@@ -138,7 +138,7 @@ export default function Speakers() {
         {selected && (
           <>
             <motion.div
-              className="fixed inset-0 z-[200] bg-black/70 backdrop-blur-sm"
+              className="fixed inset-0 z-[200] bg-black/80"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -170,13 +170,13 @@ export default function Speakers() {
                   </div>
                   <div>
                     <div className="tag mb-2">{selected.tag}</div>
-                    <h3 className="font-display font-800 text-xl text-[var(--text-primary)]">{selected.name}</h3>
+                    <h3 className="font-display text-xl text-[var(--text-primary)]">{selected.name}</h3>
                     <p className="font-body text-sm text-[var(--text-secondary)]">{selected.role}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2 mb-4">
                   <div className="w-1 h-5 bg-[var(--accent)] rounded-full" />
-                  <p className="font-display font-700 text-sm text-[var(--accent)]">Topic: {selected.topic}</p>
+                  <p className="font-body font-medium text-sm text-[var(--accent)]">Topic: {selected.topic}</p>
                 </div>
                 <p className="font-body text-sm text-[var(--text-secondary)] leading-relaxed">{selected.bio}</p>
                 <div className="flex gap-3 mt-6">

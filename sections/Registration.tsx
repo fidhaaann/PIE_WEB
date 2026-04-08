@@ -16,11 +16,11 @@ function CountdownBox({ value, label }: { value: number; label: string }) {
         animate={{ opacity: 1, y: 0 }}
         className="glass rounded-2xl w-20 h-20 md:w-24 md:h-24 flex items-center justify-center"
       >
-        <span className="font-display font-extrabold text-3xl md:text-4xl text-[var(--accent)]">
+        <span className="font-body font-medium text-3xl md:text-4xl text-[var(--accent)]">
           {String(value).padStart(2, '0')}
         </span>
       </motion.div>
-      <span className="font-body text-[0.65rem] text-[var(--text-muted)] uppercase tracking-widest mt-2">{label}</span>
+      <span className="font-body font-medium text-[0.65rem] text-[var(--text-muted)] uppercase tracking-widest mt-2">{label}</span>
     </div>
   )
 }
@@ -40,7 +40,7 @@ export default function Registration() {
         <AnimateIn className="flex justify-center mb-8">
           <div className="flex items-center gap-2 px-4 py-2 rounded-full border border-[var(--accent)]/40 bg-[var(--accent)]/8">
             <span className="w-2 h-2 rounded-full bg-[var(--accent)] animate-pulse" />
-            <span className="font-display font-700 text-xs text-[var(--accent)] uppercase tracking-widest">
+            <span className="font-body font-medium text-xs text-[var(--accent)] uppercase tracking-widest">
               Registrations Open · Limited Seats
             </span>
           </div>
@@ -48,7 +48,7 @@ export default function Registration() {
 
         <AnimateIn>
           <h2
-            className="font-display font-extrabold text-center text-[var(--text-primary)]"
+            className="font-display text-center text-[var(--text-primary)]"
             style={{ fontSize: 'clamp(2.2rem, 6vw, 4.5rem)' }}
           >
             Secure your spot
@@ -64,11 +64,11 @@ export default function Registration() {
         <AnimateIn type="scaleUp">
           <div className="flex justify-center gap-4 md:gap-6 mb-14">
             <CountdownBox value={days}    label="Days"    />
-            <div className="font-display font-700 text-3xl text-[var(--text-muted)] self-start mt-4">:</div>
+            <div className="font-body font-medium text-3xl text-[var(--text-muted)] self-start mt-4">:</div>
             <CountdownBox value={hours}   label="Hours"   />
-            <div className="font-display font-700 text-3xl text-[var(--text-muted)] self-start mt-4">:</div>
+            <div className="font-body font-medium text-3xl text-[var(--text-muted)] self-start mt-4">:</div>
             <CountdownBox value={minutes} label="Minutes" />
-            <div className="font-display font-700 text-3xl text-[var(--text-muted)] self-start mt-4">:</div>
+            <div className="font-body font-medium text-3xl text-[var(--text-muted)] self-start mt-4">:</div>
             <CountdownBox value={seconds} label="Seconds" />
           </div>
         </AnimateIn>
@@ -87,7 +87,7 @@ export default function Registration() {
                 </div>
                 <div>
                   <p className="font-body text-xs text-[var(--text-muted)] uppercase tracking-wider">{item.label}</p>
-                  <p className="font-display font-700 text-sm text-[var(--text-primary)] mt-0.5">{item.value}</p>
+                  <p className="font-body font-medium text-sm text-[var(--text-primary)] mt-0.5">{item.value}</p>
                 </div>
               </div>
             </AnimateIn>
