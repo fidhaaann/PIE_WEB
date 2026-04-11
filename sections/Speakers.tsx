@@ -85,34 +85,25 @@ const ENTRY_HOLD = 0.2
 
 const stackProfiles = {
   mobile: {
-    xStep: 0,
-    pastStep: 12,
-    futureStep: 7,
-    scaleStep: 0.025,
-    opacityStep: 0.06,
-    inactiveOpacity: 0.8,
-    cardSize: 'w-[320px] md:w-[360px] h-[440px]',
-    stageHeight: '240vh',
+    radiusX: 180,
+    radiusZ: 140,
+    angleStep: 32 * (Math.PI / 180),
+    cardSize: 'w-[280px] h-[400px]',
+    stageHeight: '300vh',
   },
   tablet: {
-    xStep: 2,
-    pastStep: 16,
-    futureStep: 9,
-    scaleStep: 0.03,
-    opacityStep: 0.05,
-    inactiveOpacity: 0.78,
-    cardSize: 'w-[320px] md:w-[360px] h-[440px]',
-    stageHeight: '260vh',
+    radiusX: 380,
+    radiusZ: 260,
+    angleStep: 24 * (Math.PI / 180),
+    cardSize: 'w-[320px] h-[440px]',
+    stageHeight: '350vh',
   },
   desktop: {
-    xStep: 4,
-    pastStep: 20,
-    futureStep: 11,
-    scaleStep: 0.035,
-    opacityStep: 0.045,
-    inactiveOpacity: 0.76,
-    cardSize: 'w-[320px] md:w-[360px] h-[440px]',
-    stageHeight: '280vh',
+    radiusX: 520,
+    radiusZ: 380,
+    angleStep: 20 * (Math.PI / 180),
+    cardSize: 'w-[340px] h-[480px]',
+    stageHeight: '400vh',
   },
 } as const
 
@@ -127,31 +118,56 @@ const getScreenTier = (width: number): ScreenTier => {
 const getStackMetrics = (progress: number, index: number, total: number, tier: ScreenTier) => {
   const profile = stackProfiles[tier]
   const usableProgress = clamp((progress - STACK_START) / (STACK_END - STACK_START), 0, 1)
-  const heldProgress = usableProgress <= ENTRY_HOLD
-    ? 0
-    : (usableProgress - ENTRY_HOLD) / (1 - ENTRY_HOLD)
-  const activeIndex = heldProgress * (total - 1)
-  const delta = index - activeIndex
-  const absDelta = Math.abs(delta)
-  const isActive = absDelta < 0.35
+  
+  // Map progress to continuous index
+  const activeIndex = usableProgress * (total - 1)
+  
+  // Snap engine: locks the index tightly to the nearest integer to make the card stay perfectly centered
+  const nearestIndex = Math.round(activeIndex)
+  const dist = activeIndex - nearestIndex
+  const SNAP_ZONE = 0.22 // Dead zone ratio around each card
 
-  const y = delta < 0
-    ? Math.min(Math.abs(delta) * profile.pastStep, 96)
-    : -Math.min(delta * profile.futureStep, 40)
-  const x = delta * profile.xStep
-  const scale = clamp(1 - absDelta * profile.scaleStep, 0.9, 1)
-  const opacity = clamp(1 - absDelta * profile.opacityStep, profile.inactiveOpacity, 1)
-  const rotate = clamp(delta * -0.45, -2.2, 2.2)
-  const zIndex = Math.round(500 - absDelta * 120)
+  let snappedIndex = nearestIndex
+  if (Math.abs(dist) > SNAP_ZONE) {
+    const movingDist = Math.abs(dist) - SNAP_ZONE
+    const movingDomain = 0.5 - SNAP_ZONE
+    snappedIndex = nearestIndex + Math.sign(dist) * (movingDist / movingDomain) * 0.5
+  }
+
+  const delta = index - snappedIndex
+  const absDelta = Math.abs(delta)
+  const isActive = absDelta < 0.1 // Stricter interactive threshold when snapped
+
+  const angle = delta * profile.angleStep
+  const x = Math.sin(angle) * profile.radiusX
+  
+  // Z measures depth. Center is 0. Outer cards fall back.
+  const z = (Math.cos(angle) - 1) * profile.radiusZ
+
+  // Slightly curve downwards like a bridge
+  const y = absDelta * 12
+
+  // Simulate depth scale and fade 
+  const scale = clamp(1 + z / (profile.radiusZ * 2.2), 0.45, 1)
+  const opacity = clamp(1 - (absDelta * 0.28), 0, 1)
+  
+  // Tilt horizontally towards user
+  const rotateY = -angle * (180 / Math.PI) * 0.8
+  
+  const zIndex = Math.round(500 - absDelta * 100)
+  
+  // 0 is full color, 1 is B&W
+  const grayscale = clamp(absDelta * 1.5, 0, 1)
 
   return {
     isActive,
     x,
     y,
     scale,
-    rotate,
+    rotateY,
     opacity,
     zIndex,
+    grayscale,
   }
 }
 
@@ -193,46 +209,46 @@ export default function Speakers() {
   }, [])
 
   return (
-    <section ref={sectionRef} id="speakers" className="relative" style={{ position: 'relative' }}>
-      {/* Intro Text */}
-      <div className="section-pad pb-2 md:pb-4 relative max-w-7xl mx-auto">
-        <AnimateIn className="section-intro">
-          <p className="section-label">Who You&apos;ll Hear</p>
-          <h2
-            className="font-display text-[var(--text-primary)] section-title"
-            style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)' }}
-          >
-            World-class
-            <span className="text-[var(--accent)]"> speakers.</span>
-          </h2>
-          <p className="font-body section-copy">
-            Learn from researchers, entrepreneurs, and engineers shaping the future of power &amp; energy.
-          </p>
-        </AnimateIn>
-      </div>
-
+    <section ref={sectionRef} id="speakers" className="relative">
       {/* Scroll-driven animation container */}
       <div
         className="relative w-full"
         style={{
           height: stackProfiles[screenTier].stageHeight,
-          position: 'relative',
         }}
       >
         {/* Sticky viewport - stays fixed while scrolling through section */}
         <div
-          className="sticky w-full flex items-center justify-center overflow-visible"
+          className="sticky w-full flex flex-col items-center justify-center overflow-hidden"
           style={{
             top: 0,
             height: '100vh',
             position: 'sticky',
             zIndex: 40,
+            perspective: '1200px',
           }}
         >
+          {/* Intro Text (Moved inside sticky wrapper to tightly bundle with cards) */}
+          <div className="w-full max-w-7xl px-5 md:px-10 mt-12 mb-8 md:mb-12 shrink-0">
+            <AnimateIn className="section-intro !mb-0">
+              <p className="section-label">Who You&apos;ll Hear</p>
+              <h2
+                className="font-display text-[var(--text-primary)] section-title"
+                style={{ fontSize: 'clamp(1.75rem, 5vw, 3.2rem)' }}
+              >
+                World-class
+                <span className="text-[var(--accent)]"> speakers.</span>
+              </h2>
+              <p className="font-body section-copy">
+                Learn from researchers, entrepreneurs, and engineers shaping the future of power &amp; energy.
+              </p>
+            </AnimateIn>
+          </div>
+
           {/* Card container */}
           <div className={`relative ${stackProfiles[screenTier].cardSize}`}>
             {speakers.map((sp, i) => {
-              const { isActive, x, y, scale, rotate, opacity, zIndex } = getStackMetrics(storyProgress, i, speakers.length, screenTier)
+              const { isActive, x, y, scale, rotateY, opacity, zIndex, grayscale } = getStackMetrics(storyProgress, i, speakers.length, screenTier)
               const floatOffset = Math.sin(floatPhase + i * 0.9) * (isActive ? 5 : 2.5)
 
               return (
@@ -243,11 +259,12 @@ export default function Speakers() {
                     x,
                     y: y + floatOffset,
                     scale,
-                    rotate,
+                    rotateY,
                     opacity,
                     zIndex,
+                    filter: `grayscale(${grayscale * 100}%) brightness(${1 - grayscale * 0.4})`,
                     pointerEvents: isActive ? 'auto' : 'none',
-                    willChange: 'transform, opacity',
+                    willChange: 'transform, opacity, filter',
                   }}
                 >
                   <motion.button
@@ -288,30 +305,29 @@ export default function Speakers() {
                       </p>
 
                       <div className="mt-auto pt-4 border-t border-[rgba(255,255,255,0.08)]">
-                        <span className="rounded-full border border-[rgba(255,255,255,0.12)] bg-[rgba(255,255,255,0.04)] px-3 py-2 text-[0.7rem] font-medium text-[var(--text-primary)] inline-flex">
+                        <span className="rounded-full border border-[rgba(255,255,255,0.12)] bg-[rgba(255,255,255,0.04)] px-3 py-2 text-[0.7rem] font-medium text-[var(--text-primary)] inline-flex transition-colors group-hover:bg-[var(--accent)] group-hover:text-black group-hover:border-[var(--accent)]">
                           Hover for details
                         </span>
                       </div>
                     </div>
-                  </motion.button>
 
-                  <div
-                    className="hidden md:block absolute top-1/2 left-[calc(100%+0.8rem)] -translate-y-1/2 w-[min(72vw,280px)] rounded-2xl border border-[rgba(255,255,255,0.12)] bg-[linear-gradient(180deg,rgba(13,34,28,0.96),rgba(8,23,19,0.98))] shadow-[0_18px_42px_rgba(0,0,0,0.35)] p-4 opacity-0 translate-x-4 transition-all duration-300 ease-out group-hover:opacity-100 group-hover:translate-x-0"
-                    style={{ pointerEvents: isActive ? 'auto' : 'none' }}
-                  >
-                    <p className="font-body text-sm text-[var(--text-secondary)] leading-relaxed">
-                      {sp.bio}
-                    </p>
-
-                    <div className="mt-4 flex flex-wrap gap-2">
-                      <span className="rounded-full border border-[rgba(255,255,255,0.12)] bg-[rgba(255,255,255,0.04)] px-3 py-2 text-[0.7rem] font-medium text-[var(--text-primary)]">
-                        Tap card to open
-                      </span>
-                      <span className="rounded-full border border-[rgba(227,239,38,0.22)] bg-[rgba(227,239,38,0.08)] px-3 py-2 text-[0.7rem] font-medium text-[var(--accent)] shadow-[0_0_18px_rgba(227,239,38,0.14)]">
-                        Detail panel
-                      </span>
+                    {/* Smooth hover details overlay */}
+                    <div className="absolute inset-0 bg-[#08231d]/95 backdrop-blur-md opacity-0 transition-all duration-300 ease-out flex flex-col p-6 sm:p-8 pointer-events-none z-10 translate-y-4 group-hover:!opacity-100 group-hover:!translate-y-0">
+                      <div className="tag self-start mb-4">{sp.tag}</div>
+                      <h3 className="font-display text-[1.4rem] sm:text-[1.6rem] text-[var(--text-primary)] leading-tight mb-2">
+                        {sp.name}
+                      </h3>
+                      <div className="w-10 h-0.5 bg-[var(--accent)] mb-4 shrink-0" />
+                      <p className="font-body text-[0.85rem] sm:text-[0.95rem] text-[var(--text-secondary)] leading-relaxed flex-1">
+                        {sp.bio}
+                      </p>
+                      <div className="mt-auto flex flex-wrap gap-2 pointer-events-auto">
+                        <span className="rounded-full border border-[rgba(227,239,38,0.22)] bg-[rgba(227,239,38,0.08)] px-4 py-2 text-[0.75rem] font-medium text-[var(--accent)] shadow-[0_0_18px_rgba(227,239,38,0.14)] inline-flex">
+                          Tap card to open full profile
+                        </span>
+                      </div>
                     </div>
-                  </div>
+                  </motion.button>
                 </motion.div>
                 )
               })}

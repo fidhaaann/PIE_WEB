@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion'
+import { motion, useReducedMotion, useScroll, useTransform, useMotionValue, useSpring, useMotionTemplate } from 'framer-motion'
 import { ArrowDown } from 'lucide-react'
 
 const HERO_WORDS = [
@@ -34,6 +34,24 @@ export default function Hero() {
   const [typingLine, setTypingLine] = useState(0)
   const [typingCharCount, setTypingCharCount] = useState(0)
   const shouldLightMotion = Boolean(prefersReducedMotion) || isMobileLike
+
+  // Mouse tracking for responsive dots
+  const mouseX = useMotionValue(0)
+  const mouseY = useMotionValue(0)
+  const isHovered = useMotionValue(0)
+  
+  const smoothX = useSpring(mouseX, { stiffness: 150, damping: 24 })
+  const smoothY = useSpring(mouseY, { stiffness: 150, damping: 24 })
+  const smoothHovered = useSpring(isHovered, { stiffness: 200, damping: 30 })
+  
+  const maskImageStyle = useMotionTemplate`radial-gradient(350px circle at ${smoothX}px ${smoothY}px, black, transparent)`
+  const opacityStyle = useMotionTemplate`${smoothHovered}`
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect()
+    mouseX.set(e.clientX - rect.left)
+    mouseY.set(e.clientY - rect.top)
+  }
 
   const { scrollYProgress } = useScroll()
   const blobY = useTransform(scrollYProgress, [0, 1], [0, 170])
@@ -90,6 +108,9 @@ export default function Hero() {
   return (
     <section
       id="home"
+      onMouseMove={handleMouseMove}
+      onMouseEnter={() => isHovered.set(1)}
+      onMouseLeave={() => isHovered.set(0)}
       className="relative min-h-[100svh] md:min-h-screen flex items-center overflow-hidden pt-[calc(env(safe-area-inset-top)+5.5rem)] md:pt-0"
     >
       {/* Ambient blobs */}
@@ -103,17 +124,30 @@ export default function Hero() {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[340px] h-[340px] md:w-[700px] md:h-[700px] rounded-full bg-[#076653] opacity-[0.06] md:opacity-[0.08] blur-[80px] md:blur-[140px]" />
       </motion.div>
 
-      {/* Grid overlay */}
-      <div
-        className="absolute inset-0 pointer-events-none opacity-[0.03]"
-        style={{
-          backgroundImage: `
-            linear-gradient(var(--border) 1px, transparent 1px),
-            linear-gradient(90deg, var(--border) 1px, transparent 1px)
-          `,
-          backgroundSize: '80px 80px',
-        }}
-      />
+      {/* Responsive Dot Grid */}
+      <div className="absolute inset-0 pointer-events-none">
+        {/* Subtle base dots */}
+        <div 
+          className="absolute inset-0"
+          style={{
+            backgroundImage: 'radial-gradient(circle at 1.5px 1.5px, rgba(255,255,255,0.04) 1.5px, transparent 0)',
+            backgroundSize: '36px 36px',
+            backgroundPosition: 'center center',
+          }}
+        />
+        {/* Glowing dots following mouse */}
+        <motion.div 
+          className="absolute inset-0"
+          style={{
+            opacity: opacityStyle,
+            backgroundImage: 'radial-gradient(circle at 1.5px 1.5px, var(--accent) 1.5px, transparent 0)',
+            backgroundSize: '36px 36px',
+            backgroundPosition: 'center center',
+            WebkitMaskImage: maskImageStyle,
+            maskImage: maskImageStyle,
+          }}
+        />
+      </div>
 
       <motion.div ref={contentRef} style={{ y: shouldLightMotion ? 0 : contentY }} className="relative z-10 w-full px-5 md:px-10">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12 items-end">
