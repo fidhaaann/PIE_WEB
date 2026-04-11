@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
-import { motion, AnimatePresence, useMotionValueEvent, useScroll } from 'framer-motion'
+import { motion, AnimatePresence, useMotionValueEvent, useScroll, useSpring } from 'framer-motion'
 import { X, ArrowUpRight } from 'lucide-react'
 import AnimateIn from '@/components/AnimateIn'
 
@@ -78,90 +78,124 @@ const speakers = [
 type Speaker = typeof speakers[0]
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value))
-const lerp = (from: number, to: number, t: number) => from + (to - from) * t
-const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3)
 
-const SCATTER_LAYOUT = [
-  { x: 10, y: 10, rotate: -14 },
-  { x: 38, y: 8, rotate: 10 },
-  { x: 66, y: 12, rotate: -10 },
-  { x: 14, y: 48, rotate: 12 },
-  { x: 42, y: 46, rotate: -8 },
-  { x: 70, y: 50, rotate: 8 },
-]
+const STACK_START = 0.06
+const STACK_END = 0.84
+const ENTRY_HOLD = 0.2
 
-const FINAL_LAYOUT = [
-  { x: 10, y: 12, rotate: -4 },
-  { x: 38, y: 12, rotate: 3 },
-  { x: 66, y: 12, rotate: -3 },
-  { x: 14, y: 60, rotate: 4 },
-  { x: 42, y: 60, rotate: -2 },
-  { x: 70, y: 60, rotate: 2 },
-]
+const stackProfiles = {
+  mobile: {
+    xStep: 0,
+    pastStep: 12,
+    futureStep: 7,
+    scaleStep: 0.025,
+    opacityStep: 0.06,
+    inactiveOpacity: 0.8,
+    cardSize: 'w-[320px] md:w-[360px] h-[440px]',
+    stageHeight: '240vh',
+  },
+  tablet: {
+    xStep: 2,
+    pastStep: 16,
+    futureStep: 9,
+    scaleStep: 0.03,
+    opacityStep: 0.05,
+    inactiveOpacity: 0.78,
+    cardSize: 'w-[320px] md:w-[360px] h-[440px]',
+    stageHeight: '260vh',
+  },
+  desktop: {
+    xStep: 4,
+    pastStep: 20,
+    futureStep: 11,
+    scaleStep: 0.035,
+    opacityStep: 0.045,
+    inactiveOpacity: 0.76,
+    cardSize: 'w-[320px] md:w-[360px] h-[440px]',
+    stageHeight: '280vh',
+  },
+} as const
+
+type ScreenTier = keyof typeof stackProfiles
+
+const getScreenTier = (width: number): ScreenTier => {
+  if (width < 768) return 'mobile'
+  if (width < 1024) return 'tablet'
+  return 'desktop'
+}
+
+const getStackMetrics = (progress: number, index: number, total: number, tier: ScreenTier) => {
+  const profile = stackProfiles[tier]
+  const usableProgress = clamp((progress - STACK_START) / (STACK_END - STACK_START), 0, 1)
+  const heldProgress = usableProgress <= ENTRY_HOLD
+    ? 0
+    : (usableProgress - ENTRY_HOLD) / (1 - ENTRY_HOLD)
+  const activeIndex = heldProgress * (total - 1)
+  const delta = index - activeIndex
+  const absDelta = Math.abs(delta)
+  const isActive = absDelta < 0.35
+
+  const y = delta < 0
+    ? Math.min(Math.abs(delta) * profile.pastStep, 96)
+    : -Math.min(delta * profile.futureStep, 40)
+  const x = delta * profile.xStep
+  const scale = clamp(1 - absDelta * profile.scaleStep, 0.9, 1)
+  const opacity = clamp(1 - absDelta * profile.opacityStep, profile.inactiveOpacity, 1)
+  const rotate = clamp(delta * -0.45, -2.2, 2.2)
+  const zIndex = Math.round(500 - absDelta * 120)
+
+  return {
+    isActive,
+    x,
+    y,
+    scale,
+    rotate,
+    opacity,
+    zIndex,
+  }
+}
 
 export default function Speakers() {
   const [selected, setSelected] = useState<Speaker | null>(null)
-  const desktopStoryRef = useRef<HTMLDivElement>(null)
+  const sectionRef = useRef<HTMLElement>(null)
   const [storyProgress, setStoryProgress] = useState(0)
-  const rafRef = useRef<number | null>(null)
+  const [screenTier, setScreenTier] = useState<ScreenTier>('desktop')
+  const [floatPhase, setFloatPhase] = useState(0)
 
-  const { scrollYProgress } = useScroll({ target: desktopStoryRef, offset: ['start start', 'end end'] })
+  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start start', 'end end'] })
+  const smoothScrollProgress = useSpring(scrollYProgress, {
+    stiffness: 78,
+    damping: 25,
+    mass: 0.72,
+  })
 
-  useMotionValueEvent(scrollYProgress, 'change', (latest) => {
-    if (rafRef.current !== null) {
-      cancelAnimationFrame(rafRef.current)
-    }
-
-    rafRef.current = requestAnimationFrame(() => {
-      setStoryProgress(latest)
-      rafRef.current = null
-    })
+  useMotionValueEvent(smoothScrollProgress, 'change', (latest) => {
+    setStoryProgress(latest)
   })
 
   useEffect(() => {
+    const updateTier = () => setScreenTier(getScreenTier(window.innerWidth))
+
+    updateTier()
+    window.addEventListener('resize', updateTier)
+
     return () => {
-      if (rafRef.current !== null) {
-        cancelAnimationFrame(rafRef.current)
-      }
+      window.removeEventListener('resize', updateTier)
     }
   }, [])
 
-  const renderSpeakerCard = (sp: Speaker, index: number, cardWidthClass: string) => (
-    <motion.button
-      key={sp.id}
-      onClick={() => setSelected(sp)}
-      className={`group text-left glass border border-[rgba(255,255,255,0.08)] backdrop-blur-xl rounded-[18px] overflow-hidden h-[266px] flex flex-col transform-gpu shadow-[0_14px_32px_rgba(0,0,0,0.18)] ${cardWidthClass}`}
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.2 }}
-      transition={{ duration: 0.45, delay: index * 0.06, ease: [0.22, 1, 0.36, 1] }}
-      whileHover={{ y: -5 }}
-    >
-      <div className="relative h-36 overflow-hidden">
-        <Image
-          src={sp.img}
-          alt={sp.name}
-          fill
-          className="object-cover"
-          sizes="280px"
-        />
-        <div className="absolute inset-0 bg-[#06231D]/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-          <span className="text-xs font-body font-medium text-[var(--text-primary)] px-3 py-1 rounded-full bg-white/10 border border-white/10 backdrop-blur-md">
-            View Bio
-          </span>
-        </div>
-      </div>
-      <div className="p-4 flex-1">
-        <div className="tag text-[0.65rem] mb-2">{sp.tag}</div>
-        <p className="font-body font-medium text-sm text-[var(--text-primary)] leading-tight">{sp.name}</p>
-        <p className="font-body text-[0.7rem] text-[var(--text-muted)] mt-0.5 leading-tight">{sp.role}</p>
-      </div>
-    </motion.button>
-  )
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      setFloatPhase((prev) => (prev + 0.09) % (Math.PI * 2))
+    }, 50)
+
+    return () => window.clearInterval(timer)
+  }, [])
 
   return (
-    <section id="speakers" className="section-pad">
-      <div className="max-w-7xl mx-auto">
+    <section ref={sectionRef} id="speakers" className="relative" style={{ position: 'relative' }}>
+      {/* Intro Text */}
+      <div className="section-pad pb-2 md:pb-4 relative max-w-7xl mx-auto">
         <AnimateIn className="section-intro">
           <p className="section-label">Who You&apos;ll Hear</p>
           <h2
@@ -175,78 +209,116 @@ export default function Speakers() {
             Learn from researchers, entrepreneurs, and engineers shaping the future of power &amp; energy.
           </p>
         </AnimateIn>
+      </div>
 
-        <div className="lg:hidden overflow-x-auto pb-3 -mx-1 px-1">
-          <div className="flex gap-4 min-w-max pr-2">
-            {speakers.map((sp, i) => renderSpeakerCard(sp, i, 'w-[240px] sm:w-[250px] shrink-0'))}
-          </div>
-        </div>
+      {/* Scroll-driven animation container */}
+      <div
+        className="relative w-full"
+        style={{
+          height: stackProfiles[screenTier].stageHeight,
+          position: 'relative',
+        }}
+      >
+        {/* Sticky viewport - stays fixed while scrolling through section */}
+        <div
+          className="sticky w-full flex items-center justify-center overflow-visible"
+          style={{
+            top: 0,
+            height: '100vh',
+            position: 'sticky',
+            zIndex: 40,
+          }}
+        >
+          {/* Card container */}
+          <div className={`relative ${stackProfiles[screenTier].cardSize}`}>
+            {speakers.map((sp, i) => {
+              const { isActive, x, y, scale, rotate, opacity, zIndex } = getStackMetrics(storyProgress, i, speakers.length, screenTier)
+              const floatOffset = Math.sin(floatPhase + i * 0.9) * (isActive ? 5 : 2.5)
 
-        <div ref={desktopStoryRef} className="hidden lg:block mt-0">
-          <div className="h-[220vh]">
-            <div className="sticky top-20 h-[94vh] overflow-visible">
-              <div className="absolute inset-0">
-                {speakers.map((sp, i) => {
-                  const revealStart = i * 0.09
-                  const revealEnd = revealStart + 0.16
-                  const t = clamp((storyProgress - revealStart) / (revealEnd - revealStart), 0, 1)
-                  const eased = easeOutCubic(t)
+              return (
+                <motion.div
+                  key={sp.id}
+                  className="group absolute inset-0"
+                  style={{
+                    x,
+                    y: y + floatOffset,
+                    scale,
+                    rotate,
+                    opacity,
+                    zIndex,
+                    pointerEvents: isActive ? 'auto' : 'none',
+                    willChange: 'transform, opacity',
+                  }}
+                >
+                  <motion.button
+                    onClick={() => setSelected(sp)}
+                    className="relative h-full w-full text-left rounded-[26px] border border-[rgba(255,255,255,0.12)] bg-[linear-gradient(180deg,rgba(13,34,28,0.98),rgba(8,23,19,0.98))] shadow-[0_18px_48px_rgba(0,0,0,0.34)] overflow-hidden flex flex-col transform-gpu"
+                    whileHover={isActive ? { scale: 1.04, y: -8 } : undefined}
+                    whileTap={isActive ? { scale: 1.02, y: -4 } : undefined}
+                    transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
+                  >
+                    <div className="relative h-[54%] overflow-hidden">
+                      <Image
+                        src={sp.img}
+                        alt={sp.name}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 640px) 92vw, (max-width: 1024px) 78vw, 520px"
+                      />
+                      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(10,10,9,0.02)_0%,rgba(10,10,9,0.22)_42%,rgba(10,10,9,0.68)_100%)]" />
+                      <div className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100" style={{ background: 'radial-gradient(circle at center, rgba(227,239,38,0.10) 0%, rgba(63,173,146,0.06) 38%, rgba(10,10,9,0) 74%)' }} />
+                    </div>
 
-                  const from = SCATTER_LAYOUT[i]
-                  const to = FINAL_LAYOUT[i]
-
-                  const x = lerp(from.x, to.x, eased)
-                  const y = lerp(from.y, to.y, eased)
-                  const rotate = lerp(from.rotate, to.rotate, eased)
-                  const opacity = clamp((t - 0.03) / 0.26, 0, 1)
-                  const blur = lerp(8, 0, eased)
-                  const scale = lerp(0.92, 1, eased)
-
-                  return (
-                    <motion.button
-                      key={sp.id}
-                      onClick={() => setSelected(sp)}
-                      className="group absolute w-[252px] xl:w-[272px] h-[286px] text-left glass border border-[rgba(255,255,255,0.08)] backdrop-blur-xl rounded-[18px] shadow-[0_14px_32px_rgba(0,0,0,0.18)] overflow-hidden flex flex-col transform-gpu"
-                      style={{
-                        left: `${x}%`,
-                        top: `${y}%`,
-                        rotate: `${rotate}deg`,
-                        opacity,
-                        scale,
-                        filter: `blur(${blur}px)`,
-                        zIndex: 20 + i,
-                        transform: 'translate(-50%, -50%)',
-                      }}
-                      whileHover={{ y: -5, rotate: 0, scale: 1.02 }}
-                      transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-                    >
-                      <div className="relative h-40 overflow-hidden">
-                        <Image
-                          src={sp.img}
-                          alt={sp.name}
-                          fill
-                          className="object-cover"
-                          sizes="272px"
-                        />
-                        <div className="absolute inset-0 bg-[#06231D]/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                          <span className="text-xs font-body font-medium text-[var(--text-primary)] px-3 py-1 rounded-full bg-white/10 border border-white/10 backdrop-blur-md">
-                            View Bio
-                          </span>
+                    <div className="relative flex flex-1 flex-col px-5 py-5 sm:px-6 sm:py-6">
+                      <div className="flex items-start justify-between gap-4">
+                        <div>
+                          <div className="tag mb-2">{sp.tag}</div>
+                          <h3 className="font-display text-[1.35rem] sm:text-[1.55rem] text-[var(--text-primary)] leading-tight">
+                            {sp.name}
+                          </h3>
+                          <p className="font-body text-sm text-[var(--text-muted)] mt-1">{sp.role}</p>
+                        </div>
+                        <div className="rounded-full border border-[rgba(255,255,255,0.12)] bg-white/5 px-3 py-1 text-[0.68rem] uppercase tracking-[0.22em] text-[var(--text-secondary)]">
+                          {String(i + 1).padStart(2, '0')}
                         </div>
                       </div>
-                      <div className="p-4 flex-1">
-                        <div className="tag text-[0.68rem] mb-2">{sp.tag}</div>
-                        <p className="font-body font-medium text-[0.95rem] text-[var(--text-primary)] leading-tight">{sp.name}</p>
-                        <p className="font-body text-xs text-[var(--text-muted)] mt-1 leading-tight">{sp.role}</p>
-                      </div>
-                    </motion.button>
-                  )
-                })}
-              </div>
 
+                      <p className="mt-4 font-body text-sm text-[var(--text-secondary)] leading-relaxed">
+                        {sp.topic}
+                      </p>
+
+                      <div className="mt-auto pt-4 border-t border-[rgba(255,255,255,0.08)]">
+                        <span className="rounded-full border border-[rgba(255,255,255,0.12)] bg-[rgba(255,255,255,0.04)] px-3 py-2 text-[0.7rem] font-medium text-[var(--text-primary)] inline-flex">
+                          Hover for details
+                        </span>
+                      </div>
+                    </div>
+                  </motion.button>
+
+                  <div
+                    className="hidden md:block absolute top-1/2 left-[calc(100%+0.8rem)] -translate-y-1/2 w-[min(72vw,280px)] rounded-2xl border border-[rgba(255,255,255,0.12)] bg-[linear-gradient(180deg,rgba(13,34,28,0.96),rgba(8,23,19,0.98))] shadow-[0_18px_42px_rgba(0,0,0,0.35)] p-4 opacity-0 translate-x-4 transition-all duration-300 ease-out group-hover:opacity-100 group-hover:translate-x-0"
+                    style={{ pointerEvents: isActive ? 'auto' : 'none' }}
+                  >
+                    <p className="font-body text-sm text-[var(--text-secondary)] leading-relaxed">
+                      {sp.bio}
+                    </p>
+
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      <span className="rounded-full border border-[rgba(255,255,255,0.12)] bg-[rgba(255,255,255,0.04)] px-3 py-2 text-[0.7rem] font-medium text-[var(--text-primary)]">
+                        Tap card to open
+                      </span>
+                      <span className="rounded-full border border-[rgba(227,239,38,0.22)] bg-[rgba(227,239,38,0.08)] px-3 py-2 text-[0.7rem] font-medium text-[var(--accent)] shadow-[0_0_18px_rgba(227,239,38,0.14)]">
+                        Detail panel
+                      </span>
+                    </div>
+                  </div>
+                </motion.div>
+                )
+              })}
             </div>
-          </div>
-        </div>
+          {/* End sticky viewport */}
+      </div>
+      {/* End scroll container */}
       </div>
 
       {/* Modal */}

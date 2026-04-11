@@ -69,7 +69,8 @@ export default function Navbar() {
                 src={pieLogo}
                 alt="IEEE PIE Kerala Section logo"
                 className="h-8 sm:h-9 md:h-10 w-auto"
-                priority
+                loading="eager"
+                fetchPriority="high"
               />
             </Link>
 

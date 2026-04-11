@@ -3,7 +3,6 @@
 import Image from 'next/image'
 import { motion } from 'framer-motion'
 import AnimateIn from '@/components/AnimateIn'
-import { StaggerContainer, StaggerItem } from '@/components/StaggerContainer'
 
 const tiers = [
   {
@@ -35,6 +34,84 @@ const tiers = [
   },
 ]
 
+const carouselTransition = (duration: number) => ({
+  duration,
+  repeat: Infinity,
+  ease: 'linear' as const,
+})
+
+function SponsorCarouselRow({
+  tier,
+  reverse = false,
+}: {
+  tier: (typeof tiers)[number]
+  reverse?: boolean
+}) {
+  const items = [...tier.sponsors, ...tier.sponsors, ...tier.sponsors]
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center gap-3">
+        <div className="h-px flex-1" style={{ background: `${tier.color}40` }} />
+        <span
+          className="font-body font-medium text-sm uppercase tracking-widest"
+          style={{ color: tier.color }}
+        >
+          {tier.label}
+        </span>
+        <div className="h-px flex-1" style={{ background: `${tier.color}40` }} />
+      </div>
+
+      <div className="relative overflow-hidden rounded-[30px] border border-[rgba(255,255,255,0.08)] bg-[linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.01))] px-2 py-4 md:px-3 md:py-5">
+        <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 md:w-24 bg-[linear-gradient(90deg,#0a0a09_0%,rgba(10,10,9,0.96)_40%,rgba(10,10,9,0)_100%)]" />
+        <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 md:w-24 bg-[linear-gradient(270deg,#0a0a09_0%,rgba(10,10,9,0.96)_40%,rgba(10,10,9,0)_100%)]" />
+
+        <motion.div
+          className="flex w-max items-stretch gap-4 md:gap-5"
+          animate={{ x: reverse ? ['-33.333%', '0%'] : ['0%', '-33.333%'] }}
+          transition={carouselTransition(24 + tier.sponsors.length * 1.4)}
+          whileHover={{ animationPlayState: 'paused' }}
+          style={{ willChange: 'transform' }}
+        >
+          {items.map((sp, index) => (
+            <motion.div
+              key={`${tier.label}-${sp.name}-${index}`}
+              className="group relative flex-shrink-0 w-[210px] sm:w-[230px] md:w-[250px] lg:w-[260px] xl:w-[270px] overflow-hidden rounded-[24px] border border-[rgba(255,255,255,0.10)] bg-[#111110] shadow-[0_16px_40px_rgba(0,0,0,0.28)]"
+              whileHover={{ scale: 1.05, y: -3 }}
+              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+              style={{ transformOrigin: 'center center' }}
+            >
+              <div className="relative h-[230px] sm:h-[240px] md:h-[250px] overflow-hidden">
+                <Image
+                  src={sp.img}
+                  alt={sp.name}
+                  fill
+                  className="object-cover transition-all duration-500 ease-out grayscale group-hover:grayscale-0 group-hover:scale-[1.03]"
+                  sizes="(max-width: 640px) 210px, (max-width: 768px) 230px, (max-width: 1024px) 250px, 270px"
+                />
+                <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(10,10,9,0.08)_0%,rgba(10,10,9,0.34)_100%)] transition-opacity duration-500 group-hover:opacity-70" />
+                <div className="absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100" style={{ background: 'radial-gradient(circle at center, rgba(227,239,38,0.10) 0%, rgba(63,173,146,0.08) 35%, rgba(10,10,9,0) 72%)', filter: 'blur(12px)' }} />
+              </div>
+
+              <div className="relative px-4 py-4 md:px-5 md:py-5 bg-[linear-gradient(180deg,rgba(10,10,9,0.18),rgba(10,10,9,0.65))]">
+                <div className="flex items-center justify-between gap-3">
+                  <span className="font-body font-medium text-sm md:text-[0.95rem] text-[var(--text-primary)]">
+                    {sp.name}
+                  </span>
+                  <span className="h-2.5 w-2.5 rounded-full bg-[var(--accent)] opacity-70 shadow-[0_0_16px_rgba(227,239,38,0.35)]" />
+                </div>
+                <p className="mt-2 font-body text-[0.72rem] uppercase tracking-[0.18em] text-[var(--text-muted)] opacity-80">
+                  Hover for color
+                </p>
+              </div>
+            </motion.div>
+          ))}
+        </motion.div>
+      </div>
+    </div>
+  )
+}
+
 export default function Sponsors() {
   return (
     <section id="sponsors" className="section-pad">
@@ -53,41 +130,11 @@ export default function Sponsors() {
           </p>
         </AnimateIn>
 
-        <div className="space-y-12">
-          {tiers.map((tier) => (
-            <div key={tier.label}>
-              <AnimateIn>
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="h-px flex-1" style={{ background: `${tier.color}40` }} />
-                  <span
-                    className="font-body font-medium text-sm uppercase tracking-widest"
-                    style={{ color: tier.color }}
-                  >
-                    {tier.label}
-                  </span>
-                  <div className="h-px flex-1" style={{ background: `${tier.color}40` }} />
-                </div>
-              </AnimateIn>
-              <StaggerContainer className="flex flex-wrap justify-center gap-3 md:gap-4">
-                {tier.sponsors.map((sp) => (
-                  <StaggerItem key={sp.name}>
-                    <motion.div
-                      className="glass rounded-2xl p-4 md:p-6 flex flex-col items-center gap-3 cursor-pointer min-w-[120px] md:min-w-[140px]"
-                      whileHover={{
-                        scale: 1.06,
-                        borderColor: `${tier.color}60`,
-                        boxShadow: `0 8px 32px ${tier.color}20`,
-                      }}
-                    >
-                      <div className="w-14 h-14 md:w-16 md:h-16 rounded-xl overflow-hidden relative">
-                        <Image src={sp.img} alt={sp.name} fill className="object-cover" sizes="64px" />
-                      </div>
-                      <span className="font-body font-medium text-xs text-[var(--text-secondary)]">{sp.name}</span>
-                    </motion.div>
-                  </StaggerItem>
-                ))}
-              </StaggerContainer>
-            </div>
+        <div className="space-y-12 md:space-y-14">
+          {tiers.map((tier, index) => (
+            <AnimateIn key={tier.label}>
+              <SponsorCarouselRow tier={tier} reverse={index % 2 === 1} />
+            </AnimateIn>
           ))}
         </div>
 

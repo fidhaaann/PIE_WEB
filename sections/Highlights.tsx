@@ -57,7 +57,7 @@ export default function Highlights() {
   const glowY = useTransform(scrollYProgress, [0, 1], [30, -30])
 
   return (
-    <section ref={sectionRef} id="highlights" className="section-pad overflow-hidden relative">
+    <section ref={sectionRef} id="highlights" className="section-pad overflow-hidden relative" style={{ position: 'relative' }}>
       <motion.div
         style={{ y: glowY }}
         className="pointer-events-none absolute -top-16 right-0 w-[220px] h-[220px] md:w-[360px] md:h-[360px] rounded-full bg-[var(--accent)] opacity-[0.06] blur-[80px]"
@@ -106,7 +106,7 @@ export default function Highlights() {
               }}
             >
               <div className="relative h-44">
-                <Image src={item.img} alt={item.title} fill className="object-cover" sizes="100vw" />
+                <Image src={item.img} alt={item.title} fill className="object-cover" sizes="(max-width: 768px) calc(100vw - 2.5rem), 320px" />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#06231D] via-transparent to-transparent" />
               </div>
               <div className="bg-[#06231D] border border-[var(--border)] p-4">

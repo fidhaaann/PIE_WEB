@@ -49,9 +49,12 @@ export default function Hero() {
 
   useEffect(() => {
     if (!shouldLightMotion) return
-    setVisibleLineCount(TERMINAL_LINES.length)
-    setTypingLine(TERMINAL_LINES.length - 1)
-    setTypingCharCount(TERMINAL_LINES[TERMINAL_LINES.length - 1].length)
+    const rafId = window.requestAnimationFrame(() => {
+      setVisibleLineCount(TERMINAL_LINES.length)
+      setTypingLine(TERMINAL_LINES.length - 1)
+      setTypingCharCount(TERMINAL_LINES[TERMINAL_LINES.length - 1].length)
+    })
+    return () => window.cancelAnimationFrame(rafId)
   }, [shouldLightMotion])
 
   useEffect(() => {
