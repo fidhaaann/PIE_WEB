@@ -60,8 +60,8 @@ export default function Navbar() {
           <div
             className={`rounded-2xl px-4 md:px-5 py-2.5 flex items-center justify-between transition-all duration-500 ${
               scrolled
-                ? 'bg-[linear-gradient(135deg,rgba(14,54,44,0.72),rgba(11,46,38,0.56))] backdrop-blur-2xl border border-[rgba(245,245,240,0.14)] shadow-[0_10px_30px_rgba(0,0,0,0.28),inset_0_1px_0_rgba(255,255,255,0.10)]'
-                : 'bg-[linear-gradient(135deg,rgba(14,54,44,0.48),rgba(11,46,38,0.30))] backdrop-blur-xl border border-[rgba(245,245,240,0.10)] shadow-[0_8px_22px_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.08)]'
+                ? 'bg-[#fef08a] border-[3px] border-[#0b0b0b] shadow-[6px_6px_0_#0b0b0b]'
+                : 'bg-[#bfdbfe] border-[3px] border-[#0b0b0b] shadow-[6px_6px_0_#0b0b0b]'
             }`}
           >
             <Link href="/" className="flex items-center gap-2.5 group">
@@ -81,7 +81,7 @@ export default function Navbar() {
                   key={link.label}
                   type="button"
                   onClick={() => handleNav(link.href)}
-                  className="relative text-sm font-body text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors duration-200 group"
+                  className="relative text-sm font-body font-bold text-[var(--text-primary)] hover:text-[#2563eb] transition-colors duration-200 group"
                 >
                   {link.label}
                   <span className="absolute -bottom-0.5 left-0 h-px w-0 bg-[var(--accent)] group-hover:w-full transition-all duration-300" />
@@ -96,7 +96,7 @@ export default function Navbar() {
             </div>
 
             <button
-              className="md:hidden p-2 rounded-lg border border-[rgba(245,245,240,0.18)] bg-[rgba(255,255,255,0.04)] text-[var(--text-primary)]"
+              className="md:hidden p-2 rounded-lg border-[3px] border-[#0b0b0b] bg-[#f472b6] text-[#0b0b0b] shadow-[4px_4px_0_#0b0b0b]"
               onClick={() => setMenuOpen((v) => !v)}
               aria-label="Toggle menu"
             >
@@ -113,7 +113,7 @@ export default function Navbar() {
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-            className="fixed inset-y-0 right-0 z-[99] w-[86vw] max-w-xs glass border-l border-[var(--border)] flex flex-col pt-20 px-6 gap-5 md:hidden"
+            className="fixed inset-y-0 right-0 z-[99] w-[86vw] max-w-xs bg-[#ffffff] border-l-[4px] border-[#0b0b0b] flex flex-col pt-20 px-6 gap-5 md:hidden"
           >
             {navLinks.map((link, i) => (
               <motion.button

@@ -89,9 +89,9 @@ export default function Hero() {
         style={{ y: shouldLightMotion ? 0 : blobY }}
         className="absolute inset-0 pointer-events-none transition-transform duration-700 ease-out"
       >
-        <div className="absolute top-1/4 left-1/4 w-[260px] h-[260px] md:w-[500px] md:h-[500px] rounded-full bg-[var(--accent)] opacity-[0.05] md:opacity-[0.06] blur-[70px] md:blur-[120px]" />
-        <div className="absolute bottom-1/4 right-1/4 w-[220px] h-[220px] md:w-[400px] md:h-[400px] rounded-full bg-forest-500 opacity-[0.08] md:opacity-[0.12] blur-[60px] md:blur-[100px]" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[340px] h-[340px] md:w-[700px] md:h-[700px] rounded-full bg-[#076653] opacity-[0.06] md:opacity-[0.08] blur-[80px] md:blur-[140px]" />
+        <div className="absolute top-8 left-8 w-20 h-20 md:w-28 md:h-28 bg-[#facc15] border-[3px] border-[#0b0b0b] rotate-6" />
+        <div className="absolute bottom-16 right-10 w-16 h-16 md:w-24 md:h-24 bg-[#60a5fa] border-[3px] border-[#0b0b0b] -rotate-12" />
+        <div className="absolute top-1/2 right-[20%] w-12 h-12 md:w-16 md:h-16 bg-[#f472b6] border-[3px] border-[#0b0b0b] rotate-12" />
       </motion.div>
 
       <motion.div ref={contentRef} style={{ y: shouldLightMotion ? 0 : contentY }} className="relative z-10 w-full px-5 md:px-10">
@@ -121,7 +121,7 @@ export default function Hero() {
               initial={{ opacity: 0, y: shouldLightMotion ? 10 : 18 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: shouldLightMotion ? 0.14 : 0.5, duration: shouldLightMotion ? 0.35 : 0.6 }}
-              className="hero-display gradient-text"
+              className="hero-display"
               style={{ fontSize: 'clamp(2.6rem, 11vw, 8rem)', lineHeight: 0.92 }}
             >
               V-FIESTA 5.0
@@ -161,19 +161,19 @@ export default function Hero() {
             transition={{ delay: shouldLightMotion ? 0.32 : 1.1, duration: shouldLightMotion ? 0.42 : 0.7 }}
             className="lg:col-span-2"
           >
-            <div className="glass accent-stroke rounded-[28px] p-4 md:p-6 w-full max-w-[560px] mx-auto lg:mx-0 overflow-hidden">
-              <div className="rounded-[22px] border border-[var(--border)] bg-[linear-gradient(180deg,rgba(8,36,29,0.96),rgba(6,35,29,0.98))] shadow-card overflow-hidden">
-                <div className="flex items-center justify-between gap-3 px-4 md:px-5 py-3 border-b border-[var(--border)] bg-[rgba(255,255,255,0.02)]">
+            <div className="glass accent-stroke rounded-[28px] p-4 md:p-6 w-full max-w-[560px] mx-auto lg:mx-0 overflow-hidden bg-[#fef08a]">
+              <div className="rounded-[22px] border-[3px] border-[#0b0b0b] bg-[#ffffff] shadow-[6px_6px_0_#0b0b0b] overflow-hidden">
+                <div className="flex items-center justify-between gap-3 px-4 md:px-5 py-3 border-b-[3px] border-[#0b0b0b] bg-[#dbeafe]">
                   <div className="flex items-center gap-2">
                     <span className="w-3 h-3 rounded-full bg-[#ff5f57]" />
                     <span className="w-3 h-3 rounded-full bg-[#febc2e]" />
                     <span className="w-3 h-3 rounded-full bg-[#28c840]" />
                   </div>
-                  <p className="font-body text-[0.66rem] uppercase tracking-[0.18em] text-[var(--text-muted)]">v-fiesta terminal</p>
+                  <p className="font-body text-[0.66rem] uppercase tracking-[0.18em] text-[#111827]">v-fiesta terminal</p>
                   <div className="w-16" />
                 </div>
 
-                <div className="px-4 md:px-5 py-4 md:py-5 min-h-[300px] md:min-h-[330px] font-mono text-sm md:text-[0.95rem] leading-relaxed text-[var(--text-secondary)]">
+                <div className="px-4 md:px-5 py-4 md:py-5 min-h-[300px] md:min-h-[330px] font-mono text-sm md:text-[0.95rem] leading-relaxed text-[#111827] bg-[#ffffff]">
                   <div className="mb-4 flex items-center gap-2 text-[var(--accent)]">
                     <span className="inline-block h-2.5 w-2.5 rounded-full bg-[var(--accent)] shadow-[0_0_12px_rgba(227,239,38,0.5)]" />
                     <span className="font-body text-[0.65rem] uppercase tracking-[0.18em] text-[var(--text-muted)]">Live event feed</span>

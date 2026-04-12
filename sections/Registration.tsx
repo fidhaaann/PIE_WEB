@@ -29,11 +29,7 @@ export default function Registration() {
   const { days, hours, minutes, seconds } = useCountdown(EVENT_DATE)
 
   return (
-    <section id="register" className="section-pad relative overflow-hidden">
-      {/* Bg accent */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[240px] h-[180px] sm:w-[320px] sm:h-[220px] md:w-[600px] md:h-[400px] rounded-full bg-[var(--accent)] opacity-[0.04] blur-[56px] md:blur-[100px]" />
-      </div>
+    <section id="register" className="section-pad notebook-paper relative overflow-hidden">
 
       <div className="max-w-5xl mx-auto relative z-10">
         {/* Top urgency badge */}

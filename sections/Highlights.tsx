@@ -1,8 +1,7 @@
 'use client'
 
-import { useRef } from 'react'
 import Image from 'next/image'
-import { motion, useScroll, useTransform } from 'framer-motion'
+import { motion } from 'framer-motion'
 import AnimateIn from '@/components/AnimateIn'
 
 const highlights = [
@@ -11,6 +10,7 @@ const highlights = [
     title: 'V-Fiesta 4.0 Highlights',
     desc: '1800+ Participants from 60+ colleges across Kerala.',
     img: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&q=80',
+    bg: '#fef08a',
     rotate: -3,
     z: 1,
   },
@@ -19,6 +19,7 @@ const highlights = [
     title: 'Grand Award Ceremony',
     desc: 'Winners celebrated with trophies and cash prizes.',
     img: 'https://images.unsplash.com/photo-1581092921461-eab62e97a780?w=800&q=80',
+    bg: '#bfdbfe',
     rotate: 1.5,
     z: 2,
   },
@@ -27,6 +28,7 @@ const highlights = [
     title: 'Keynote: Dr. Anitha Nair',
     desc: 'Inspiring session on smart grids and the future of energy.',
     img: 'https://images.unsplash.com/photo-1475721027785-f74eccf877e2?w=800&q=80',
+    bg: '#fbcfe8',
     rotate: -1,
     z: 3,
   },
@@ -35,6 +37,7 @@ const highlights = [
     title: 'Hands-On Workshops',
     desc: '12 workshops, 600+ participants, 0% boredom.',
     img: 'https://images.unsplash.com/photo-1573164574572-cb89e39749b4?w=800&q=80',
+    bg: '#bbf7d0',
     rotate: 2.5,
     z: 4,
   },
@@ -52,16 +55,8 @@ const marqueeItems = [
 ]
 
 export default function Highlights() {
-  const sectionRef = useRef<HTMLElement>(null)
-  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start end', 'end start'] })
-  const glowY = useTransform(scrollYProgress, [0, 1], [30, -30])
-
   return (
-    <section ref={sectionRef} id="highlights" className="section-pad overflow-hidden relative" style={{ position: 'relative' }}>
-      <motion.div
-        style={{ y: glowY }}
-        className="pointer-events-none absolute -top-16 right-0 w-[220px] h-[220px] md:w-[360px] md:h-[360px] rounded-full bg-[var(--accent)] opacity-[0.06] blur-[80px]"
-      />
+    <section id="highlights" className="section-pad notebook-paper overflow-hidden relative" style={{ position: 'relative' }}>
       <div className="max-w-7xl mx-auto">
         <AnimateIn className="section-intro">
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-end">
@@ -95,7 +90,8 @@ export default function Highlights() {
           {highlights.map((item, i) => (
             <motion.div
               key={`mobile-${item.id}`}
-              className="w-full rounded-2xl overflow-hidden shadow-card bg-[#06231D]"
+              className="w-full rounded-2xl overflow-hidden border-[3px] border-[#0b0b0b] shadow-[7px_7px_0_#0b0b0b]"
+              style={{ background: item.bg }}
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               animate={{ y: [-3, 3] }}
@@ -107,9 +103,9 @@ export default function Highlights() {
             >
               <div className="relative h-44">
                 <Image src={item.img} alt={item.title} fill className="object-cover" sizes="(max-width: 768px) calc(100vw - 2.5rem), 320px" />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#06231D] via-transparent to-transparent" />
+                <div className="absolute inset-0 bg-black/20" />
               </div>
-              <div className="bg-[#06231D] border border-[var(--border)] p-4">
+              <div className="border-t-[3px] border-[#0b0b0b] p-4" style={{ background: item.bg }}>
                 <p className="font-body font-medium text-sm text-[var(--text-primary)]">{item.title}</p>
                 <p className="font-body text-xs text-[var(--text-secondary)] mt-1">{item.desc}</p>
               </div>
@@ -122,7 +118,7 @@ export default function Highlights() {
           {highlights.map((item, i) => (
             <motion.div
               key={item.id}
-              className="absolute w-[320px] rounded-2xl overflow-hidden shadow-card bg-[#06231D]"
+              className="absolute w-[320px] rounded-2xl overflow-hidden border-[3px] border-[#0b0b0b] shadow-[7px_7px_0_#0b0b0b]"
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
               animate={{ y: [-8, 8] }}
@@ -133,6 +129,7 @@ export default function Highlights() {
               }}
               whileHover={{ scale: 1.05, rotate: 0, zIndex: 20, transition: { duration: 0.25 } }}
               style={{
+                background: item.bg,
                 zIndex: item.z,
                 left: `${10 + i * 18}%`,
                 top: `${i % 2 === 0 ? 0 : 60}px`,
@@ -142,9 +139,9 @@ export default function Highlights() {
             >
               <div className="relative h-44">
                 <Image src={item.img} alt={item.title} fill className="object-cover" sizes="320px" />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#06231D] via-transparent to-transparent" />
+                <div className="absolute inset-0 bg-black/20" />
               </div>
-              <div className="bg-[#06231D] border border-[var(--border)] p-4">
+              <div className="border-t-[3px] border-[#0b0b0b] p-4" style={{ background: item.bg }}>
                 <p className="font-body font-medium text-sm text-[var(--text-primary)]">{item.title}</p>
                 <p className="font-body text-xs text-[var(--text-secondary)] mt-1">{item.desc}</p>
               </div>

@@ -224,10 +224,10 @@ export default function Speakers() {
   }, [selected])
 
   return (
-    <section id="speakers" className="relative group overflow-hidden">
+    <section id="speakers" className="notebook-paper relative group overflow-hidden border-t-[6px] border-[#0b0b0b]">
       {/* Intro Text */}
-      <div className="pt-16 pb-2 md:pt-24 md:pb-6 relative max-w-7xl mx-auto px-5 sm:px-10">
-        <AnimateIn className="section-intro">
+      <div className="pt-16 pb-0 md:pt-24 md:pb-1 relative max-w-7xl mx-auto px-5 sm:px-10">
+        <AnimateIn className="section-intro !mb-1 md:!mb-2">
           <p className="section-label">Who You&apos;ll Hear</p>
           <h2
             className="font-display text-[var(--text-primary)] section-title"
@@ -312,7 +312,7 @@ export default function Speakers() {
                 >
                   <motion.button
                     onClick={() => setSelected(sp)}
-                    className="relative h-full w-full text-left rounded-[26px] border border-[rgba(255,255,255,0.12)] bg-[linear-gradient(180deg,rgba(13,34,28,0.98),rgba(8,23,19,0.98))] shadow-[0_18px_48px_rgba(0,0,0,0.34)] overflow-hidden flex flex-col transform-gpu"
+                    className="relative h-full w-full text-left rounded-[26px] border-[3px] border-[#0b0b0b] bg-[#ffffff] shadow-[8px_8px_0_#0b0b0b] overflow-hidden flex flex-col transform-gpu"
                     whileHover={isActive ? { scale: 1.04, y: -8 } : undefined}
                     whileTap={isActive ? { scale: 1.02, y: -4 } : undefined}
                     transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
@@ -326,7 +326,7 @@ export default function Speakers() {
                         className="object-cover"
                         sizes="(max-width: 640px) 92vw, (max-width: 1024px) 78vw, 520px"
                       />
-                      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(10,10,9,0.02)_0%,rgba(10,10,9,0.22)_42%,rgba(10,10,9,0.68)_100%)]" />
+                      <div className="absolute inset-0 bg-black/20" />
                       <div className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100" style={{ background: 'radial-gradient(circle at center, rgba(227,239,38,0.10) 0%, rgba(63,173,146,0.06) 38%, rgba(10,10,9,0) 74%)' }} />
                     </div>
 
@@ -339,7 +339,7 @@ export default function Speakers() {
                           </h3>
                           <p className="font-body text-xs sm:text-sm text-[var(--text-muted)] mt-1">{sp.role}</p>
                         </div>
-                        <div className="rounded-full border border-[rgba(255,255,255,0.12)] bg-white/5 px-2 py-1 sm:px-3 text-[0.6rem] sm:text-[0.68rem] uppercase tracking-[0.22em] text-[var(--text-secondary)]">
+                        <div className="rounded-full border-[2px] border-[#0b0b0b] bg-[#facc15] px-2 py-1 sm:px-3 text-[0.6rem] sm:text-[0.68rem] uppercase tracking-[0.22em] text-[#0b0b0b]">
                           {String(i + 1).padStart(2, '0')}
                         </div>
                       </div>
@@ -348,8 +348,8 @@ export default function Speakers() {
                         {sp.topic}
                       </p>
 
-                      <div className="mt-auto pt-3 sm:pt-4 border-t border-[rgba(255,255,255,0.08)]">
-                        <span className="rounded-full border border-[rgba(255,255,255,0.12)] bg-[rgba(255,255,255,0.04)] px-3 py-1.5 sm:py-2 text-[0.65rem] sm:text-[0.7rem] font-medium text-[var(--text-primary)] inline-flex">
+                      <div className="mt-auto pt-3 sm:pt-4 border-t-[3px] border-[#0b0b0b]">
+                        <span className="rounded-full border-[2px] border-[#0b0b0b] bg-[#bfdbfe] px-3 py-1.5 sm:py-2 text-[0.65rem] sm:text-[0.7rem] font-medium text-[#0b0b0b] inline-flex">
                           Tap for details
                         </span>
                       </div>
@@ -363,7 +363,7 @@ export default function Speakers() {
 
         {/* Global Hover Detail Panel */}
         <div
-          className={`hidden md:block absolute top-1/2 left-[calc(50%+193px)] -translate-y-1/2 z-[200] w-[280px] rounded-2xl border border-[rgba(255,255,255,0.12)] bg-[linear-gradient(180deg,rgba(13,34,28,0.96),rgba(8,23,19,0.98))] shadow-[0_18px_42px_rgba(0,0,0,0.35)] p-4 transition-all duration-300 ease-out ${hoveredSpeaker ? 'opacity-100 translate-x-0 pointer-events-auto' : 'opacity-0 translate-x-4 pointer-events-none'}`}
+          className={`hidden md:block absolute top-1/2 left-[calc(50%+193px)] -translate-y-1/2 z-[200] w-[280px] rounded-2xl border-[3px] border-[#0b0b0b] bg-[#ffffff] shadow-[8px_8px_0_#0b0b0b] p-4 transition-all duration-300 ease-out ${hoveredSpeaker ? 'opacity-100 translate-x-0 pointer-events-auto' : 'opacity-0 translate-x-4 pointer-events-none'}`}
         >
           <p className="font-body text-sm text-[var(--text-secondary)] leading-relaxed">
             {hoveredSpeaker?.bio}

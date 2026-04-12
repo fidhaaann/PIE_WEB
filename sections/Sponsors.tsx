@@ -15,7 +15,7 @@ const sponsors = [
 
 export default function Sponsors() {
   return (
-    <section id="sponsors" className="section-pad">
+    <section id="sponsors" className="section-pad notebook-paper">
       <div className="max-w-7xl mx-auto">
         <AnimateIn className="section-intro">
           <p className="section-label">Our Supporters</p>

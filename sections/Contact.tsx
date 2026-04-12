@@ -18,7 +18,7 @@ export default function Contact() {
   }
 
   return (
-    <section id="contact" className="section-pad">
+    <section id="contact" className="section-pad notebook-paper">
       <div className="max-w-7xl mx-auto">
         <AnimateIn className="section-intro">
           <p className="section-label">Get in Touch</p>
@@ -52,7 +52,7 @@ export default function Contact() {
                   icon: MapPin,
                   label: 'Venue',
                   value: 'Rajagiri School of Engineering & Technology, Kakkanad, Kochi, Kerala – 682039',
-                  href: 'https://www.google.com/maps/place/Rajagiri+School+of+Engineering+%26+Technology/@9.9934428,76.3554876,17z/data=!3m1!4b1!4m6!3m5!1s0x3b080ca6b98ae0f7:0xc81786bb40617774!8m2!3d9.9934375!4d76.3580625!16s%2Fm%2F0cp4jkw?entry=ttu&g_ep=EgoyMDI2MDQwOC4wIKXMDSoASAFQAw%3D%3D',
+                  href: 'https://maps.google.com',
                 },
               ].map((item) => (
                 <a
@@ -106,7 +106,7 @@ export default function Contact() {
                   <p className="font-body font-medium text-sm text-[var(--text-primary)]">Rajagiri Engineering</p>
                   <p className="font-body text-xs text-[var(--text-muted)]">Kakkanad, Kochi, Kerala</p>
                   <a
-                    href="https://www.google.com/maps/place/Rajagiri+School+of+Engineering+%26+Technology/@9.9934428,76.3554876,17z/data=!3m1!4b1!4m6!3m5!1s0x3b080ca6b98ae0f7:0xc81786bb40617774!8m2!3d9.9934375!4d76.3580625!16s%2Fm%2F0cp4jkw?entry=ttu&g_ep=EgoyMDI2MDQwOC4wIKXMDSoASAFQAw%3D%3D"
+                    href="https://maps.google.com"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-block mt-3 text-xs font-body font-medium text-[var(--accent)] hover:underline"
@@ -124,8 +124,8 @@ export default function Contact() {
               <h3 className="font-display text-[1.1rem] sm:text-xl text-[var(--text-primary)]">Send a Message</h3>
 
               {[
-                { id: 'name', label: 'Your Name', type: 'text', placeholder: 'e.g. Arjun Kumar' },
-                { id: 'email', label: 'Email Address', type: 'email', placeholder: 'arjun@college.edu' },
+                { id: 'name',    label: 'Your Name',    type: 'text',  placeholder: 'e.g. Arjun Kumar' },
+                { id: 'email',   label: 'Email Address', type: 'email', placeholder: 'arjun@college.edu' },
               ].map((field) => (
                 <div key={field.id}>
                   <label htmlFor={field.id} className="block font-body text-xs text-[var(--text-muted)] uppercase tracking-wider mb-2">

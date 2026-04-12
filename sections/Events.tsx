@@ -1,8 +1,8 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import Image from 'next/image'
-import { motion, useScroll, useTransform } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { ArrowUpRight } from 'lucide-react'
 import AnimateIn from '@/components/AnimateIn'
 
@@ -70,23 +70,15 @@ const events = [
 ]
 
 export default function Events() {
-  const sectionRef = useRef<HTMLElement>(null)
   const [isTrainPaused, setIsTrainPaused] = useState(false)
-  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start end', 'end start'] })
-  const accentY = useTransform(scrollYProgress, [0, 1], [24, -32])
   const trainEvents = [...events, ...events]
 
   return (
     <section
-      ref={sectionRef}
       id="events"
-      className="section-pad relative overflow-hidden"
+      className="section-pad notebook-paper relative overflow-hidden"
       style={{ position: 'relative' }}
     >
-      <motion.div
-        style={{ y: accentY }}
-        className="pointer-events-none absolute left-0 top-12 w-[220px] h-[220px] md:w-[340px] md:h-[340px] rounded-full bg-[var(--accent)] opacity-[0.05] blur-[90px]"
-      />
       <div className="max-w-7xl mx-auto">
         <AnimateIn className="section-intro">
           <p className="section-label">Events &amp; Competitions</p>
@@ -118,12 +110,12 @@ export default function Events() {
             </div>
 
             <div
-              className="relative overflow-hidden rounded-[28px] border border-[var(--border)] bg-[linear-gradient(160deg,rgba(14,54,44,0.92),rgba(8,36,29,0.94))] p-4 md:p-5"
+              className="relative overflow-hidden rounded-[28px] border-[3px] border-[#0b0b0b] bg-[#ffffff] shadow-[8px_8px_0_#0b0b0b] p-4 md:p-5"
               onMouseEnter={() => setIsTrainPaused(true)}
               onMouseLeave={() => setIsTrainPaused(false)}
             >
-              <div className="pointer-events-none absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-[#06231D] to-transparent z-10" />
-              <div className="pointer-events-none absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-[#06231D] to-transparent z-10" />
+              <div className="pointer-events-none absolute inset-y-0 left-0 w-10 bg-[#facc15] z-10 border-r-[3px] border-[#0b0b0b]" />
+              <div className="pointer-events-none absolute inset-y-0 right-0 w-10 bg-[#60a5fa] z-10 border-l-[3px] border-[#0b0b0b]" />
 
               <motion.div
                 className="train-track flex w-max gap-4 md:gap-5"
@@ -132,24 +124,24 @@ export default function Events() {
                 {trainEvents.map((ev, i) => (
                   <motion.article
                     key={`${ev.id}-${i}`}
-                    className="group relative flex-shrink-0 w-[280px] md:w-[304px] h-[380px] overflow-hidden rounded-[24px] border border-[var(--border)] bg-[linear-gradient(180deg,rgba(14,54,44,0.98),rgba(6,35,29,0.98))] shadow-card"
+                    className="group relative flex-shrink-0 w-[280px] md:w-[304px] h-[380px] overflow-hidden rounded-[24px] border-[3px] border-[#0b0b0b] bg-[#fdfdfd] shadow-[7px_7px_0_#0b0b0b]"
                     whileHover={{ y: -6 }}
                     transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
                   >
                     <div className="relative h-[168px]">
                       <Image src={ev.img} alt={ev.title} fill className="object-cover" sizes="304px" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#06231D] via-[#06231D]/24 to-transparent" />
+                      <div className="absolute inset-0 bg-black/20" />
                     </div>
 
                     <div className="relative flex h-[212px] flex-col p-4 md:p-5">
                       <div className="flex-1 flex items-center justify-center text-center">
                         <div>
-                          <p className="font-body text-[0.68rem] uppercase tracking-[0.18em] text-[var(--accent)]">Event</p>
+                          <p className="font-body text-[0.68rem] uppercase tracking-[0.18em] text-[#ec4899]">Event</p>
                           <h4 className="font-display text-2xl text-[var(--text-primary)] mt-3 leading-tight">{ev.title}</h4>
                         </div>
                       </div>
 
-                      <div className="mt-auto pt-4 border-t border-[var(--border)] overflow-hidden">
+                      <div className="mt-auto pt-4 border-t-[3px] border-[#0b0b0b] overflow-hidden">
                         <div className="max-h-0 opacity-0 translate-y-2 transition-all duration-300 group-hover:max-h-32 group-hover:opacity-100 group-hover:translate-y-0">
                           <p className="font-body text-sm text-[var(--text-secondary)] leading-relaxed">{ev.desc}</p>
                         </div>

@@ -41,7 +41,7 @@ const links = [
 
 export default function QuickLinks() {
   return (
-    <section id="about" className="section-pad">
+    <section id="about" className="section-pad notebook-paper">
       <div className="max-w-7xl mx-auto">
         <AnimateIn className="section-intro">
           <p className="section-label">Quick Access</p>
@@ -66,14 +66,14 @@ export default function QuickLinks() {
                 className={`card-base group relative isolate flex flex-col h-full p-4 sm:p-5 md:p-6 cursor-pointer overflow-hidden ${link.span}`}
               >
                 <div
-                  className="absolute inset-x-0 top-0 h-px opacity-70"
-                  style={{ background: `linear-gradient(90deg, transparent, ${link.accent}, transparent)` }}
+                  className="absolute inset-x-0 top-0 h-2 opacity-100 border-b-[3px] border-[#0b0b0b]"
+                  style={{ background: link.accent }}
                 />
                 <div
-                  className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center mb-4 sm:mb-5"
-                  style={{ background: `${link.accent}18`, border: `1px solid ${link.accent}30` }}
+                  className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center mb-4 sm:mb-5 border-[3px] border-[#0b0b0b]"
+                  style={{ background: link.accent }}
                 >
-                  <link.icon size={18} style={{ color: link.accent }} />
+                  <link.icon size={18} style={{ color: '#0b0b0b' }} />
                 </div>
                 <p className="font-body text-[0.65rem] tracking-[0.16em] uppercase text-[var(--text-muted)] mb-2">
                   {i === 0 ? 'Most Used' : 'Quick Route'}
