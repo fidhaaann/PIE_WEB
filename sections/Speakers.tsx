@@ -81,12 +81,12 @@ const clamp = (value: number, min: number, max: number) => Math.min(max, Math.ma
 
 const stackProfiles = {
   mobile: {
-    radiusX: 240,
-    radiusZ: 200,
-    yOffset: 20,
-    angleStep: 0.35,
+    radiusX: 180,
+    radiusZ: 150,
+    yOffset: 15,
+    angleStep: 0.45,
     inactiveOpacity: 0.8,
-    cardSize: 'w-[320px] md:w-[360px] h-[440px]',
+    cardSize: 'w-[260px] md:w-[360px] h-[360px] md:h-[440px]',
   },
   tablet: {
     radiusX: 480,
@@ -227,25 +227,25 @@ export default function Speakers() {
       </div>
 
       {/* Interactive Carousel Container */}
-      <div className="relative w-full h-[540px] md:h-[620px] lg:h-[660px]">
+      <div className="relative w-full h-[480px] md:h-[620px] lg:h-[660px]">
         
         {/* Navigation Buttons */}
-        <div className="hidden lg:flex absolute inset-x-4 max-w-7xl mx-auto top-1/2 -translate-y-1/2 z-50 items-center justify-between pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <div className="flex absolute inset-x-2 md:inset-x-4 max-w-7xl mx-auto top-[92%] lg:top-1/2 -translate-y-1/2 z-[300] items-center justify-between pointer-events-none opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity duration-300">
           <button
             onClick={() => setActiveIndex(prev => Math.max(0, prev - 1))}
             disabled={activeIndex === 0}
-            className="w-14 h-14 rounded-full glass flex items-center justify-center text-white/70 hover:text-white disabled:opacity-20 disabled:cursor-not-allowed pointer-events-auto cursor-pointer border border-white/10"
+            className="w-12 h-12 lg:w-14 lg:h-14 rounded-full glass flex items-center justify-center text-white/70 hover:text-white disabled:opacity-20 disabled:cursor-not-allowed pointer-events-auto cursor-pointer border border-white/10 shadow-lg"
             aria-label="Previous speaker"
           >
-            <ChevronLeft size={28} />
+            <ChevronLeft className="w-6 h-6 lg:w-7 lg:h-7" />
           </button>
           <button
             onClick={() => setActiveIndex(prev => Math.min(speakers.length - 1, prev + 1))}
             disabled={activeIndex === speakers.length - 1}
-            className="w-14 h-14 rounded-full glass flex items-center justify-center text-white/70 hover:text-white disabled:opacity-20 disabled:cursor-not-allowed pointer-events-auto cursor-pointer border border-white/10"
+            className="w-12 h-12 lg:w-14 lg:h-14 rounded-full glass flex items-center justify-center text-white/70 hover:text-white disabled:opacity-20 disabled:cursor-not-allowed pointer-events-auto cursor-pointer border border-white/10 shadow-lg"
             aria-label="Next speaker"
           >
-            <ChevronRight size={28} />
+            <ChevronRight className="w-6 h-6 lg:w-7 lg:h-7" />
           </button>
         </div>
 
@@ -314,27 +314,27 @@ export default function Speakers() {
                       <div className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100" style={{ background: 'radial-gradient(circle at center, rgba(227,239,38,0.10) 0%, rgba(63,173,146,0.06) 38%, rgba(10,10,9,0) 74%)' }} />
                     </div>
 
-                    <div className={`relative flex flex-1 flex-col px-5 py-5 sm:px-6 sm:py-6 transition-opacity duration-500 ${isActive ? 'opacity-100' : 'opacity-0'}`}>
-                      <div className="flex items-start justify-between gap-4">
+                    <div className={`relative flex flex-1 flex-col px-4 py-4 sm:px-6 sm:py-6 transition-opacity duration-500 ${isActive ? 'opacity-100' : 'opacity-0'}`}>
+                      <div className="flex items-start justify-between gap-3 sm:gap-4">
                         <div>
-                          <div className="tag mb-2">{sp.tag}</div>
-                          <h3 className="font-display text-[1.35rem] sm:text-[1.55rem] text-[var(--text-primary)] leading-tight">
+                          <div className="tag mb-1 sm:mb-2 text-[0.65rem] sm:text-[0.75rem]">{sp.tag}</div>
+                          <h3 className="font-display text-[1.15rem] sm:text-[1.55rem] text-[var(--text-primary)] leading-tight">
                             {sp.name}
                           </h3>
-                          <p className="font-body text-sm text-[var(--text-muted)] mt-1">{sp.role}</p>
+                          <p className="font-body text-xs sm:text-sm text-[var(--text-muted)] mt-1">{sp.role}</p>
                         </div>
-                        <div className="rounded-full border border-[rgba(255,255,255,0.12)] bg-white/5 px-3 py-1 text-[0.68rem] uppercase tracking-[0.22em] text-[var(--text-secondary)]">
+                        <div className="rounded-full border border-[rgba(255,255,255,0.12)] bg-white/5 px-2 py-1 sm:px-3 text-[0.6rem] sm:text-[0.68rem] uppercase tracking-[0.22em] text-[var(--text-secondary)]">
                           {String(i + 1).padStart(2, '0')}
                         </div>
                       </div>
 
-                      <p className="mt-4 font-body text-sm text-[var(--text-secondary)] leading-relaxed">
+                      <p className="mt-2 sm:mt-4 font-body text-xs sm:text-sm text-[var(--text-secondary)] leading-relaxed">
                         {sp.topic}
                       </p>
 
-                      <div className="mt-auto pt-4 border-t border-[rgba(255,255,255,0.08)]">
-                        <span className="rounded-full border border-[rgba(255,255,255,0.12)] bg-[rgba(255,255,255,0.04)] px-3 py-2 text-[0.7rem] font-medium text-[var(--text-primary)] inline-flex">
-                          Hover for details
+                      <div className="mt-auto pt-3 sm:pt-4 border-t border-[rgba(255,255,255,0.08)]">
+                        <span className="rounded-full border border-[rgba(255,255,255,0.12)] bg-[rgba(255,255,255,0.04)] px-3 py-1.5 sm:py-2 text-[0.65rem] sm:text-[0.7rem] font-medium text-[var(--text-primary)] inline-flex">
+                          Tap for details
                         </span>
                       </div>
                     </div>
