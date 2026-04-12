@@ -44,12 +44,11 @@ export default function Loader() {
                 className="absolute inset-0 w-full h-full"
                 viewBox="0 0 100 100"
                 initial={{ rotate: -90 }} // Start top
-                animate={{ rotate: 270 + (i * 90) }}
+                animate={{ rotate: 270 }} // 360 degrees full rotation
                 transition={{
                   repeat: Infinity,
-                  duration: 2.2 + i * 0.4,
-                  ease: "easeInOut",
-                  repeatType: "mirror"
+                  duration: 2 + i * 0.4,
+                  ease: "linear",
                 }}
               >
                 <motion.circle

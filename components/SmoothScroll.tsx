@@ -61,23 +61,7 @@ export default function SmoothScroll({ children }: { children: ReactNode }) {
       gsap.ticker.add(updateLenis)
       gsap.ticker.lagSmoothing(0)
 
-      const batchTargets = gsap.utils?.toArray('[data-scroll-batch]') ?? []
-      if (batchTargets.length > 0) {
-        ScrollTrigger.batch(batchTargets, {
-          start: 'top 88%',
-          end: 'bottom 12%',
-          onEnter: (batch: any[]) => {
-            batch.forEach((el: any) => {
-              el.style.willChange = 'transform, opacity'
-            })
-          },
-          onLeaveBack: (batch: any[]) => {
-            batch.forEach((el: any) => {
-              el.style.willChange = 'auto'
-            })
-          },
-        })
-      }
+      // Removed ScrollTrigger.batch for data-scroll-batch as toggling will-change mid-scroll is very expensive and causes jitter.
 
       runtimeWindow.__pieLenisRuntime = {
         destroy: () => {

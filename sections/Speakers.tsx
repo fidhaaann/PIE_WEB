@@ -84,7 +84,7 @@ const stackProfiles = {
     radiusX: 180,
     radiusZ: 150,
     yOffset: 15,
-    angleStep: 0.45,
+    angleStep: 0.60,
     inactiveOpacity: 0.8,
     cardSize: 'w-[260px] md:w-[360px] h-[360px] md:h-[440px]',
   },
@@ -206,6 +206,22 @@ export default function Speakers() {
       window.removeEventListener('resize', onResize)
     }
   }, [])
+
+  useEffect(() => {
+    // Lock background scroll when modal is open
+    if (selected) {
+      document.body.style.overflow = 'hidden'
+      document.documentElement.classList.add('lenis-stopped')
+    } else {
+      document.body.style.overflow = ''
+      document.documentElement.classList.remove('lenis-stopped')
+    }
+    
+    return () => {
+      document.body.style.overflow = ''
+      document.documentElement.classList.remove('lenis-stopped')
+    }
+  }, [selected])
 
   return (
     <section id="speakers" className="relative group overflow-hidden">
@@ -387,6 +403,7 @@ export default function Speakers() {
                 animate={{ scale: 1, y: 0 }}
                 exit={{ scale: 0.9, y: 20 }}
                 transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+                data-lenis-prevent="true"
               >
                 <button
                   onClick={() => setSelected(null)}
