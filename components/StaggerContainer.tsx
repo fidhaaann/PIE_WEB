@@ -15,15 +15,15 @@ export function StaggerContainer({ children, className, delay = 0 }: StaggerProp
   const prefersReducedMotion = useReducedMotion()
   const inView = useInView(ref, { once: true, margin: '-40px 0px' })
 
-  const useReducedMotionMode = Boolean(prefersReducedMotion)
+  const useLightMotion = Boolean(prefersReducedMotion)
 
   return (
     <motion.div
       ref={ref}
-      variants={useReducedMotionMode ? undefined : staggerContainer}
-      initial={useReducedMotionMode ? { opacity: 0, y: 10 } : 'hidden'}
-      animate={inView ? (useReducedMotionMode ? { opacity: 1, y: 0 } : 'visible') : (useReducedMotionMode ? { opacity: 0, y: 10 } : 'hidden')}
-      transition={useReducedMotionMode ? { duration: 0.3, delay } : { delayChildren: delay }}
+      variants={useLightMotion ? undefined : staggerContainer}
+      initial={useLightMotion ? { opacity: 0, y: 10 } : 'hidden'}
+      animate={inView ? (useLightMotion ? { opacity: 1, y: 0 } : 'visible') : (useLightMotion ? { opacity: 0, y: 10 } : 'hidden')}
+      transition={useLightMotion ? { duration: 0.3, delay } : { delayChildren: delay }}
       className={className}
     >
       {children}
@@ -33,15 +33,16 @@ export function StaggerContainer({ children, className, delay = 0 }: StaggerProp
 
 export function StaggerItem({ children, className }: { children: ReactNode; className?: string }) {
   const prefersReducedMotion = useReducedMotion()
-  const useReducedMotionMode = Boolean(prefersReducedMotion)
+
+  const useLightMotion = Boolean(prefersReducedMotion)
 
   return (
     <motion.div
-      variants={useReducedMotionMode ? undefined : staggerItem}
-      initial={useReducedMotionMode ? { opacity: 0, y: 10 } : undefined}
-      whileInView={useReducedMotionMode ? { opacity: 1, y: 0 } : undefined}
-      viewport={useReducedMotionMode ? { once: true, amount: 0.18 } : undefined}
-      transition={useReducedMotionMode ? { duration: 0.28, ease: [0.22, 1, 0.36, 1] } : undefined}
+      variants={useLightMotion ? undefined : staggerItem}
+      initial={useLightMotion ? { opacity: 0, y: 10 } : undefined}
+      whileInView={useLightMotion ? { opacity: 1, y: 0 } : undefined}
+      viewport={useLightMotion ? { once: true, amount: 0.18 } : undefined}
+      transition={useLightMotion ? { duration: 0.28, ease: [0.22, 1, 0.36, 1] } : undefined}
       className={className}
     >
       {children}

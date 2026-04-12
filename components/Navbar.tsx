@@ -109,18 +109,18 @@ export default function Navbar() {
       <AnimatePresence>
         {menuOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -18, scaleY: 0.96 }}
-            animate={{ opacity: 1, y: 0, scaleY: 1 }}
-            exit={{ opacity: 0, y: -18, scaleY: 0.96 }}
-            transition={{ type: 'spring', stiffness: 320, damping: 32 }}
-            className="fixed top-[calc(env(safe-area-inset-top)+4.75rem)] left-4 right-4 z-[99] glass border border-[var(--border)] rounded-2xl flex flex-col px-5 py-5 gap-4 md:hidden origin-top"
+            initial={{ x: '100%' }}
+            animate={{ x: 0 }}
+            exit={{ x: '100%' }}
+            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+            className="fixed inset-y-0 right-0 z-[99] w-[86vw] max-w-xs glass border-l border-[var(--border)] flex flex-col pt-20 px-6 gap-5 md:hidden"
           >
             {navLinks.map((link, i) => (
               <motion.button
                 key={link.label}
-                initial={{ opacity: 0, y: -8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.05 }}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: i * 0.06 }}
                 type="button"
                 onClick={() => handleNav(link.href)}
               >
@@ -132,7 +132,7 @@ export default function Navbar() {
             <a
               href="#register"
               onClick={() => setMenuOpen(false)}
-              className="btn-primary btn-register-dark mt-2 justify-center"
+              className="btn-primary btn-register-dark mt-4 justify-center"
             >
               Register Now
             </a>

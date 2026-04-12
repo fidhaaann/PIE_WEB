@@ -87,19 +87,31 @@ export default function AnimatedBackground() {
   const rafRef = useRef<number | null>(null)
   const target = useRef({ x: 0, y: 0 })
   const current = useRef({ x: 0, y: 0 })
+  const isMobile = useRef(false)
 
   const layers = useMemo(() => LAYERS, [])
 
   useEffect(() => {
+    const coarsePointerQuery = window.matchMedia('(pointer: coarse)')
+    const smallScreenQuery = window.matchMedia('(max-width: 900px)')
+
+    const updateDeviceMode = () => {
+      isMobile.current = coarsePointerQuery.matches || smallScreenQuery.matches
+    }
+
     const onPointerMove = (event: PointerEvent) => {
+      if (isMobile.current) return
       const nx = event.clientX / window.innerWidth - 0.5
       const ny = event.clientY / window.innerHeight - 0.5
       target.current.x = nx
       target.current.y = ny
     }
 
+    let running = true
+
     const animate = (time: number) => {
-      const smoothing = 0.085
+      if (!running) return
+      const smoothing = isMobile.current ? 0.035 : 0.085
       current.current.x += (target.current.x - current.current.x) * smoothing
       current.current.y += (target.current.y - current.current.y) * smoothing
 
@@ -110,8 +122,8 @@ export default function AnimatedBackground() {
         const layer = layers[i]
         const driftX = Math.sin(time * 0.00018 + i * 0.82) * 8
         const driftY = Math.cos(time * 0.00014 + i * 0.63) * 10
-        const parallaxX = current.current.x * 38 * layer.depth
-        const parallaxY = current.current.y * 24 * layer.depth
+        const parallaxX = isMobile.current ? 0 : current.current.x * 38 * layer.depth
+        const parallaxY = isMobile.current ? 0 : current.current.y * 24 * layer.depth
 
         bar.style.transform = `translate3d(${(driftX + parallaxX).toFixed(2)}px, ${(driftY + parallaxY).toFixed(2)}px, 0)`
       }
@@ -119,15 +131,42 @@ export default function AnimatedBackground() {
       rafRef.current = window.requestAnimationFrame(animate)
     }
 
+    const stopLoop = () => {
+      running = false
+      if (rafRef.current !== null) {
+        window.cancelAnimationFrame(rafRef.current)
+        rafRef.current = null
+      }
+    }
+
+    const startLoop = () => {
+      if (running) return
+      running = true
+      rafRef.current = window.requestAnimationFrame(animate)
+    }
+
+    const onVisibilityChange = () => {
+      if (document.hidden) {
+        stopLoop()
+      } else {
+        startLoop()
+      }
+    }
+
+    updateDeviceMode()
+    coarsePointerQuery.addEventListener('change', updateDeviceMode)
+    smallScreenQuery.addEventListener('change', updateDeviceMode)
     window.addEventListener('pointermove', onPointerMove, { passive: true })
+    document.addEventListener('visibilitychange', onVisibilityChange)
 
     rafRef.current = window.requestAnimationFrame(animate)
 
     return () => {
-      if (rafRef.current !== null) {
-        window.cancelAnimationFrame(rafRef.current)
-      }
+      stopLoop()
       window.removeEventListener('pointermove', onPointerMove)
+      document.removeEventListener('visibilitychange', onVisibilityChange)
+      coarsePointerQuery.removeEventListener('change', updateDeviceMode)
+      smallScreenQuery.removeEventListener('change', updateDeviceMode)
     }
   }, [layers])
 

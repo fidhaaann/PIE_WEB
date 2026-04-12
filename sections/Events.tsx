@@ -1,11 +1,10 @@
 'use client'
 
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import Image from 'next/image'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { ArrowUpRight } from 'lucide-react'
 import AnimateIn from '@/components/AnimateIn'
-import { StaggerContainer, StaggerItem } from '@/components/StaggerContainer'
 
 const events = [
   {
@@ -72,6 +71,7 @@ const events = [
 
 export default function Events() {
   const sectionRef = useRef<HTMLElement>(null)
+  const [isTrainPaused, setIsTrainPaused] = useState(false)
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start end', 'end start'] })
   const accentY = useTransform(scrollYProgress, [0, 1], [24, -32])
   const trainEvents = [...events, ...events]
@@ -114,13 +114,15 @@ export default function Events() {
 
             <div
               className="relative overflow-hidden rounded-[28px] border border-[var(--border)] bg-[linear-gradient(160deg,rgba(14,54,44,0.92),rgba(8,36,29,0.94))] p-4 md:p-5"
+              onMouseEnter={() => setIsTrainPaused(true)}
+              onMouseLeave={() => setIsTrainPaused(false)}
             >
               <div className="pointer-events-none absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-[#06231D] to-transparent z-10" />
               <div className="pointer-events-none absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-[#06231D] to-transparent z-10" />
 
               <motion.div
                 className="train-track flex w-max gap-4 md:gap-5"
-                style={{ animationPlayState: 'running' }}
+                style={{ animationPlayState: isTrainPaused ? 'paused' : 'running' }}
               >
                 {trainEvents.map((ev, i) => (
                   <motion.article

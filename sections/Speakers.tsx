@@ -2,8 +2,8 @@
 
 import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
-import { motion, AnimatePresence, useMotionValueEvent, useScroll, useSpring } from 'framer-motion'
-import { X, ArrowUpRight } from 'lucide-react'
+import { motion, AnimatePresence, useMotionValueEvent, useSpring, PanInfo } from 'framer-motion'
+import { X, ArrowUpRight, ChevronLeft, ChevronRight } from 'lucide-react'
 import AnimateIn from '@/components/AnimateIn'
 
 const speakers = [
@@ -79,40 +79,30 @@ type Speaker = typeof speakers[0]
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value))
 
-const STACK_START = 0.06
-const STACK_END = 0.84
-const ENTRY_HOLD = 0.2
-
 const stackProfiles = {
   mobile: {
-    xStep: 0,
-    pastStep: 12,
-    futureStep: 7,
-    scaleStep: 0.025,
-    opacityStep: 0.06,
+    radiusX: 240,
+    radiusZ: 200,
+    yOffset: 20,
+    angleStep: 0.35,
     inactiveOpacity: 0.8,
     cardSize: 'w-[320px] md:w-[360px] h-[440px]',
-    stageHeight: '240vh',
   },
   tablet: {
-    xStep: 2,
-    pastStep: 16,
-    futureStep: 9,
-    scaleStep: 0.03,
-    opacityStep: 0.05,
+    radiusX: 480,
+    radiusZ: 300,
+    yOffset: 40,
+    angleStep: 0.28,
     inactiveOpacity: 0.78,
     cardSize: 'w-[320px] md:w-[360px] h-[440px]',
-    stageHeight: '260vh',
   },
   desktop: {
-    xStep: 4,
-    pastStep: 20,
-    futureStep: 11,
-    scaleStep: 0.035,
-    opacityStep: 0.045,
+    radiusX: 800,
+    radiusZ: 450,
+    yOffset: 60,
+    angleStep: 0.20,
     inactiveOpacity: 0.76,
     cardSize: 'w-[320px] md:w-[360px] h-[440px]',
-    stageHeight: '280vh',
   },
 } as const
 
@@ -126,109 +116,101 @@ const getScreenTier = (width: number): ScreenTier => {
 
 const getStackMetrics = (progress: number, index: number, total: number, tier: ScreenTier) => {
   const profile = stackProfiles[tier]
-  const usableProgress = clamp((progress - STACK_START) / (STACK_END - STACK_START), 0, 1)
-  const heldProgress = usableProgress <= ENTRY_HOLD
-    ? 0
-    : (usableProgress - ENTRY_HOLD) / (1 - ENTRY_HOLD)
-  const activeIndex = heldProgress * (total - 1)
-  const delta = index - activeIndex
+  
+  const exactActiveIndex = progress * (total - 1)
+  const delta = index - exactActiveIndex
   const absDelta = Math.abs(delta)
   const isActive = absDelta < 0.35
 
-  const y = delta < 0
-    ? Math.min(Math.abs(delta) * profile.pastStep, 96)
-    : -Math.min(delta * profile.futureStep, 40)
-  const x = delta * profile.xStep
-  const scale = clamp(1 - absDelta * profile.scaleStep, 0.9, 1)
-  const opacity = clamp(1 - absDelta * profile.opacityStep, profile.inactiveOpacity, 1)
-  const rotate = clamp(delta * -0.45, -2.2, 2.2)
-  const zIndex = Math.round(500 - absDelta * 120)
+  const angle = delta * profile.angleStep
+  const x = Math.sin(angle) * profile.radiusX
+  const z = (Math.cos(angle) - 1) * profile.radiusZ
+  const y = Math.abs(Math.sin(angle)) * profile.yOffset
+
+  const rotateY = -(angle * 180 / Math.PI)
+  const rotateZ = delta * -1.5
+
+  const scale = 1
+  const opacity = clamp(1 - (absDelta * 0.15), profile.inactiveOpacity, 1)
+  const zIndex = Math.round(500 - absDelta * 100)
+  const filter = isActive ? 'grayscale(0%)' : `grayscale(${clamp(absDelta * 80, 0, 100)}%)`
 
   return {
     isActive,
     x,
     y,
+    z,
+    rotateY,
+    rotateZ,
     scale,
-    rotate,
     opacity,
     zIndex,
+    filter,
   }
 }
 
 export default function Speakers() {
   const [selected, setSelected] = useState<Speaker | null>(null)
-  const sectionRef = useRef<HTMLElement>(null)
-  const [storyProgress, setStoryProgress] = useState(0)
-  const [floatPhase, setFloatPhase] = useState(0)
-  const screenTier: ScreenTier = 'desktop'
+  const [screenTier, setScreenTier] = useState<ScreenTier>('desktop')
+  const [activeIndex, setActiveIndex] = useState(Math.floor(speakers.length / 2))
+  const [hoveredSpeaker, setHoveredSpeaker] = useState<Speaker | null>(null)
 
-  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start start', 'end end'] })
-  const smoothScrollProgress = useSpring(scrollYProgress, {
-    stiffness: 78,
-    damping: 25,
-    mass: 0.72,
+  // Spring to drive visual rotation from 0.0 to 1.0 continuously
+  const storyProgress = useSpring(0, {
+    stiffness: 85,
+    damping: 22,
+    mass: 0.8,
   })
 
-  useMotionValueEvent(smoothScrollProgress, 'change', (latest) => {
-    setStoryProgress(latest)
+  const [localProgress, setLocalProgress] = useState(0)
+
+  useMotionValueEvent(storyProgress, 'change', (latest) => {
+    setLocalProgress(latest)
   })
+
+  // Whenever the user changes cards, update the target progress of the spring
+  useEffect(() => {
+    // We map index to a 0 to 1 scale since getStackMetrics uses a global 0-1 continuous progress
+    storyProgress.set(activeIndex / (speakers.length - 1))
+  }, [activeIndex, storyProgress])
+
+  const handlePanEnd = (e: any, info: PanInfo) => {
+    const offset = info.offset.x
+    const velocity = info.velocity.x
+    // Swipe left (next) vs Swipe right (prev)
+    if (offset < -50 || velocity < -400) {
+      setActiveIndex((prev) => Math.min(speakers.length - 1, prev + 1))
+    } else if (offset > 50 || velocity > 400) {
+      setActiveIndex((prev) => Math.max(0, prev - 1))
+    }
+  }
 
   useEffect(() => {
-    const timer = window.setInterval(() => {
-      setFloatPhase((prev) => (prev + 0.09) % (Math.PI * 2))
-    }, 50)
+    let resizeTimer: number | null = null
 
-    return () => window.clearInterval(timer)
+    const updateTier = () => setScreenTier(getScreenTier(window.innerWidth))
+    const onResize = () => {
+      if (resizeTimer !== null) {
+        window.clearTimeout(resizeTimer)
+      }
+      resizeTimer = window.setTimeout(updateTier, 120)
+    }
+
+    updateTier()
+    window.addEventListener('resize', onResize, { passive: true })
+
+    return () => {
+      if (resizeTimer !== null) {
+        window.clearTimeout(resizeTimer)
+      }
+      window.removeEventListener('resize', onResize)
+    }
   }, [])
 
-  const SpeakerCard = ({ speaker, index }: { speaker: Speaker; index: number }) => (
-    <motion.button
-      onClick={() => setSelected(speaker)}
-      className="relative w-full overflow-hidden rounded-[22px] border border-[rgba(255,255,255,0.12)] bg-[linear-gradient(180deg,rgba(13,34,28,0.98),rgba(8,23,19,0.98))] shadow-[0_14px_34px_rgba(0,0,0,0.26)] text-left flex flex-col transform-gpu"
-      whileTap={{ scale: 0.985 }}
-      transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-    >
-      <div className="relative aspect-[4/3] overflow-hidden">
-        <Image
-          src={speaker.img}
-          alt={speaker.name}
-          fill
-          className="object-cover"
-          sizes="(max-width: 640px) 94vw, 420px"
-        />
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(10,10,9,0.04)_0%,rgba(10,10,9,0.2)_48%,rgba(10,10,9,0.74)_100%)]" />
-      </div>
-
-      <div className="relative flex flex-1 flex-col px-4 py-4 sm:px-5 sm:py-5">
-        <div className="flex items-start justify-between gap-3">
-          <div className="min-w-0">
-            <div className="tag mb-1.5">{speaker.tag}</div>
-            <h3 className="font-display text-[1.1rem] sm:text-[1.35rem] text-[var(--text-primary)] leading-tight">
-              {speaker.name}
-            </h3>
-            <p className="font-body text-[0.75rem] sm:text-sm text-[var(--text-muted)] mt-1 leading-snug">{speaker.role}</p>
-          </div>
-          <div className="rounded-full border border-[rgba(255,255,255,0.12)] bg-white/5 px-2.5 py-1 text-[0.65rem] uppercase tracking-[0.2em] text-[var(--text-secondary)]">
-            {String(index + 1).padStart(2, '0')}
-          </div>
-        </div>
-
-        <p className="mt-3 font-body text-[0.9rem] text-[var(--text-secondary)] leading-relaxed">
-          {speaker.topic}
-        </p>
-
-        <div className="mt-auto pt-3.5 flex items-center justify-between border-t border-[rgba(255,255,255,0.08)]">
-          <span className="text-[0.68rem] sm:text-[0.7rem] font-medium text-[var(--text-primary)]">Tap for details</span>
-          <ArrowUpRight size={14} className="text-[var(--accent)]" />
-        </div>
-      </div>
-    </motion.button>
-  )
-
   return (
-    <section ref={sectionRef} id="speakers" className="relative" style={{ position: 'relative' }}>
+    <section id="speakers" className="relative group overflow-hidden">
       {/* Intro Text */}
-      <div className="section-pad pb-2 md:pb-4 relative max-w-7xl mx-auto">
+      <div className="pt-16 pb-2 md:pt-24 md:pb-6 relative max-w-7xl mx-auto px-5 sm:px-10">
         <AnimateIn className="section-intro">
           <p className="section-label">Who You&apos;ll Hear</p>
           <h2
@@ -244,40 +226,72 @@ export default function Speakers() {
         </AnimateIn>
       </div>
 
-      <div
-        className="relative w-full"
-        style={{
-          height: stackProfiles[screenTier].stageHeight,
-          position: 'relative',
-        }}
-      >
-        <div
-          className="sticky w-full flex items-center justify-center overflow-visible"
-          style={{
-            top: 0,
-            height: '100vh',
-            position: 'sticky',
-            zIndex: 40,
-          }}
+      {/* Interactive Carousel Container */}
+      <div className="relative w-full h-[540px] md:h-[620px] lg:h-[660px]">
+        
+        {/* Navigation Buttons */}
+        <div className="hidden lg:flex absolute inset-x-4 max-w-7xl mx-auto top-1/2 -translate-y-1/2 z-50 items-center justify-between pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <button
+            onClick={() => setActiveIndex(prev => Math.max(0, prev - 1))}
+            disabled={activeIndex === 0}
+            className="w-14 h-14 rounded-full glass flex items-center justify-center text-white/70 hover:text-white disabled:opacity-20 disabled:cursor-not-allowed pointer-events-auto cursor-pointer border border-white/10"
+            aria-label="Previous speaker"
+          >
+            <ChevronLeft size={28} />
+          </button>
+          <button
+            onClick={() => setActiveIndex(prev => Math.min(speakers.length - 1, prev + 1))}
+            disabled={activeIndex === speakers.length - 1}
+            className="w-14 h-14 rounded-full glass flex items-center justify-center text-white/70 hover:text-white disabled:opacity-20 disabled:cursor-not-allowed pointer-events-auto cursor-pointer border border-white/10"
+            aria-label="Next speaker"
+          >
+            <ChevronRight size={28} />
+          </button>
+        </div>
+
+        {/* Swipe Indicators Mobile */}
+        <div className="absolute top-4 left-0 right-0 z-50 flex justify-center gap-2 pointer-events-none">
+          {speakers.map((_, i) => (
+            <div
+              key={i}
+              className={`h-1.5 rounded-full transition-all duration-300 ${activeIndex === i ? 'w-6 bg-[var(--accent)]' : 'w-1.5 bg-white/20'}`}
+            />
+          ))}
+        </div>
+
+        {/* 3D Scene */}
+        <motion.div
+          className="absolute inset-0 flex items-center justify-center overflow-visible cursor-grab active:cursor-grabbing"
+          style={{ touchAction: 'pan-y' }}
+          onPanEnd={handlePanEnd}
         >
-          <div className={`relative ${stackProfiles[screenTier].cardSize}`}>
+          {/* Card Engine Container */}
+          <div 
+            className={`relative ${stackProfiles[screenTier].cardSize}`}
+            style={{ perspective: '1400px', transformStyle: 'preserve-3d' }}
+          >
             {speakers.map((sp, i) => {
-              const { isActive, x, y, scale, rotate, opacity, zIndex } = getStackMetrics(storyProgress, i, speakers.length, screenTier)
-              const floatOffset = Math.sin(floatPhase + i * 0.9) * (isActive ? 5 : 2.5)
+              const { isActive, x, y, z, rotateY, rotateZ, scale, opacity, zIndex, filter } = getStackMetrics(localProgress, i, speakers.length, screenTier)
 
               return (
                 <motion.div
                   key={sp.id}
-                  className="group absolute inset-0"
+                  className="group absolute inset-0 pointer-events-auto cursor-pointer"
+                  onMouseEnter={() => isActive && setHoveredSpeaker(sp)}
+                  onMouseLeave={() => setHoveredSpeaker(null)}
                   style={{
                     x,
-                    y: y + floatOffset,
+                    y,
+                    z,
                     scale,
-                    rotate,
+                    rotateY,
+                    rotateZ,
                     opacity,
                     zIndex,
+                    filter,
                     pointerEvents: isActive ? 'auto' : 'none',
-                    willChange: 'transform, opacity',
+                    willChange: 'transform, opacity, filter',
+                    transformStyle: 'preserve-3d',
                   }}
                 >
                   <motion.button
@@ -287,11 +301,12 @@ export default function Speakers() {
                     whileTap={isActive ? { scale: 1.02, y: -4 } : undefined}
                     transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
                   >
-                    <div className="relative h-[54%] overflow-hidden">
+                    <div className={`relative overflow-hidden transition-all duration-500 ease-out ${isActive ? 'h-[54%]' : 'h-full'}`}>
                       <Image
                         src={sp.img}
                         alt={sp.name}
                         fill
+                        loading={i === 0 ? 'eager' : 'lazy'}
                         className="object-cover"
                         sizes="(max-width: 640px) 92vw, (max-width: 1024px) 78vw, 520px"
                       />
@@ -299,7 +314,7 @@ export default function Speakers() {
                       <div className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100" style={{ background: 'radial-gradient(circle at center, rgba(227,239,38,0.10) 0%, rgba(63,173,146,0.06) 38%, rgba(10,10,9,0) 74%)' }} />
                     </div>
 
-                    <div className="relative flex flex-1 flex-col px-5 py-5 sm:px-6 sm:py-6">
+                    <div className={`relative flex flex-1 flex-col px-5 py-5 sm:px-6 sm:py-6 transition-opacity duration-500 ${isActive ? 'opacity-100' : 'opacity-0'}`}>
                       <div className="flex items-start justify-between gap-4">
                         <div>
                           <div className="tag mb-2">{sp.tag}</div>
@@ -324,27 +339,27 @@ export default function Speakers() {
                       </div>
                     </div>
                   </motion.button>
-
-                  <div
-                    className="hidden md:block absolute top-1/2 left-[calc(100%+0.8rem)] -translate-y-1/2 w-[min(72vw,280px)] rounded-2xl border border-[rgba(255,255,255,0.12)] bg-[linear-gradient(180deg,rgba(13,34,28,0.96),rgba(8,23,19,0.98))] shadow-[0_18px_42px_rgba(0,0,0,0.35)] p-4 opacity-0 translate-x-4 transition-all duration-300 ease-out group-hover:opacity-100 group-hover:translate-x-0"
-                    style={{ pointerEvents: isActive ? 'auto' : 'none' }}
-                  >
-                    <p className="font-body text-sm text-[var(--text-secondary)] leading-relaxed">
-                      {sp.bio}
-                    </p>
-
-                    <div className="mt-4 flex flex-wrap gap-2">
-                      <span className="rounded-full border border-[rgba(255,255,255,0.12)] bg-[rgba(255,255,255,0.04)] px-3 py-2 text-[0.7rem] font-medium text-[var(--text-primary)]">
-                        Tap card to open
-                      </span>
-                      <span className="rounded-full border border-[rgba(227,239,38,0.22)] bg-[rgba(227,239,38,0.08)] px-3 py-2 text-[0.7rem] font-medium text-[var(--accent)] shadow-[0_0_18px_rgba(227,239,38,0.14)]">
-                        Detail panel
-                      </span>
-                    </div>
-                  </div>
                 </motion.div>
               )
             })}
+          </div>
+        </motion.div>
+
+        {/* Global Hover Detail Panel */}
+        <div
+          className={`hidden md:block absolute top-1/2 left-[calc(50%+193px)] -translate-y-1/2 z-[200] w-[280px] rounded-2xl border border-[rgba(255,255,255,0.12)] bg-[linear-gradient(180deg,rgba(13,34,28,0.96),rgba(8,23,19,0.98))] shadow-[0_18px_42px_rgba(0,0,0,0.35)] p-4 transition-all duration-300 ease-out ${hoveredSpeaker ? 'opacity-100 translate-x-0 pointer-events-auto' : 'opacity-0 translate-x-4 pointer-events-none'}`}
+        >
+          <p className="font-body text-sm text-[var(--text-secondary)] leading-relaxed">
+            {hoveredSpeaker?.bio}
+          </p>
+
+          <div className="mt-4 flex flex-wrap gap-2">
+            <span className="rounded-full border border-[rgba(255,255,255,0.12)] bg-[rgba(255,255,255,0.04)] px-3 py-2 text-[0.7rem] font-medium text-[var(--text-primary)]">
+              Tap card to open
+            </span>
+            <span className="rounded-full border border-[rgba(227,239,38,0.22)] bg-[rgba(227,239,38,0.08)] px-3 py-2 text-[0.7rem] font-medium text-[var(--accent)] shadow-[0_0_18px_rgba(227,239,38,0.14)]">
+              Detail panel
+            </span>
           </div>
         </div>
       </div>

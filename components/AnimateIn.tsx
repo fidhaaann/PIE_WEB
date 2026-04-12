@@ -34,7 +34,7 @@ export default function AnimateIn({
   const inView = useInView(ref, { once, margin: '-40px 0px' })
   const variant = variantMap[type]
 
-  const useReducedMotionMode = Boolean(prefersReducedMotion)
+  const useLightMotion = Boolean(prefersReducedMotion)
 
   const hiddenState =
     type === 'slideLeft'
@@ -52,7 +52,7 @@ export default function AnimateIn({
     scale: 1,
     transition: {
       delay,
-      duration: useReducedMotionMode ? 0.34 : 0.46,
+      duration: useLightMotion ? 0.34 : 0.46,
       ease: [0.22, 1, 0.36, 1] as const,
     },
   }
@@ -60,10 +60,10 @@ export default function AnimateIn({
   return (
     <motion.div
       ref={ref}
-      variants={useReducedMotionMode ? undefined : variant}
-      initial={useReducedMotionMode ? hiddenState : 'hidden'}
-      animate={inView ? (useReducedMotionMode ? visibleState : 'visible') : (useReducedMotionMode ? hiddenState : 'hidden')}
-      transition={useReducedMotionMode ? undefined : { delay }}
+      variants={useLightMotion ? undefined : variant}
+      initial={useLightMotion ? hiddenState : 'hidden'}
+      animate={inView ? (useLightMotion ? visibleState : 'visible') : (useLightMotion ? hiddenState : 'hidden')}
+      transition={useLightMotion ? undefined : { delay }}
       className={className}
     >
       {children}

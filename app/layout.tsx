@@ -5,6 +5,7 @@ import SmoothScroll from '@/components/SmoothScroll'
 import ScrollProgress from '@/components/ScrollProgress'
 import Navbar from '@/components/Navbar'
 import LiquidGlassBackground from '@/components/LiquidGlassBackground'
+import Loader from '@/components/Loader'
 
 const siteUrl =
   process.env.NEXT_PUBLIC_SITE_URL ||
@@ -46,7 +47,8 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="font-body">
-          <LiquidGlassBackground />
+        <Loader />
+        <LiquidGlassBackground />
         <ThemeProvider>
           <SmoothScroll>
             <ScrollProgress />

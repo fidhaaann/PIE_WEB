@@ -3,34 +3,33 @@
 import Image from 'next/image'
 import { motion } from 'framer-motion'
 import AnimateIn from '@/components/AnimateIn'
-import { StaggerContainer, StaggerItem } from '@/components/StaggerContainer'
 
 const tiers = [
   {
     label: 'Gold Sponsors',
     color: '#E3EF26',
     sponsors: [
-      { name: 'KSEB',        img: 'https://ui-avatars.com/api/?name=KSEB&background=E3EF26&color=06231D&size=128&bold=true' },
-      { name: 'Greenko',     img: 'https://ui-avatars.com/api/?name=Greenko&background=E3EF26&color=06231D&size=128&bold=true' },
+      { name: 'KSEB',        img: 'https://ui-avatars.com/api/?name=KSEB&background=E3EF26&color=06231D&size=512&bold=true' },
+      { name: 'Greenko',     img: 'https://ui-avatars.com/api/?name=Greenko&background=E3EF26&color=06231D&size=512&bold=true' },
     ],
   },
   {
     label: 'Silver Sponsors',
     color: '#76d7b0',
     sponsors: [
-      { name: 'VoltEdge',    img: 'https://ui-avatars.com/api/?name=VoltEdge&background=76d7b0&color=06231D&size=128&bold=true' },
-      { name: 'Renew Power', img: 'https://ui-avatars.com/api/?name=Renew&background=76d7b0&color=06231D&size=128&bold=true' },
-      { name: 'CESA Tech',   img: 'https://ui-avatars.com/api/?name=CESA&background=76d7b0&color=06231D&size=128&bold=true' },
+      { name: 'VoltEdge',    img: 'https://ui-avatars.com/api/?name=VoltEdge&background=76d7b0&color=06231D&size=512&bold=true' },
+      { name: 'Renew Power', img: 'https://ui-avatars.com/api/?name=Renew&background=76d7b0&color=06231D&size=512&bold=true' },
+      { name: 'CESA Tech',   img: 'https://ui-avatars.com/api/?name=CESA&background=76d7b0&color=06231D&size=512&bold=true' },
     ],
   },
   {
     label: 'Bronze Sponsors',
     color: '#f9a848',
     sponsors: [
-      { name: 'Zyod Labs',   img: 'https://ui-avatars.com/api/?name=Zyod&background=f9a848&color=06231D&size=128&bold=true' },
-      { name: 'InnoHacks',   img: 'https://ui-avatars.com/api/?name=InnoHacks&background=f9a848&color=06231D&size=128&bold=true' },
-      { name: 'ElecTrack',   img: 'https://ui-avatars.com/api/?name=ElecTrack&background=f9a848&color=06231D&size=128&bold=true' },
-      { name: 'PowerSync',   img: 'https://ui-avatars.com/api/?name=PowerSync&background=f9a848&color=06231D&size=128&bold=true' },
+      { name: 'Zyod Labs',   img: 'https://ui-avatars.com/api/?name=Zyod&background=f9a848&color=06231D&size=512&bold=true' },
+      { name: 'InnoHacks',   img: 'https://ui-avatars.com/api/?name=InnoHacks&background=f9a848&color=06231D&size=512&bold=true' },
+      { name: 'ElecTrack',   img: 'https://ui-avatars.com/api/?name=ElecTrack&background=f9a848&color=06231D&size=512&bold=true' },
+      { name: 'PowerSync',   img: 'https://ui-avatars.com/api/?name=PowerSync&background=f9a848&color=06231D&size=512&bold=true' },
     ],
   },
 ]
@@ -140,8 +139,8 @@ export default function Sponsors() {
         </div>
 
         {/* Become a sponsor CTA */}
-        <AnimateIn className="mt-12 md:mt-16 text-center">
-          <div className="card-base inline-block px-5 md:px-8 py-5 md:py-6 rounded-3xl max-w-full w-full sm:w-auto">
+        <AnimateIn className="mt-16 text-center">
+          <div className="card-base inline-block px-5 md:px-8 py-5 md:py-6 rounded-3xl max-w-full">
             <p className="font-display text-lg text-[var(--text-primary)] mb-2">
               Want to sponsor V-Fiesta 5.0?
             </p>
