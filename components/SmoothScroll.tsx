@@ -6,8 +6,7 @@ import { useEffect, ReactNode } from 'react'
 export default function SmoothScroll({ children }: { children: ReactNode }) {
   useEffect(() => {
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    const isTouchDevice = window.matchMedia('(pointer: coarse)').matches
-    if (prefersReducedMotion || isTouchDevice) return
+    if (prefersReducedMotion) return
 
     let lenis: Lenis | null = null
     let scrollTriggerUpdate: (() => void) | null = null

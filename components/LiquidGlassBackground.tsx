@@ -101,9 +101,6 @@ export default function LiquidGlassBackground() {
   const cursor = useRef({ x: 0.5, y: 0.5 })   // normalised [0-1]
   const smoothCur = useRef({ x: 0.5, y: 0.5 })
   const gyro = useRef({ x: 0.0, y: 0.0 })    // normalised [-1,1]
-  const isMobile = useRef(false)
-  const isTouching = useRef(false)
-  const lastTouch = useRef({ x: 0.5, y: 0.5 })
   const velocity = useRef({ x: 0, y: 0 })
   const prevSmooth = useRef({ x: 0.5, y: 0.5 })
   const startTime = useRef(performance.now())
@@ -121,69 +118,23 @@ export default function LiquidGlassBackground() {
   }, [])
 
   useEffect(() => {
-    /* ── device detection ──────────────────────────────────── */
-    const coarseQ = window.matchMedia('(pointer: coarse)')
-    const smallQ = window.matchMedia('(max-width: 900px)')
-    const update = () => { isMobile.current = coarseQ.matches || smallQ.matches }
-    update()
-    coarseQ.addEventListener('change', update)
-    smallQ.addEventListener('change', update)
-
     /* ── pointer move ──────────────────────────────────────── */
     const onPointerMove = (e: PointerEvent) => {
-      if (isMobile.current || isTouching.current) return
       cursor.current.x = e.clientX / window.innerWidth
       cursor.current.y = e.clientY / window.innerHeight
     }
 
     /* ── click ripple ──────────────────────────────────────── */
     const onPointerDown = (e: PointerEvent) => {
-      if (isMobile.current) return
       triggerRipple(e.clientX / window.innerWidth, e.clientY / window.innerHeight)
-    }
-
-    /* ── touch ─────────────────────────────────────────────── */
-    const onTouchStart = (e: TouchEvent) => {
-      isTouching.current = true
-      const t = e.touches[0]
-      lastTouch.current = {
-        x: t.clientX / window.innerWidth,
-        y: t.clientY / window.innerHeight,
-      }
-      cursor.current = { ...lastTouch.current }
-    }
-    const onTouchMove = (e: TouchEvent) => {
-      const t = e.touches[0]
-      cursor.current = {
-        x: t.clientX / window.innerWidth,
-        y: t.clientY / window.innerHeight,
-      }
-    }
-    const onTouchEnd = () => {
-      isTouching.current = false
-      // Drift back to centre slowly
-      cursor.current = { x: 0.5, y: 0.5 }
-    }
-
-    /* ── gyroscope ─────────────────────────────────────────── */
-    const onDeviceOrientation = (e: DeviceOrientationEvent) => {
-      if (!isMobile.current || isTouching.current) return
-      const beta = e.beta ?? 0  // –180 to 180 (tilt fwd/back)
-      const gamma = e.gamma ?? 0  // –90  to 90  (tilt left/right)
-      gyro.current.x = Math.max(-1, Math.min(1, gamma / 45))
-      gyro.current.y = Math.max(-1, Math.min(1, (beta - 45) / 45))
-      cursor.current = {
-        x: 0.5 + gyro.current.x * 0.35,
-        y: 0.5 + gyro.current.y * 0.35,
-      }
     }
 
     /* ── rAF loop ──────────────────────────────────────────── */
     const animate = (now: number) => {
       const t = (now - startTime.current) * 0.001 // seconds
 
-      /* smooth cursor with different lerp on mobile vs desktop */
-      const lerpT = isMobile.current ? 0.04 : 0.072
+      /* smooth cursor */
+      const lerpT = 0.072
       smoothCur.current.x = lerp(smoothCur.current.x, cursor.current.x, lerpT)
       smoothCur.current.y = lerp(smoothCur.current.y, cursor.current.y, lerpT)
 
@@ -204,12 +155,11 @@ export default function LiquidGlassBackground() {
 
         /* orbital drift */
         const angle = t * b.speed + b.phase
-        const mobileScale = isMobile.current ? 0.24 : 1
-        const driftX = Math.sin(angle) * b.rx * (vmin / 100) * mobileScale
-        const driftY = Math.cos(angle * 0.77) * b.ry * (vmin / 100) * mobileScale
+        const driftX = Math.sin(angle) * b.rx * (vmin / 100)
+        const driftY = Math.cos(angle * 0.77) * b.ry * (vmin / 100)
 
         /* magnetic pull toward cursor */
-        const pullStrength = isMobile.current ? 0.04 : 0.18
+        const pullStrength = 0.18
         const pullX = (smoothCur.current.x - b.bx) * W * b.depth * pullStrength
         const pullY = (smoothCur.current.y - b.by) * H * b.depth * pullStrength
 
@@ -231,9 +181,6 @@ export default function LiquidGlassBackground() {
 
       /* ── glass overlay parallax + tilt ────────────────── */
       if (glassRef.current) {
-        if (isMobile.current) {
-          glassRef.current.style.transform = 'translate3d(0, 0, 0) rotateX(0deg) rotateY(0deg)'
-        } else {
         const dx = (smoothCur.current.x - 0.5) * 2   // -1 to 1
         const dy = (smoothCur.current.y - 0.5) * 2
         const tiltX = dy * -6   // degrees
@@ -242,7 +189,6 @@ export default function LiquidGlassBackground() {
         const shiftY = dy * 8
         glassRef.current.style.transform =
           `translate3d(${shiftX.toFixed(2)}px, ${shiftY.toFixed(2)}px, 0) rotateX(${tiltX.toFixed(3)}deg) rotateY(${tiltY.toFixed(3)}deg)`
-        }
       }
 
       rafRef.current = requestAnimationFrame(animate)
@@ -250,10 +196,6 @@ export default function LiquidGlassBackground() {
 
     window.addEventListener('pointermove', onPointerMove, { passive: true })
     window.addEventListener('pointerdown', onPointerDown, { passive: true })
-    window.addEventListener('touchstart', onTouchStart, { passive: true })
-    window.addEventListener('touchmove', onTouchMove, { passive: true })
-    window.addEventListener('touchend', onTouchEnd, { passive: true })
-    window.addEventListener('deviceorientation', onDeviceOrientation, { passive: true })
 
     rafRef.current = requestAnimationFrame(animate)
 
@@ -261,12 +203,6 @@ export default function LiquidGlassBackground() {
       if (rafRef.current !== null) cancelAnimationFrame(rafRef.current)
       window.removeEventListener('pointermove', onPointerMove)
       window.removeEventListener('pointerdown', onPointerDown)
-      window.removeEventListener('touchstart', onTouchStart)
-      window.removeEventListener('touchmove', onTouchMove)
-      window.removeEventListener('touchend', onTouchEnd)
-      window.removeEventListener('deviceorientation', onDeviceOrientation)
-      coarseQ.removeEventListener('change', update)
-      smallQ.removeEventListener('change', update)
     }
   }, [triggerRipple])
 

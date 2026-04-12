@@ -29,11 +29,10 @@ export default function Hero() {
   const blobRef = useRef<HTMLDivElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
   const prefersReducedMotion = useReducedMotion()
-  const [isMobileLike, setIsMobileLike] = useState(false)
   const [visibleLineCount, setVisibleLineCount] = useState(1)
   const [typingLine, setTypingLine] = useState(0)
   const [typingCharCount, setTypingCharCount] = useState(0)
-  const shouldLightMotion = Boolean(prefersReducedMotion) || isMobileLike
+  const shouldReduceMotion = Boolean(prefersReducedMotion)
 
   // Mouse tracking for responsive dots
   const mouseX = useMotionValue(0)
@@ -58,25 +57,17 @@ export default function Hero() {
   const contentY = useTransform(scrollYProgress, [0, 1], [0, -56])
 
   useEffect(() => {
-    const media = window.matchMedia('(max-width: 900px), (pointer: coarse)')
-    const update = () => setIsMobileLike(media.matches)
-    update()
-    media.addEventListener('change', update)
-    return () => media.removeEventListener('change', update)
-  }, [])
-
-  useEffect(() => {
-    if (!shouldLightMotion) return
+    if (!shouldReduceMotion) return
     const rafId = window.requestAnimationFrame(() => {
       setVisibleLineCount(TERMINAL_LINES.length)
       setTypingLine(TERMINAL_LINES.length - 1)
       setTypingCharCount(TERMINAL_LINES[TERMINAL_LINES.length - 1].length)
     })
     return () => window.cancelAnimationFrame(rafId)
-  }, [shouldLightMotion])
+  }, [shouldReduceMotion])
 
   useEffect(() => {
-    if (shouldLightMotion) return
+    if (shouldReduceMotion) return
 
     const currentLine = TERMINAL_LINES[typingLine] ?? ''
     const isTypingCommand = currentLine.startsWith('$')
@@ -99,7 +90,7 @@ export default function Hero() {
 
       return () => window.clearTimeout(timer)
     }
-  }, [typingCharCount, typingLine, visibleLineCount, shouldLightMotion])
+  }, [typingCharCount, typingLine, visibleLineCount, shouldReduceMotion])
 
   const scrollDown = () => {
     document.querySelector('#about')?.scrollIntoView({ behavior: 'smooth' })
@@ -116,7 +107,7 @@ export default function Hero() {
       {/* Ambient blobs */}
       <motion.div
         ref={blobRef}
-        style={{ y: shouldLightMotion ? 0 : blobY }}
+        style={{ y: blobY }}
         className="absolute inset-0 pointer-events-none transition-transform duration-700 ease-out"
       >
         <div className="absolute top-1/5 left-1/2 -translate-x-1/2 w-[180px] h-[180px] sm:w-[260px] sm:h-[260px] md:w-[500px] md:h-[500px] rounded-full bg-[var(--accent)] opacity-[0.04] md:opacity-[0.06] blur-[56px] sm:blur-[70px] md:blur-[120px]" />
@@ -149,22 +140,22 @@ export default function Hero() {
         />
       </div>
 
-      <motion.div ref={contentRef} style={{ y: shouldLightMotion ? 0 : contentY }} className="relative z-10 w-full px-4 sm:px-5 md:px-10">
+      <motion.div ref={contentRef} style={{ y: contentY }} className="relative z-10 w-full px-4 sm:px-5 md:px-10">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12 items-end">
           <div className="lg:col-span-3 text-left">
             <motion.h1
-              initial={{ opacity: 0, y: shouldLightMotion ? 12 : 24 }}
+              initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: shouldLightMotion ? 0.35 : 0.65, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
               className="flex flex-wrap items-baseline gap-x-2 gap-y-1.5 mb-4"
               style={{ fontSize: 'clamp(2.15rem, 7vw, 4.4rem)' }}
             >
               {HERO_WORDS.map((word, i) => (
                 <motion.span
                   key={word.text}
-                  initial={{ opacity: 0, y: shouldLightMotion ? 14 : 30 }}
+                  initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: shouldLightMotion ? i * 0.04 : 0.2 + i * 0.12, duration: shouldLightMotion ? 0.35 : 0.6, ease: [0.22, 1, 0.36, 1] }}
+                  transition={{ delay: 0.2 + i * 0.12, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
                   className={word.className}
                 >
                   {word.text}
@@ -173,9 +164,9 @@ export default function Hero() {
             </motion.h1>
 
             <motion.p
-              initial={{ opacity: 0, y: shouldLightMotion ? 10 : 18 }}
+              initial={{ opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: shouldLightMotion ? 0.14 : 0.5, duration: shouldLightMotion ? 0.35 : 0.6 }}
+              transition={{ delay: 0.5, duration: 0.6 }}
               className="hero-display gradient-text"
               style={{ fontSize: 'clamp(2.8rem, 13vw, 8rem)', lineHeight: 0.92 }}
             >
@@ -183,9 +174,9 @@ export default function Hero() {
             </motion.p>
 
             <motion.p
-              initial={{ opacity: 0, y: shouldLightMotion ? 12 : 20 }}
+              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: shouldLightMotion ? 0.2 : 0.75, duration: shouldLightMotion ? 0.35 : 0.6 }}
+              transition={{ delay: 0.75, duration: 0.6 }}
               className="font-body text-[var(--text-secondary)] mt-4 sm:mt-5 max-w-[34ch]"
               style={{ fontSize: 'clamp(0.95rem, 2vw, 1.2rem)' }}
             >
@@ -193,9 +184,9 @@ export default function Hero() {
             </motion.p>
 
             <motion.div
-              initial={{ opacity: 0, y: shouldLightMotion ? 14 : 30 }}
+              initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: shouldLightMotion ? 0.26 : 0.95, duration: shouldLightMotion ? 0.38 : 0.6 }}
+              transition={{ delay: 0.95, duration: 0.6 }}
               className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-7 w-full max-w-md"
             >
               <a href="#register" className="btn-primary btn-register-dark text-base px-8 py-4 justify-center w-full sm:w-auto">
@@ -211,9 +202,9 @@ export default function Hero() {
           </div>
 
           <motion.div
-            initial={{ opacity: 0, y: shouldLightMotion ? 18 : 40 }}
+            initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: shouldLightMotion ? 0.32 : 1.1, duration: shouldLightMotion ? 0.42 : 0.7 }}
+            transition={{ delay: 1.1, duration: 0.7 }}
             className="lg:col-span-2 mt-4 lg:mt-0"
           >
             <div className="glass accent-stroke rounded-[24px] sm:rounded-[28px] p-3.5 sm:p-4 md:p-6 w-full max-w-[560px] mx-auto lg:mx-0 overflow-hidden">
@@ -270,15 +261,15 @@ export default function Hero() {
       <motion.button
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: shouldLightMotion ? 0.4 : 2, duration: shouldLightMotion ? 0.45 : 0.8 }}
+        transition={{ delay: 2, duration: 0.8 }}
         onClick={scrollDown}
         className="absolute bottom-6 sm:bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-[var(--text-muted)] hover:text-[var(--accent)] transition-colors"
         aria-label="Scroll down"
       >
         <span className="text-xs font-body tracking-widest uppercase">Scroll</span>
         <motion.div
-          animate={shouldLightMotion ? { y: [0, 5, 0] } : { y: [0, 8, 0] }}
-          transition={{ repeat: Infinity, duration: shouldLightMotion ? 1.2 : 1.5 }}
+          animate={{ y: [0, 8, 0] }}
+          transition={{ repeat: Infinity, duration: 1.5 }}
         >
           <ArrowDown size={18} />
         </motion.div>

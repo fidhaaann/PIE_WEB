@@ -1,7 +1,7 @@
 'use client'
 
 import { motion, useInView, useReducedMotion } from 'framer-motion'
-import { useEffect, useRef, useState, ReactNode } from 'react'
+import { useRef, ReactNode } from 'react'
 import { fadeUp, slideLeft, slideRight, scaleUp } from '@/lib/animations'
 import { Variants } from 'framer-motion'
 
@@ -31,19 +31,10 @@ export default function AnimateIn({
 }: AnimateInProps) {
   const ref = useRef(null)
   const prefersReducedMotion = useReducedMotion()
-  const [isMobileLike, setIsMobileLike] = useState(false)
   const inView = useInView(ref, { once, margin: '-40px 0px' })
   const variant = variantMap[type]
 
-  useEffect(() => {
-    const media = window.matchMedia('(max-width: 900px), (pointer: coarse)')
-    const update = () => setIsMobileLike(media.matches)
-    update()
-    media.addEventListener('change', update)
-    return () => media.removeEventListener('change', update)
-  }, [])
-
-  const useLightMotion = Boolean(prefersReducedMotion) || isMobileLike
+  const useReducedMotionMode = Boolean(prefersReducedMotion)
 
   const hiddenState =
     type === 'slideLeft'
@@ -61,7 +52,7 @@ export default function AnimateIn({
     scale: 1,
     transition: {
       delay,
-      duration: useLightMotion ? 0.34 : 0.46,
+      duration: useReducedMotionMode ? 0.34 : 0.46,
       ease: [0.22, 1, 0.36, 1] as const,
     },
   }
@@ -69,10 +60,10 @@ export default function AnimateIn({
   return (
     <motion.div
       ref={ref}
-      variants={useLightMotion ? undefined : variant}
-      initial={useLightMotion ? hiddenState : 'hidden'}
-      animate={inView ? (useLightMotion ? visibleState : 'visible') : (useLightMotion ? hiddenState : 'hidden')}
-      transition={useLightMotion ? undefined : { delay }}
+      variants={useReducedMotionMode ? undefined : variant}
+      initial={useReducedMotionMode ? hiddenState : 'hidden'}
+      animate={inView ? (useReducedMotionMode ? visibleState : 'visible') : (useReducedMotionMode ? hiddenState : 'hidden')}
+      transition={useReducedMotionMode ? undefined : { delay }}
       className={className}
     >
       {children}

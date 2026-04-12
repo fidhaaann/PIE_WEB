@@ -1,8 +1,8 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useRef } from 'react'
 import Image from 'next/image'
-import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion'
+import { motion, useScroll, useTransform } from 'framer-motion'
 import AnimateIn from '@/components/AnimateIn'
 
 const highlights = [
@@ -53,26 +53,13 @@ const marqueeItems = [
 
 export default function Highlights() {
   const sectionRef = useRef<HTMLElement>(null)
-  const [isMobileLike, setIsMobileLike] = useState(false)
-  const prefersReducedMotion = useReducedMotion()
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start end', 'end start'] })
   const glowY = useTransform(scrollYProgress, [0, 1], [30, -30])
-
-  useEffect(() => {
-    const media = window.matchMedia('(max-width: 900px), (pointer: coarse)')
-    const update = () => setIsMobileLike(media.matches)
-
-    update()
-    media.addEventListener('change', update)
-    return () => media.removeEventListener('change', update)
-  }, [])
-
-  const useStaticMobile = Boolean(prefersReducedMotion) || isMobileLike
 
   return (
     <section ref={sectionRef} id="highlights" className="section-pad overflow-hidden relative" style={{ position: 'relative' }}>
       <motion.div
-        style={{ y: useStaticMobile ? 0 : glowY }}
+        style={{ y: glowY }}
         className="pointer-events-none absolute -top-16 right-0 w-[220px] h-[220px] md:w-[360px] md:h-[360px] rounded-full bg-[var(--accent)] opacity-[0.06] blur-[80px]"
       />
       <div className="max-w-7xl mx-auto">
@@ -103,27 +90,41 @@ export default function Highlights() {
           </div>
         </AnimateIn>
 
-        {/* Mobile cards */}
-        <div className="md:hidden grid grid-cols-1 gap-4 mb-12">
+        {/* Mobile story stack */}
+        <div className="md:hidden space-y-4 mb-12">
           {highlights.map((item, i) => (
             <motion.div
-              key={`mobile-${item.id}`}
-              className="w-full rounded-2xl overflow-hidden shadow-card bg-[#06231D]"
-              initial={{ opacity: 0, y: 24 }}
+              key={`mobile-story-${item.id}`}
+              className="overflow-hidden rounded-[24px] border border-[var(--border)] bg-[linear-gradient(180deg,rgba(14,54,44,0.96),rgba(6,35,29,0.98))] shadow-card"
+              initial={{ opacity: 0, y: 18, scale: 0.985 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-80px' }}
+              viewport={{ once: true, amount: 0.2 }}
               transition={{
-                opacity: { delay: i * 0.1, duration: 0.5, ease: [0.22, 1, 0.36, 1] },
-                y: { duration: 0.45, ease: [0.22, 1, 0.36, 1] },
+                opacity: { delay: i * 0.08, duration: 0.42, ease: [0.22, 1, 0.36, 1] },
+                y: { delay: i * 0.08, duration: 0.42, ease: [0.22, 1, 0.36, 1] },
+                scale: { delay: i * 0.08, duration: 0.42, ease: [0.22, 1, 0.36, 1] },
               }}
             >
-              <div className="relative h-44">
-                <Image src={item.img} alt={item.title} fill className="object-cover" sizes="(max-width: 768px) calc(100vw - 2.5rem), 320px" />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#06231D] via-transparent to-transparent" />
-              </div>
-              <div className="bg-[#06231D] border border-[var(--border)] p-4">
-                <p className="font-body font-medium text-sm text-[var(--text-primary)]">{item.title}</p>
-                <p className="font-body text-xs text-[var(--text-secondary)] mt-1">{item.desc}</p>
+              <div className="grid grid-cols-1 sm:grid-cols-[1.1fr_0.9fr]">
+                <div className="relative h-48 sm:h-full min-h-[12rem]">
+                  <Image src={item.img} alt={item.title} fill className="object-cover" sizes="(max-width: 640px) calc(100vw - 2rem), 320px" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#06231D] via-[#06231D]/18 to-transparent" />
+                </div>
+                <div className="flex flex-col justify-between p-4 sm:p-5">
+                  <div>
+                    <p className="font-body text-[0.62rem] uppercase tracking-[0.2em] text-[var(--accent)]">Highlight {String(i + 1).padStart(2, '0')}</p>
+                    <h3 className="font-display text-[1.15rem] leading-tight text-[var(--text-primary)] mt-2">
+                      {item.title}
+                    </h3>
+                    <p className="font-body text-[0.9rem] text-[var(--text-secondary)] mt-2 leading-relaxed">
+                      {item.desc}
+                    </p>
+                  </div>
+                  <div className="mt-4 flex items-center gap-2 text-[0.65rem] uppercase tracking-[0.18em] text-[var(--text-muted)]">
+                    <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" />
+                    Swipe down for more
+                  </div>
+                </div>
               </div>
             </motion.div>
           ))}
@@ -166,10 +167,10 @@ export default function Highlights() {
 
         {/* Marquee ticker */}
         <div className="divider mb-6 md:mb-8" />
-        <div className="relative left-1/2 w-screen -translate-x-1/2 overflow-hidden">
+        <div className="relative w-full overflow-hidden">
           <div className="px-4 sm:px-6 md:px-10">
             <motion.div
-              className="flex gap-6 md:gap-8 whitespace-nowrap"
+              className="flex gap-6 md:gap-8 whitespace-nowrap will-change-transform"
               animate={{ x: [0, '-50%'] }}
               transition={{ repeat: Infinity, duration: 20, ease: 'linear' }}
             >

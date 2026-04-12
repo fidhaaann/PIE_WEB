@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
-import { motion, AnimatePresence, useMotionValueEvent, useScroll, useSpring, useReducedMotion } from 'framer-motion'
+import { motion, AnimatePresence, useMotionValueEvent, useScroll, useSpring } from 'framer-motion'
 import { X, ArrowUpRight } from 'lucide-react'
 import AnimateIn from '@/components/AnimateIn'
 
@@ -159,53 +159,27 @@ export default function Speakers() {
   const [selected, setSelected] = useState<Speaker | null>(null)
   const sectionRef = useRef<HTMLElement>(null)
   const [storyProgress, setStoryProgress] = useState(0)
-  const [screenTier, setScreenTier] = useState<ScreenTier>('desktop')
   const [floatPhase, setFloatPhase] = useState(0)
-  const [isMobileLike, setIsMobileLike] = useState(false)
-  const prefersReducedMotion = useReducedMotion()
-  const useLightLayout = isMobileLike || Boolean(prefersReducedMotion)
-  const mobileMotionRef = useRef(false)
+  const screenTier: ScreenTier = 'desktop'
 
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start start', 'end end'] })
   const smoothScrollProgress = useSpring(scrollYProgress, {
-    stiffness: useLightLayout ? 62 : 78,
-    damping: useLightLayout ? 28 : 25,
-    mass: useLightLayout ? 0.84 : 0.72,
+    stiffness: 78,
+    damping: 25,
+    mass: 0.72,
   })
 
   useMotionValueEvent(smoothScrollProgress, 'change', (latest) => {
-    if (mobileMotionRef.current) return
     setStoryProgress(latest)
   })
 
   useEffect(() => {
-    const updateTier = () => setScreenTier(getScreenTier(window.innerWidth))
-    const updateMobileMode = () => {
-      const next = window.matchMedia('(max-width: 900px), (pointer: coarse)').matches
-      mobileMotionRef.current = next
-      setIsMobileLike(next)
-    }
-
-    updateTier()
-    updateMobileMode()
-    window.addEventListener('resize', updateTier)
-    window.addEventListener('resize', updateMobileMode)
-
-    return () => {
-      window.removeEventListener('resize', updateTier)
-      window.removeEventListener('resize', updateMobileMode)
-    }
-  }, [])
-
-  useEffect(() => {
-    if (useLightLayout) return
-
     const timer = window.setInterval(() => {
       setFloatPhase((prev) => (prev + 0.09) % (Math.PI * 2))
     }, 50)
 
     return () => window.clearInterval(timer)
-  }, [useLightLayout])
+  }, [])
 
   const SpeakerCard = ({ speaker, index }: { speaker: Speaker; index: number }) => (
     <motion.button
@@ -270,122 +244,110 @@ export default function Speakers() {
         </AnimateIn>
       </div>
 
-      {useLightLayout ? (
-        <div className="max-w-7xl mx-auto px-4 sm:px-5 md:px-10 pb-10 md:pb-0">
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-            {speakers.map((speaker, index) => (
-              <AnimateIn key={speaker.id} delay={index * 0.04}>
-                <SpeakerCard speaker={speaker} index={index} />
-              </AnimateIn>
-            ))}
-          </div>
-        </div>
-      ) : (
+      <div
+        className="relative w-full"
+        style={{
+          height: stackProfiles[screenTier].stageHeight,
+          position: 'relative',
+        }}
+      >
         <div
-          className="relative w-full"
+          className="sticky w-full flex items-center justify-center overflow-visible"
           style={{
-            height: stackProfiles[screenTier].stageHeight,
-            position: 'relative',
+            top: 0,
+            height: '100vh',
+            position: 'sticky',
+            zIndex: 40,
           }}
         >
-          <div
-            className="sticky w-full flex items-center justify-center overflow-visible"
-            style={{
-              top: 0,
-              height: '100vh',
-              position: 'sticky',
-              zIndex: 40,
-            }}
-          >
-            <div className={`relative ${stackProfiles[screenTier].cardSize}`}>
-              {speakers.map((sp, i) => {
-                const { isActive, x, y, scale, rotate, opacity, zIndex } = getStackMetrics(storyProgress, i, speakers.length, screenTier)
-                const floatOffset = Math.sin(floatPhase + i * 0.9) * (isActive ? 5 : 2.5)
+          <div className={`relative ${stackProfiles[screenTier].cardSize}`}>
+            {speakers.map((sp, i) => {
+              const { isActive, x, y, scale, rotate, opacity, zIndex } = getStackMetrics(storyProgress, i, speakers.length, screenTier)
+              const floatOffset = Math.sin(floatPhase + i * 0.9) * (isActive ? 5 : 2.5)
 
-                return (
-                  <motion.div
-                    key={sp.id}
-                    className="group absolute inset-0"
-                    style={{
-                      x,
-                      y: y + floatOffset,
-                      scale,
-                      rotate,
-                      opacity,
-                      zIndex,
-                      pointerEvents: isActive ? 'auto' : 'none',
-                      willChange: 'transform, opacity',
-                    }}
+              return (
+                <motion.div
+                  key={sp.id}
+                  className="group absolute inset-0"
+                  style={{
+                    x,
+                    y: y + floatOffset,
+                    scale,
+                    rotate,
+                    opacity,
+                    zIndex,
+                    pointerEvents: isActive ? 'auto' : 'none',
+                    willChange: 'transform, opacity',
+                  }}
+                >
+                  <motion.button
+                    onClick={() => setSelected(sp)}
+                    className="relative h-full w-full text-left rounded-[26px] border border-[rgba(255,255,255,0.12)] bg-[linear-gradient(180deg,rgba(13,34,28,0.98),rgba(8,23,19,0.98))] shadow-[0_18px_48px_rgba(0,0,0,0.34)] overflow-hidden flex flex-col transform-gpu"
+                    whileHover={isActive ? { scale: 1.04, y: -8 } : undefined}
+                    whileTap={isActive ? { scale: 1.02, y: -4 } : undefined}
+                    transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
                   >
-                    <motion.button
-                      onClick={() => setSelected(sp)}
-                      className="relative h-full w-full text-left rounded-[26px] border border-[rgba(255,255,255,0.12)] bg-[linear-gradient(180deg,rgba(13,34,28,0.98),rgba(8,23,19,0.98))] shadow-[0_18px_48px_rgba(0,0,0,0.34)] overflow-hidden flex flex-col transform-gpu"
-                      whileHover={isActive ? { scale: 1.04, y: -8 } : undefined}
-                      whileTap={isActive ? { scale: 1.02, y: -4 } : undefined}
-                      transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
-                    >
-                      <div className="relative h-[54%] overflow-hidden">
-                        <Image
-                          src={sp.img}
-                          alt={sp.name}
-                          fill
-                          className="object-cover"
-                          sizes="(max-width: 640px) 92vw, (max-width: 1024px) 78vw, 520px"
-                        />
-                        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(10,10,9,0.02)_0%,rgba(10,10,9,0.22)_42%,rgba(10,10,9,0.68)_100%)]" />
-                        <div className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100" style={{ background: 'radial-gradient(circle at center, rgba(227,239,38,0.10) 0%, rgba(63,173,146,0.06) 38%, rgba(10,10,9,0) 74%)' }} />
-                      </div>
+                    <div className="relative h-[54%] overflow-hidden">
+                      <Image
+                        src={sp.img}
+                        alt={sp.name}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 640px) 92vw, (max-width: 1024px) 78vw, 520px"
+                      />
+                      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(10,10,9,0.02)_0%,rgba(10,10,9,0.22)_42%,rgba(10,10,9,0.68)_100%)]" />
+                      <div className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100" style={{ background: 'radial-gradient(circle at center, rgba(227,239,38,0.10) 0%, rgba(63,173,146,0.06) 38%, rgba(10,10,9,0) 74%)' }} />
+                    </div>
 
-                      <div className="relative flex flex-1 flex-col px-5 py-5 sm:px-6 sm:py-6">
-                        <div className="flex items-start justify-between gap-4">
-                          <div>
-                            <div className="tag mb-2">{sp.tag}</div>
-                            <h3 className="font-display text-[1.35rem] sm:text-[1.55rem] text-[var(--text-primary)] leading-tight">
-                              {sp.name}
-                            </h3>
-                            <p className="font-body text-sm text-[var(--text-muted)] mt-1">{sp.role}</p>
-                          </div>
-                          <div className="rounded-full border border-[rgba(255,255,255,0.12)] bg-white/5 px-3 py-1 text-[0.68rem] uppercase tracking-[0.22em] text-[var(--text-secondary)]">
-                            {String(i + 1).padStart(2, '0')}
-                          </div>
+                    <div className="relative flex flex-1 flex-col px-5 py-5 sm:px-6 sm:py-6">
+                      <div className="flex items-start justify-between gap-4">
+                        <div>
+                          <div className="tag mb-2">{sp.tag}</div>
+                          <h3 className="font-display text-[1.35rem] sm:text-[1.55rem] text-[var(--text-primary)] leading-tight">
+                            {sp.name}
+                          </h3>
+                          <p className="font-body text-sm text-[var(--text-muted)] mt-1">{sp.role}</p>
                         </div>
-
-                        <p className="mt-4 font-body text-sm text-[var(--text-secondary)] leading-relaxed">
-                          {sp.topic}
-                        </p>
-
-                        <div className="mt-auto pt-4 border-t border-[rgba(255,255,255,0.08)]">
-                          <span className="rounded-full border border-[rgba(255,255,255,0.12)] bg-[rgba(255,255,255,0.04)] px-3 py-2 text-[0.7rem] font-medium text-[var(--text-primary)] inline-flex">
-                            Hover for details
-                          </span>
+                        <div className="rounded-full border border-[rgba(255,255,255,0.12)] bg-white/5 px-3 py-1 text-[0.68rem] uppercase tracking-[0.22em] text-[var(--text-secondary)]">
+                          {String(i + 1).padStart(2, '0')}
                         </div>
                       </div>
-                    </motion.button>
 
-                    <div
-                      className="hidden md:block absolute top-1/2 left-[calc(100%+0.8rem)] -translate-y-1/2 w-[min(72vw,280px)] rounded-2xl border border-[rgba(255,255,255,0.12)] bg-[linear-gradient(180deg,rgba(13,34,28,0.96),rgba(8,23,19,0.98))] shadow-[0_18px_42px_rgba(0,0,0,0.35)] p-4 opacity-0 translate-x-4 transition-all duration-300 ease-out group-hover:opacity-100 group-hover:translate-x-0"
-                      style={{ pointerEvents: isActive ? 'auto' : 'none' }}
-                    >
-                      <p className="font-body text-sm text-[var(--text-secondary)] leading-relaxed">
-                        {sp.bio}
+                      <p className="mt-4 font-body text-sm text-[var(--text-secondary)] leading-relaxed">
+                        {sp.topic}
                       </p>
 
-                      <div className="mt-4 flex flex-wrap gap-2">
-                        <span className="rounded-full border border-[rgba(255,255,255,0.12)] bg-[rgba(255,255,255,0.04)] px-3 py-2 text-[0.7rem] font-medium text-[var(--text-primary)]">
-                          Tap card to open
-                        </span>
-                        <span className="rounded-full border border-[rgba(227,239,38,0.22)] bg-[rgba(227,239,38,0.08)] px-3 py-2 text-[0.7rem] font-medium text-[var(--accent)] shadow-[0_0_18px_rgba(227,239,38,0.14)]">
-                          Detail panel
+                      <div className="mt-auto pt-4 border-t border-[rgba(255,255,255,0.08)]">
+                        <span className="rounded-full border border-[rgba(255,255,255,0.12)] bg-[rgba(255,255,255,0.04)] px-3 py-2 text-[0.7rem] font-medium text-[var(--text-primary)] inline-flex">
+                          Hover for details
                         </span>
                       </div>
                     </div>
-                  </motion.div>
-                )
-              })}
-            </div>
+                  </motion.button>
+
+                  <div
+                    className="hidden md:block absolute top-1/2 left-[calc(100%+0.8rem)] -translate-y-1/2 w-[min(72vw,280px)] rounded-2xl border border-[rgba(255,255,255,0.12)] bg-[linear-gradient(180deg,rgba(13,34,28,0.96),rgba(8,23,19,0.98))] shadow-[0_18px_42px_rgba(0,0,0,0.35)] p-4 opacity-0 translate-x-4 transition-all duration-300 ease-out group-hover:opacity-100 group-hover:translate-x-0"
+                    style={{ pointerEvents: isActive ? 'auto' : 'none' }}
+                  >
+                    <p className="font-body text-sm text-[var(--text-secondary)] leading-relaxed">
+                      {sp.bio}
+                    </p>
+
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      <span className="rounded-full border border-[rgba(255,255,255,0.12)] bg-[rgba(255,255,255,0.04)] px-3 py-2 text-[0.7rem] font-medium text-[var(--text-primary)]">
+                        Tap card to open
+                      </span>
+                      <span className="rounded-full border border-[rgba(227,239,38,0.22)] bg-[rgba(227,239,38,0.08)] px-3 py-2 text-[0.7rem] font-medium text-[var(--accent)] shadow-[0_0_18px_rgba(227,239,38,0.14)]">
+                        Detail panel
+                      </span>
+                    </div>
+                  </div>
+                </motion.div>
+              )
+            })}
           </div>
         </div>
-      )}
+      </div>
 
       {/* Modal */}
       <AnimatePresence>
