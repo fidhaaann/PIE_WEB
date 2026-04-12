@@ -204,12 +204,14 @@ export default function LiquidGlassBackground() {
 
         /* orbital drift */
         const angle = t * b.speed + b.phase
-        const driftX = Math.sin(angle) * b.rx * (vmin / 100)
-        const driftY = Math.cos(angle * 0.77) * b.ry * (vmin / 100)
+        const mobileScale = isMobile.current ? 0.24 : 1
+        const driftX = Math.sin(angle) * b.rx * (vmin / 100) * mobileScale
+        const driftY = Math.cos(angle * 0.77) * b.ry * (vmin / 100) * mobileScale
 
         /* magnetic pull toward cursor */
-        const pullX = (smoothCur.current.x - b.bx) * W * b.depth * 0.18
-        const pullY = (smoothCur.current.y - b.by) * H * b.depth * 0.18
+        const pullStrength = isMobile.current ? 0.04 : 0.18
+        const pullX = (smoothCur.current.x - b.bx) * W * b.depth * pullStrength
+        const pullY = (smoothCur.current.y - b.by) * H * b.depth * pullStrength
 
         const cx = b.bx * W + driftX + pullX
         const cy = b.by * H + driftY + pullY
@@ -229,6 +231,9 @@ export default function LiquidGlassBackground() {
 
       /* ── glass overlay parallax + tilt ────────────────── */
       if (glassRef.current) {
+        if (isMobile.current) {
+          glassRef.current.style.transform = 'translate3d(0, 0, 0) rotateX(0deg) rotateY(0deg)'
+        } else {
         const dx = (smoothCur.current.x - 0.5) * 2   // -1 to 1
         const dy = (smoothCur.current.y - 0.5) * 2
         const tiltX = dy * -6   // degrees
@@ -237,6 +242,7 @@ export default function LiquidGlassBackground() {
         const shiftY = dy * 8
         glassRef.current.style.transform =
           `translate3d(${shiftX.toFixed(2)}px, ${shiftY.toFixed(2)}px, 0) rotateX(${tiltX.toFixed(3)}deg) rotateY(${tiltY.toFixed(3)}deg)`
+        }
       }
 
       rafRef.current = requestAnimationFrame(animate)

@@ -1,7 +1,8 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import Image from 'next/image'
-import { motion } from 'framer-motion'
+import { motion, useReducedMotion } from 'framer-motion'
 import AnimateIn from '@/components/AnimateIn'
 
 const tiers = [
@@ -113,6 +114,20 @@ function SponsorCarouselRow({
 }
 
 export default function Sponsors() {
+  const [isMobileLike, setIsMobileLike] = useState(false)
+  const prefersReducedMotion = useReducedMotion()
+
+  useEffect(() => {
+    const media = window.matchMedia('(max-width: 900px), (pointer: coarse)')
+    const update = () => setIsMobileLike(media.matches)
+
+    update()
+    media.addEventListener('change', update)
+    return () => media.removeEventListener('change', update)
+  }, [])
+
+  const useStaticLayout = Boolean(prefersReducedMotion) || isMobileLike
+
   return (
     <section id="sponsors" className="section-pad">
       <div className="max-w-7xl mx-auto">
@@ -130,17 +145,52 @@ export default function Sponsors() {
           </p>
         </AnimateIn>
 
-        <div className="space-y-12 md:space-y-14">
-          {tiers.map((tier, index) => (
-            <AnimateIn key={tier.label}>
-              <SponsorCarouselRow tier={tier} reverse={index % 2 === 1} />
-            </AnimateIn>
-          ))}
-        </div>
+        {useStaticLayout ? (
+          <div className="grid gap-8 sm:grid-cols-2">
+            {tiers.map((tier) => (
+              <div key={tier.label} className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="h-px flex-1" style={{ background: `${tier.color}40` }} />
+                  <span className="font-body font-medium text-sm uppercase tracking-widest" style={{ color: tier.color }}>
+                    {tier.label}
+                  </span>
+                  <div className="h-px flex-1" style={{ background: `${tier.color}40` }} />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  {tier.sponsors.map((sp) => (
+                    <div key={sp.name} className="overflow-hidden rounded-[22px] border border-[rgba(255,255,255,0.10)] bg-[#111110] shadow-[0_12px_28px_rgba(0,0,0,0.24)]">
+                      <div className="relative aspect-[4/5]">
+                        <Image
+                          src={sp.img}
+                          alt={sp.name}
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 640px) 46vw, 210px"
+                        />
+                        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(10,10,9,0.08)_0%,rgba(10,10,9,0.40)_100%)]" />
+                      </div>
+                      <div className="px-3 py-3 bg-[linear-gradient(180deg,rgba(10,10,9,0.18),rgba(10,10,9,0.65))]">
+                        <p className="font-body text-sm text-[var(--text-primary)]">{sp.name}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="space-y-12 md:space-y-14">
+            {tiers.map((tier, index) => (
+              <AnimateIn key={tier.label}>
+                <SponsorCarouselRow tier={tier} reverse={index % 2 === 1} />
+              </AnimateIn>
+            ))}
+          </div>
+        )}
 
         {/* Become a sponsor CTA */}
-        <AnimateIn className="mt-16 text-center">
-          <div className="card-base inline-block px-5 md:px-8 py-5 md:py-6 rounded-3xl max-w-full">
+        <AnimateIn className="mt-12 md:mt-16 text-center">
+          <div className="card-base inline-block px-5 md:px-8 py-5 md:py-6 rounded-3xl max-w-full w-full sm:w-auto">
             <p className="font-display text-lg text-[var(--text-primary)] mb-2">
               Want to sponsor V-Fiesta 5.0?
             </p>

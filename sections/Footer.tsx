@@ -18,22 +18,23 @@ export default function Footer() {
   const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' })
 
   return (
-    <footer className="relative border-t border-[var(--border)] pt-16 pb-8">
-      <div className="max-w-7xl mx-auto px-5 md:px-10">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-12 mb-14 md:mb-16">
+    <footer className="relative border-t border-[var(--border)] pt-14 sm:pt-16 pb-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-5 md:px-10">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 mb-12 md:mb-16 text-center md:text-left">
           {/* Brand */}
           <div>
-            <div className="mb-4">
+            <div className="mb-4 flex justify-center md:justify-start">
               <Image
                 src={pieLogo}
                 alt="IEEE PIE Kerala Section logo"
-                className="h-14 sm:h-18 md:h-20 w-auto"
+                className="h-12 sm:h-14 md:h-20 w-auto"
+                loading="eager"
               />
             </div>
-            <p className="font-body text-xs text-[var(--text-secondary)] max-w-xs leading-relaxed">
+            <p className="font-body text-xs text-[var(--text-secondary)] max-w-xs mx-auto md:mx-0 leading-relaxed">
               IEEE Power & Energy Society, Kerala Section — connecting engineers, driving innovation, and powering the future of energy.
             </p>
-            <div className="flex gap-3 mt-5">
+            <div className="flex gap-3 mt-5 justify-center md:justify-start flex-wrap">
               {[
                 { icon: ArrowUpRight, href: '#', label: 'Instagram' },
                 { icon: ArrowUpRight, href: '#', label: 'LinkedIn' },
@@ -88,11 +89,11 @@ export default function Footer() {
 
         <div className="divider mb-6" />
 
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-          <p className="font-body text-xs text-[var(--text-muted)] text-left">
+        <div className="flex flex-col md:flex-row items-center md:items-center justify-between gap-4 text-center md:text-left">
+          <p className="font-body text-xs text-[var(--text-muted)] text-center md:text-left">
             © 2026 IEEE Power & Energy Society, Kerala Section · All rights reserved
           </p>
-          <div className="flex items-center gap-4 self-start md:self-auto">
+          <div className="flex items-center gap-4 self-center md:self-auto">
             <span className="font-body text-xs text-[var(--text-muted)]">V-Fiesta 5.0 · 5th Edition</span>
             <button
               onClick={scrollToTop}

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
-import { motion, AnimatePresence, useMotionValueEvent, useScroll, useSpring } from 'framer-motion'
+import { motion, AnimatePresence, useMotionValueEvent, useScroll, useSpring, useReducedMotion } from 'framer-motion'
 import { X, ArrowUpRight } from 'lucide-react'
 import AnimateIn from '@/components/AnimateIn'
 
@@ -13,7 +13,7 @@ const speakers = [
     role: 'Professor, IIT Bombay',
     topic: 'Smart Grid Technologies',
     bio: 'Dr. Priya Krishnan is a leading researcher in smart grid systems and power electronics at IIT Bombay with over 20 years of experience. She has authored 150+ research papers and serves on the IEEE Power & Energy Society Technical Committee.',
-    img: 'https://ui-avatars.com/api/?name=Priya+Krishnan&background=076653&color=E3EF26&size=256&bold=true',
+    img: 'https://ui-avatars.com/api/?name=Priya+Krishnan&background=076653&color=E3EF26&size=512&bold=true',
     linkedin: '#',
     twitter: '#',
     tag: 'Keynote',
@@ -24,7 +24,7 @@ const speakers = [
     role: 'CTO, Greenko Group',
     topic: 'Renewable Energy Storage',
     bio: 'Rahul Menon heads technology at Greenko, India\'s largest renewable energy company. He has led over 3 GW of wind and solar projects across 8 states and is passionate about making India carbon-neutral by 2050.',
-    img: 'https://ui-avatars.com/api/?name=Rahul+Menon&background=0C342C&color=E3EF26&size=256&bold=true',
+    img: 'https://ui-avatars.com/api/?name=Rahul+Menon&background=0C342C&color=E3EF26&size=512&bold=true',
     linkedin: '#',
     twitter: '#',
     tag: 'Industry',
@@ -35,7 +35,7 @@ const speakers = [
     role: 'Scientist, ISRO',
     topic: 'Power Systems in Space',
     bio: 'Dr. Anita Varma is a senior scientist at ISRO\'s Space Applications Centre, specialising in spacecraft power systems. She was part of the Chandrayaan-3 mission team responsible for lunar power management.',
-    img: 'https://ui-avatars.com/api/?name=Anita+Varma&background=076653&color=E3EF26&size=256&bold=true',
+    img: 'https://ui-avatars.com/api/?name=Anita+Varma&background=076653&color=E3EF26&size=512&bold=true',
     linkedin: '#',
     twitter: '#',
     tag: 'Keynote',
@@ -46,7 +46,7 @@ const speakers = [
     role: 'Founder, VoltEdge Labs',
     topic: 'EV Charging Infrastructure',
     bio: 'Kevin Thomas founded VoltEdge Labs after graduating from CUSAT and has built 200+ EV charging stations across Kerala & Tamil Nadu. He is a Forbes 30 Under 30 Asia awardee and active IEEE volunteer.',
-    img: 'https://ui-avatars.com/api/?name=Kevin+Thomas&background=0C342C&color=E3EF26&size=256&bold=true',
+    img: 'https://ui-avatars.com/api/?name=Kevin+Thomas&background=0C342C&color=E3EF26&size=512&bold=true',
     linkedin: '#',
     twitter: '#',
     tag: 'Startup',
@@ -57,7 +57,7 @@ const speakers = [
     role: 'Assoc. Professor, NIT Calicut',
     topic: 'Power Electronics & Drives',
     bio: 'Dr. Sujith Nair is the recipient of the INAE Young Engineer Award 2024. His work on high-frequency power converters has been adopted in industrial motor drive applications across Southeast Asia.',
-    img: 'https://ui-avatars.com/api/?name=Sujith+Nair&background=076653&color=E3EF26&size=256&bold=true',
+    img: 'https://ui-avatars.com/api/?name=Sujith+Nair&background=076653&color=E3EF26&size=512&bold=true',
     linkedin: '#',
     twitter: '#',
     tag: 'Academic',
@@ -68,7 +68,7 @@ const speakers = [
     role: 'Senior Engineer, KSEB',
     topic: 'Grid Modernisation in Kerala',
     bio: 'Divya Chandran has led KSEB\'s smart metering initiative covering 2 million households and is instrumental in Kerala\'s transition to advanced distribution management systems. She heads the R&D wing at KSEB.',
-    img: 'https://ui-avatars.com/api/?name=Divya+Chandran&background=0C342C&color=E3EF26&size=256&bold=true',
+    img: 'https://ui-avatars.com/api/?name=Divya+Chandran&background=0C342C&color=E3EF26&size=512&bold=true',
     linkedin: '#',
     twitter: '#',
     tag: 'Utility',
@@ -85,25 +85,34 @@ const ENTRY_HOLD = 0.2
 
 const stackProfiles = {
   mobile: {
-    radiusX: 180,
-    radiusZ: 140,
-    angleStep: 32 * (Math.PI / 180),
-    cardSize: 'w-[280px] h-[400px]',
-    stageHeight: '300vh',
+    xStep: 0,
+    pastStep: 12,
+    futureStep: 7,
+    scaleStep: 0.025,
+    opacityStep: 0.06,
+    inactiveOpacity: 0.8,
+    cardSize: 'w-[320px] md:w-[360px] h-[440px]',
+    stageHeight: '240vh',
   },
   tablet: {
-    radiusX: 380,
-    radiusZ: 260,
-    angleStep: 24 * (Math.PI / 180),
-    cardSize: 'w-[320px] h-[440px]',
-    stageHeight: '350vh',
+    xStep: 2,
+    pastStep: 16,
+    futureStep: 9,
+    scaleStep: 0.03,
+    opacityStep: 0.05,
+    inactiveOpacity: 0.78,
+    cardSize: 'w-[320px] md:w-[360px] h-[440px]',
+    stageHeight: '260vh',
   },
   desktop: {
-    radiusX: 520,
-    radiusZ: 380,
-    angleStep: 20 * (Math.PI / 180),
-    cardSize: 'w-[340px] h-[480px]',
-    stageHeight: '400vh',
+    xStep: 4,
+    pastStep: 20,
+    futureStep: 11,
+    scaleStep: 0.035,
+    opacityStep: 0.045,
+    inactiveOpacity: 0.76,
+    cardSize: 'w-[320px] md:w-[360px] h-[440px]',
+    stageHeight: '280vh',
   },
 } as const
 
@@ -118,56 +127,31 @@ const getScreenTier = (width: number): ScreenTier => {
 const getStackMetrics = (progress: number, index: number, total: number, tier: ScreenTier) => {
   const profile = stackProfiles[tier]
   const usableProgress = clamp((progress - STACK_START) / (STACK_END - STACK_START), 0, 1)
-  
-  // Map progress to continuous index
-  const activeIndex = usableProgress * (total - 1)
-  
-  // Snap engine: locks the index tightly to the nearest integer to make the card stay perfectly centered
-  const nearestIndex = Math.round(activeIndex)
-  const dist = activeIndex - nearestIndex
-  const SNAP_ZONE = 0.22 // Dead zone ratio around each card
-
-  let snappedIndex = nearestIndex
-  if (Math.abs(dist) > SNAP_ZONE) {
-    const movingDist = Math.abs(dist) - SNAP_ZONE
-    const movingDomain = 0.5 - SNAP_ZONE
-    snappedIndex = nearestIndex + Math.sign(dist) * (movingDist / movingDomain) * 0.5
-  }
-
-  const delta = index - snappedIndex
+  const heldProgress = usableProgress <= ENTRY_HOLD
+    ? 0
+    : (usableProgress - ENTRY_HOLD) / (1 - ENTRY_HOLD)
+  const activeIndex = heldProgress * (total - 1)
+  const delta = index - activeIndex
   const absDelta = Math.abs(delta)
-  const isActive = absDelta < 0.1 // Stricter interactive threshold when snapped
+  const isActive = absDelta < 0.35
 
-  const angle = delta * profile.angleStep
-  const x = Math.sin(angle) * profile.radiusX
-  
-  // Z measures depth. Center is 0. Outer cards fall back.
-  const z = (Math.cos(angle) - 1) * profile.radiusZ
-
-  // Slightly curve downwards like a bridge
-  const y = absDelta * 12
-
-  // Simulate depth scale and fade 
-  const scale = clamp(1 + z / (profile.radiusZ * 2.2), 0.45, 1)
-  const opacity = clamp(1 - (absDelta * 0.28), 0, 1)
-  
-  // Tilt horizontally towards user
-  const rotateY = -angle * (180 / Math.PI) * 0.8
-  
-  const zIndex = Math.round(500 - absDelta * 100)
-  
-  // 0 is full color, 1 is B&W
-  const grayscale = clamp(absDelta * 1.5, 0, 1)
+  const y = delta < 0
+    ? Math.min(Math.abs(delta) * profile.pastStep, 96)
+    : -Math.min(delta * profile.futureStep, 40)
+  const x = delta * profile.xStep
+  const scale = clamp(1 - absDelta * profile.scaleStep, 0.9, 1)
+  const opacity = clamp(1 - absDelta * profile.opacityStep, profile.inactiveOpacity, 1)
+  const rotate = clamp(delta * -0.45, -2.2, 2.2)
+  const zIndex = Math.round(500 - absDelta * 120)
 
   return {
     isActive,
     x,
     y,
     scale,
-    rotateY,
+    rotate,
     opacity,
     zIndex,
-    grayscale,
   }
 }
 
@@ -177,165 +161,231 @@ export default function Speakers() {
   const [storyProgress, setStoryProgress] = useState(0)
   const [screenTier, setScreenTier] = useState<ScreenTier>('desktop')
   const [floatPhase, setFloatPhase] = useState(0)
+  const [isMobileLike, setIsMobileLike] = useState(false)
+  const prefersReducedMotion = useReducedMotion()
+  const useLightLayout = isMobileLike || Boolean(prefersReducedMotion)
+  const mobileMotionRef = useRef(false)
 
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start start', 'end end'] })
   const smoothScrollProgress = useSpring(scrollYProgress, {
-    stiffness: 78,
-    damping: 25,
-    mass: 0.72,
+    stiffness: useLightLayout ? 62 : 78,
+    damping: useLightLayout ? 28 : 25,
+    mass: useLightLayout ? 0.84 : 0.72,
   })
 
   useMotionValueEvent(smoothScrollProgress, 'change', (latest) => {
+    if (mobileMotionRef.current) return
     setStoryProgress(latest)
   })
 
   useEffect(() => {
     const updateTier = () => setScreenTier(getScreenTier(window.innerWidth))
+    const updateMobileMode = () => {
+      const next = window.matchMedia('(max-width: 900px), (pointer: coarse)').matches
+      mobileMotionRef.current = next
+      setIsMobileLike(next)
+    }
 
     updateTier()
+    updateMobileMode()
     window.addEventListener('resize', updateTier)
+    window.addEventListener('resize', updateMobileMode)
 
     return () => {
       window.removeEventListener('resize', updateTier)
+      window.removeEventListener('resize', updateMobileMode)
     }
   }, [])
 
   useEffect(() => {
+    if (useLightLayout) return
+
     const timer = window.setInterval(() => {
       setFloatPhase((prev) => (prev + 0.09) % (Math.PI * 2))
     }, 50)
 
     return () => window.clearInterval(timer)
-  }, [])
+  }, [useLightLayout])
+
+  const SpeakerCard = ({ speaker, index }: { speaker: Speaker; index: number }) => (
+    <motion.button
+      onClick={() => setSelected(speaker)}
+      className="relative w-full overflow-hidden rounded-[22px] border border-[rgba(255,255,255,0.12)] bg-[linear-gradient(180deg,rgba(13,34,28,0.98),rgba(8,23,19,0.98))] shadow-[0_14px_34px_rgba(0,0,0,0.26)] text-left flex flex-col transform-gpu"
+      whileTap={{ scale: 0.985 }}
+      transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+    >
+      <div className="relative aspect-[4/3] overflow-hidden">
+        <Image
+          src={speaker.img}
+          alt={speaker.name}
+          fill
+          className="object-cover"
+          sizes="(max-width: 640px) 94vw, 420px"
+        />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(10,10,9,0.04)_0%,rgba(10,10,9,0.2)_48%,rgba(10,10,9,0.74)_100%)]" />
+      </div>
+
+      <div className="relative flex flex-1 flex-col px-4 py-4 sm:px-5 sm:py-5">
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <div className="tag mb-1.5">{speaker.tag}</div>
+            <h3 className="font-display text-[1.1rem] sm:text-[1.35rem] text-[var(--text-primary)] leading-tight">
+              {speaker.name}
+            </h3>
+            <p className="font-body text-[0.75rem] sm:text-sm text-[var(--text-muted)] mt-1 leading-snug">{speaker.role}</p>
+          </div>
+          <div className="rounded-full border border-[rgba(255,255,255,0.12)] bg-white/5 px-2.5 py-1 text-[0.65rem] uppercase tracking-[0.2em] text-[var(--text-secondary)]">
+            {String(index + 1).padStart(2, '0')}
+          </div>
+        </div>
+
+        <p className="mt-3 font-body text-[0.9rem] text-[var(--text-secondary)] leading-relaxed">
+          {speaker.topic}
+        </p>
+
+        <div className="mt-auto pt-3.5 flex items-center justify-between border-t border-[rgba(255,255,255,0.08)]">
+          <span className="text-[0.68rem] sm:text-[0.7rem] font-medium text-[var(--text-primary)]">Tap for details</span>
+          <ArrowUpRight size={14} className="text-[var(--accent)]" />
+        </div>
+      </div>
+    </motion.button>
+  )
 
   return (
-    <section ref={sectionRef} id="speakers" className="relative">
-      {/* Scroll-driven animation container */}
-      <div
-        className="relative w-full"
-        style={{
-          height: stackProfiles[screenTier].stageHeight,
-        }}
-      >
-        {/* Sticky viewport - stays fixed while scrolling through section */}
+    <section ref={sectionRef} id="speakers" className="relative" style={{ position: 'relative' }}>
+      {/* Intro Text */}
+      <div className="section-pad pb-2 md:pb-4 relative max-w-7xl mx-auto">
+        <AnimateIn className="section-intro">
+          <p className="section-label">Who You&apos;ll Hear</p>
+          <h2
+            className="font-display text-[var(--text-primary)] section-title"
+            style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)' }}
+          >
+            World-class
+            <span className="text-[var(--accent)]"> speakers.</span>
+          </h2>
+          <p className="font-body section-copy">
+            Learn from researchers, entrepreneurs, and engineers shaping the future of power &amp; energy.
+          </p>
+        </AnimateIn>
+      </div>
+
+      {useLightLayout ? (
+        <div className="max-w-7xl mx-auto px-4 sm:px-5 md:px-10 pb-10 md:pb-0">
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            {speakers.map((speaker, index) => (
+              <AnimateIn key={speaker.id} delay={index * 0.04}>
+                <SpeakerCard speaker={speaker} index={index} />
+              </AnimateIn>
+            ))}
+          </div>
+        </div>
+      ) : (
         <div
-          className="sticky w-full flex flex-col items-center justify-center overflow-hidden"
+          className="relative w-full"
           style={{
-            top: 0,
-            height: '100vh',
-            position: 'sticky',
-            zIndex: 40,
-            perspective: '1200px',
+            height: stackProfiles[screenTier].stageHeight,
+            position: 'relative',
           }}
         >
-          {/* Intro Text (Moved inside sticky wrapper to tightly bundle with cards) */}
-          <div className="w-full max-w-7xl px-5 md:px-10 mt-12 mb-8 md:mb-12 shrink-0">
-            <AnimateIn className="section-intro !mb-0">
-              <p className="section-label">Who You&apos;ll Hear</p>
-              <h2
-                className="font-display text-[var(--text-primary)] section-title"
-                style={{ fontSize: 'clamp(1.75rem, 5vw, 3.2rem)' }}
-              >
-                World-class
-                <span className="text-[var(--accent)]"> speakers.</span>
-              </h2>
-              <p className="font-body section-copy">
-                Learn from researchers, entrepreneurs, and engineers shaping the future of power &amp; energy.
-              </p>
-            </AnimateIn>
-          </div>
+          <div
+            className="sticky w-full flex items-center justify-center overflow-visible"
+            style={{
+              top: 0,
+              height: '100vh',
+              position: 'sticky',
+              zIndex: 40,
+            }}
+          >
+            <div className={`relative ${stackProfiles[screenTier].cardSize}`}>
+              {speakers.map((sp, i) => {
+                const { isActive, x, y, scale, rotate, opacity, zIndex } = getStackMetrics(storyProgress, i, speakers.length, screenTier)
+                const floatOffset = Math.sin(floatPhase + i * 0.9) * (isActive ? 5 : 2.5)
 
-          {/* Card container */}
-          <div className={`relative ${stackProfiles[screenTier].cardSize}`}>
-            {speakers.map((sp, i) => {
-              const { isActive, x, y, scale, rotateY, opacity, zIndex, grayscale } = getStackMetrics(storyProgress, i, speakers.length, screenTier)
-              const floatOffset = Math.sin(floatPhase + i * 0.9) * (isActive ? 5 : 2.5)
-
-              return (
-                <motion.div
-                  key={sp.id}
-                  className="group absolute inset-0"
-                  style={{
-                    x,
-                    y: y + floatOffset,
-                    scale,
-                    rotateY,
-                    opacity,
-                    zIndex,
-                    filter: `grayscale(${grayscale * 100}%) brightness(${1 - grayscale * 0.4})`,
-                    pointerEvents: isActive ? 'auto' : 'none',
-                    willChange: 'transform, opacity, filter',
-                  }}
-                >
-                  <motion.button
-                    onClick={() => setSelected(sp)}
-                    className="relative h-full w-full text-left rounded-[26px] border border-[rgba(255,255,255,0.12)] bg-[linear-gradient(180deg,rgba(13,34,28,0.98),rgba(8,23,19,0.98))] shadow-[0_18px_48px_rgba(0,0,0,0.34)] overflow-hidden flex flex-col transform-gpu"
-                    whileHover={isActive ? { scale: 1.04, y: -8 } : undefined}
-                    whileTap={isActive ? { scale: 1.02, y: -4 } : undefined}
-                    transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
+                return (
+                  <motion.div
+                    key={sp.id}
+                    className="group absolute inset-0"
+                    style={{
+                      x,
+                      y: y + floatOffset,
+                      scale,
+                      rotate,
+                      opacity,
+                      zIndex,
+                      pointerEvents: isActive ? 'auto' : 'none',
+                      willChange: 'transform, opacity',
+                    }}
                   >
-                    <div className="relative h-[54%] overflow-hidden">
-                      <Image
-                        src={sp.img}
-                        alt={sp.name}
-                        fill
-                        className="object-cover"
-                        sizes="(max-width: 640px) 92vw, (max-width: 1024px) 78vw, 520px"
-                      />
-                      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(10,10,9,0.02)_0%,rgba(10,10,9,0.22)_42%,rgba(10,10,9,0.68)_100%)]" />
-                      <div className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100" style={{ background: 'radial-gradient(circle at center, rgba(227,239,38,0.10) 0%, rgba(63,173,146,0.06) 38%, rgba(10,10,9,0) 74%)' }} />
-                    </div>
-
-                    <div className="relative flex flex-1 flex-col px-5 py-5 sm:px-6 sm:py-6">
-                      <div className="flex items-start justify-between gap-4">
-                        <div>
-                          <div className="tag mb-2">{sp.tag}</div>
-                          <h3 className="font-display text-[1.35rem] sm:text-[1.55rem] text-[var(--text-primary)] leading-tight">
-                            {sp.name}
-                          </h3>
-                          <p className="font-body text-sm text-[var(--text-muted)] mt-1">{sp.role}</p>
-                        </div>
-                        <div className="rounded-full border border-[rgba(255,255,255,0.12)] bg-white/5 px-3 py-1 text-[0.68rem] uppercase tracking-[0.22em] text-[var(--text-secondary)]">
-                          {String(i + 1).padStart(2, '0')}
-                        </div>
+                    <motion.button
+                      onClick={() => setSelected(sp)}
+                      className="relative h-full w-full text-left rounded-[26px] border border-[rgba(255,255,255,0.12)] bg-[linear-gradient(180deg,rgba(13,34,28,0.98),rgba(8,23,19,0.98))] shadow-[0_18px_48px_rgba(0,0,0,0.34)] overflow-hidden flex flex-col transform-gpu"
+                      whileHover={isActive ? { scale: 1.04, y: -8 } : undefined}
+                      whileTap={isActive ? { scale: 1.02, y: -4 } : undefined}
+                      transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
+                    >
+                      <div className="relative h-[54%] overflow-hidden">
+                        <Image
+                          src={sp.img}
+                          alt={sp.name}
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 640px) 92vw, (max-width: 1024px) 78vw, 520px"
+                        />
+                        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(10,10,9,0.02)_0%,rgba(10,10,9,0.22)_42%,rgba(10,10,9,0.68)_100%)]" />
+                        <div className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100" style={{ background: 'radial-gradient(circle at center, rgba(227,239,38,0.10) 0%, rgba(63,173,146,0.06) 38%, rgba(10,10,9,0) 74%)' }} />
                       </div>
 
-                      <p className="mt-4 font-body text-sm text-[var(--text-secondary)] leading-relaxed">
-                        {sp.topic}
-                      </p>
+                      <div className="relative flex flex-1 flex-col px-5 py-5 sm:px-6 sm:py-6">
+                        <div className="flex items-start justify-between gap-4">
+                          <div>
+                            <div className="tag mb-2">{sp.tag}</div>
+                            <h3 className="font-display text-[1.35rem] sm:text-[1.55rem] text-[var(--text-primary)] leading-tight">
+                              {sp.name}
+                            </h3>
+                            <p className="font-body text-sm text-[var(--text-muted)] mt-1">{sp.role}</p>
+                          </div>
+                          <div className="rounded-full border border-[rgba(255,255,255,0.12)] bg-white/5 px-3 py-1 text-[0.68rem] uppercase tracking-[0.22em] text-[var(--text-secondary)]">
+                            {String(i + 1).padStart(2, '0')}
+                          </div>
+                        </div>
 
-                      <div className="mt-auto pt-4 border-t border-[rgba(255,255,255,0.08)]">
-                        <span className="rounded-full border border-[rgba(255,255,255,0.12)] bg-[rgba(255,255,255,0.04)] px-3 py-2 text-[0.7rem] font-medium text-[var(--text-primary)] inline-flex transition-colors group-hover:bg-[var(--accent)] group-hover:text-black group-hover:border-[var(--accent)]">
-                          Hover for details
-                        </span>
+                        <p className="mt-4 font-body text-sm text-[var(--text-secondary)] leading-relaxed">
+                          {sp.topic}
+                        </p>
+
+                        <div className="mt-auto pt-4 border-t border-[rgba(255,255,255,0.08)]">
+                          <span className="rounded-full border border-[rgba(255,255,255,0.12)] bg-[rgba(255,255,255,0.04)] px-3 py-2 text-[0.7rem] font-medium text-[var(--text-primary)] inline-flex">
+                            Hover for details
+                          </span>
+                        </div>
                       </div>
-                    </div>
+                    </motion.button>
 
-                    {/* Smooth hover details overlay */}
-                    <div className="absolute inset-0 bg-[#08231d]/95 backdrop-blur-md opacity-0 transition-all duration-300 ease-out flex flex-col p-6 sm:p-8 pointer-events-none z-10 translate-y-4 group-hover:!opacity-100 group-hover:!translate-y-0">
-                      <div className="tag self-start mb-4">{sp.tag}</div>
-                      <h3 className="font-display text-[1.4rem] sm:text-[1.6rem] text-[var(--text-primary)] leading-tight mb-2">
-                        {sp.name}
-                      </h3>
-                      <div className="w-10 h-0.5 bg-[var(--accent)] mb-4 shrink-0" />
-                      <p className="font-body text-[0.85rem] sm:text-[0.95rem] text-[var(--text-secondary)] leading-relaxed flex-1">
+                    <div
+                      className="hidden md:block absolute top-1/2 left-[calc(100%+0.8rem)] -translate-y-1/2 w-[min(72vw,280px)] rounded-2xl border border-[rgba(255,255,255,0.12)] bg-[linear-gradient(180deg,rgba(13,34,28,0.96),rgba(8,23,19,0.98))] shadow-[0_18px_42px_rgba(0,0,0,0.35)] p-4 opacity-0 translate-x-4 transition-all duration-300 ease-out group-hover:opacity-100 group-hover:translate-x-0"
+                      style={{ pointerEvents: isActive ? 'auto' : 'none' }}
+                    >
+                      <p className="font-body text-sm text-[var(--text-secondary)] leading-relaxed">
                         {sp.bio}
                       </p>
-                      <div className="mt-auto flex flex-wrap gap-2 pointer-events-auto">
-                        <span className="rounded-full border border-[rgba(227,239,38,0.22)] bg-[rgba(227,239,38,0.08)] px-4 py-2 text-[0.75rem] font-medium text-[var(--accent)] shadow-[0_0_18px_rgba(227,239,38,0.14)] inline-flex">
-                          Tap card to open full profile
+
+                      <div className="mt-4 flex flex-wrap gap-2">
+                        <span className="rounded-full border border-[rgba(255,255,255,0.12)] bg-[rgba(255,255,255,0.04)] px-3 py-2 text-[0.7rem] font-medium text-[var(--text-primary)]">
+                          Tap card to open
+                        </span>
+                        <span className="rounded-full border border-[rgba(227,239,38,0.22)] bg-[rgba(227,239,38,0.08)] px-3 py-2 text-[0.7rem] font-medium text-[var(--accent)] shadow-[0_0_18px_rgba(227,239,38,0.14)]">
+                          Detail panel
                         </span>
                       </div>
                     </div>
-                  </motion.button>
-                </motion.div>
+                  </motion.div>
                 )
               })}
             </div>
-          {/* End sticky viewport */}
-      </div>
-      {/* End scroll container */}
-      </div>
+          </div>
+        </div>
+      )}
 
       {/* Modal */}
       <AnimatePresence>

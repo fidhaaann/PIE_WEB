@@ -1,8 +1,8 @@
 'use client'
 
-import { useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
-import { motion, useScroll, useTransform } from 'framer-motion'
+import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion'
 import AnimateIn from '@/components/AnimateIn'
 
 const highlights = [
@@ -53,13 +53,26 @@ const marqueeItems = [
 
 export default function Highlights() {
   const sectionRef = useRef<HTMLElement>(null)
+  const [isMobileLike, setIsMobileLike] = useState(false)
+  const prefersReducedMotion = useReducedMotion()
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start end', 'end start'] })
   const glowY = useTransform(scrollYProgress, [0, 1], [30, -30])
+
+  useEffect(() => {
+    const media = window.matchMedia('(max-width: 900px), (pointer: coarse)')
+    const update = () => setIsMobileLike(media.matches)
+
+    update()
+    media.addEventListener('change', update)
+    return () => media.removeEventListener('change', update)
+  }, [])
+
+  const useStaticMobile = Boolean(prefersReducedMotion) || isMobileLike
 
   return (
     <section ref={sectionRef} id="highlights" className="section-pad overflow-hidden relative" style={{ position: 'relative' }}>
       <motion.div
-        style={{ y: glowY }}
+        style={{ y: useStaticMobile ? 0 : glowY }}
         className="pointer-events-none absolute -top-16 right-0 w-[220px] h-[220px] md:w-[360px] md:h-[360px] rounded-full bg-[var(--accent)] opacity-[0.06] blur-[80px]"
       />
       <div className="max-w-7xl mx-auto">
@@ -91,18 +104,17 @@ export default function Highlights() {
         </AnimateIn>
 
         {/* Mobile cards */}
-        <div className="md:hidden grid grid-cols-1 gap-4 mb-14">
+        <div className="md:hidden grid grid-cols-1 gap-4 mb-12">
           {highlights.map((item, i) => (
             <motion.div
               key={`mobile-${item.id}`}
               className="w-full rounded-2xl overflow-hidden shadow-card bg-[#06231D]"
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
-              animate={{ y: [-3, 3] }}
               viewport={{ once: true, margin: '-80px' }}
               transition={{
                 opacity: { delay: i * 0.1, duration: 0.5, ease: [0.22, 1, 0.36, 1] },
-                y: { duration: 3.8 + i * 0.18, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut', delay: i * 0.2 },
+                y: { duration: 0.45, ease: [0.22, 1, 0.36, 1] },
               }}
             >
               <div className="relative h-44">
@@ -154,22 +166,24 @@ export default function Highlights() {
 
         {/* Marquee ticker */}
         <div className="divider mb-6 md:mb-8" />
-        <div className="overflow-hidden relative">
-          <motion.div
-            className="flex gap-6 md:gap-8 whitespace-nowrap"
-            animate={{ x: [0, '-50%'] }}
-            transition={{ repeat: Infinity, duration: 20, ease: 'linear' }}
-          >
-            {[...marqueeItems, ...marqueeItems].map((item, i) => (
-              <span
-                key={i}
-                className="font-body font-medium text-xs md:text-sm uppercase tracking-widest text-[var(--text-muted)] flex items-center gap-6 md:gap-8"
-              >
-                {item}
-                <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] inline-block" />
-              </span>
-            ))}
-          </motion.div>
+        <div className="relative left-1/2 w-screen -translate-x-1/2 overflow-hidden">
+          <div className="px-4 sm:px-6 md:px-10">
+            <motion.div
+              className="flex gap-6 md:gap-8 whitespace-nowrap"
+              animate={{ x: [0, '-50%'] }}
+              transition={{ repeat: Infinity, duration: 20, ease: 'linear' }}
+            >
+              {[...marqueeItems, ...marqueeItems].map((item, i) => (
+                <span
+                  key={i}
+                  className="font-body font-medium text-xs md:text-sm uppercase tracking-widest text-[var(--text-muted)] flex items-center gap-6 md:gap-8"
+                >
+                  {item}
+                  <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] inline-block" />
+                </span>
+              ))}
+            </motion.div>
+          </div>
         </div>
         <div className="divider mt-8" />
       </div>

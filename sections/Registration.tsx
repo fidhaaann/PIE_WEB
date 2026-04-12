@@ -32,15 +32,15 @@ export default function Registration() {
     <section id="register" className="section-pad relative overflow-hidden">
       {/* Bg accent */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[320px] h-[220px] md:w-[600px] md:h-[400px] rounded-full bg-[var(--accent)] opacity-[0.04] blur-[70px] md:blur-[100px]" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[240px] h-[180px] sm:w-[320px] sm:h-[220px] md:w-[600px] md:h-[400px] rounded-full bg-[var(--accent)] opacity-[0.04] blur-[56px] md:blur-[100px]" />
       </div>
 
       <div className="max-w-5xl mx-auto relative z-10">
         {/* Top urgency badge */}
-        <AnimateIn className="flex justify-center mb-8">
-          <div className="flex items-center gap-2 px-3 py-2 md:px-4 rounded-full border border-[var(--accent)]/40 bg-[var(--accent)]/8 text-center">
+        <AnimateIn className="flex justify-center mb-6 sm:mb-8">
+          <div className="flex items-center gap-2 px-3 py-2 md:px-4 rounded-full border border-[var(--accent)]/40 bg-[var(--accent)]/8 text-center max-w-full">
             <span className="w-2 h-2 rounded-full bg-[var(--accent)] animate-pulse" />
-            <span className="font-body font-medium text-[0.65rem] md:text-xs text-[var(--accent)] uppercase tracking-[0.18em] md:tracking-widest">
+            <span className="font-body font-medium text-[0.6rem] sm:text-[0.65rem] md:text-xs text-[var(--accent)] uppercase tracking-[0.14em] sm:tracking-[0.18em] md:tracking-widest text-center leading-snug">
               Registrations Open · Limited Seats
             </span>
           </div>
@@ -49,7 +49,7 @@ export default function Registration() {
         <AnimateIn className="section-intro">
           <h2
             className="font-display text-center text-[var(--text-primary)] section-title"
-            style={{ fontSize: 'clamp(2.2rem, 6vw, 4.5rem)' }}
+            style={{ fontSize: 'clamp(2.1rem, 7vw, 4.5rem)' }}
           >
             Secure your <span className="editorial-italic">spot</span>
             <br />
@@ -62,7 +62,7 @@ export default function Registration() {
 
         {/* Countdown */}
         <AnimateIn type="scaleUp">
-          <div className="grid grid-cols-2 sm:flex sm:flex-wrap justify-center gap-3 md:gap-6 mb-12 md:mb-14 max-w-xs sm:max-w-none mx-auto">
+          <div className="grid grid-cols-2 sm:flex sm:flex-wrap justify-center gap-3 md:gap-6 mb-10 md:mb-14 max-w-xs sm:max-w-none mx-auto">
             <CountdownBox value={days}    label="Days"    />
             <div className="hidden md:block font-body font-medium text-3xl text-[var(--text-muted)] self-start mt-4">:</div>
             <CountdownBox value={hours}   label="Hours"   />
@@ -74,20 +74,20 @@ export default function Registration() {
         </AnimateIn>
 
         {/* Info cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4 mb-10 md:mb-12">
           {[
             { icon: Clock,   label: 'Duration',     value: '2 Days · June 14–15' },
             { icon: MapPin,  label: 'Venue',         value: 'Rajagiri Engineering, Kochi' },
             { icon: Users,   label: 'Max Capacity',  value: '2000 Participants' },
           ].map((item) => (
             <AnimateIn key={item.label} type="scaleUp">
-              <div className="card-base flex items-center gap-4 p-5">
-                <div className="w-10 h-10 rounded-xl bg-[var(--accent)]/12 border border-[var(--accent)]/20 flex items-center justify-center flex-shrink-0">
-                  <item.icon size={18} className="text-[var(--accent)]" />
+              <div className="card-base flex items-center gap-3 sm:gap-4 p-4 sm:p-5">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[var(--accent)]/12 border border-[var(--accent)]/20 flex items-center justify-center flex-shrink-0">
+                  <item.icon size={17} className="text-[var(--accent)]" />
                 </div>
                 <div>
                   <p className="font-body text-xs text-[var(--text-muted)] uppercase tracking-wider">{item.label}</p>
-                  <p className="font-body font-medium text-sm text-[var(--text-primary)] mt-0.5">{item.value}</p>
+                  <p className="font-body font-medium text-[0.9rem] sm:text-sm text-[var(--text-primary)] mt-0.5">{item.value}</p>
                 </div>
               </div>
             </AnimateIn>
@@ -95,7 +95,7 @@ export default function Registration() {
         </div>
 
         {/* CTA */}
-        <AnimateIn className="flex flex-col sm:flex-row items-center justify-center gap-4">
+        <AnimateIn className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
           <motion.a
             href="https://forms.google.com"
             target="_blank"
@@ -111,7 +111,7 @@ export default function Registration() {
           </a>
         </AnimateIn>
 
-        <p className="font-body text-center text-xs text-[var(--text-muted)] mt-6">
+        <p className="font-body text-center text-[0.7rem] sm:text-xs text-[var(--text-muted)] mt-5 sm:mt-6 leading-relaxed px-4">
           No registration fee · IEEE membership not required · Open to all engineering students
         </p>
       </div>

@@ -31,10 +31,10 @@ export default function Contact() {
           </h2>
         </AnimateIn>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-12 mt-10 md:mt-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 mt-8 md:mt-12">
           {/* Left: info */}
           <AnimateIn type="slideLeft">
-            <div className="space-y-8">
+            <div className="space-y-6 sm:space-y-8">
               {[
                 {
                   icon: Mail,
@@ -60,14 +60,14 @@ export default function Contact() {
                   href={item.href}
                   target={item.icon === MapPin ? '_blank' : undefined}
                   rel="noopener noreferrer"
-                  className="flex items-start gap-4 group"
+                  className="flex items-start gap-3 sm:gap-4 group"
                 >
-                  <div className="w-10 h-10 rounded-xl bg-[var(--accent)]/12 border border-[var(--accent)]/20 flex items-center justify-center flex-shrink-0 mt-0.5 group-hover:bg-[var(--accent)]/20 transition-colors">
-                    <item.icon size={18} className="text-[var(--accent)]" />
+                  <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[var(--accent)]/12 border border-[var(--accent)]/20 flex items-center justify-center flex-shrink-0 mt-0.5 group-hover:bg-[var(--accent)]/20 transition-colors">
+                    <item.icon size={17} className="text-[var(--accent)]" />
                   </div>
                   <div>
                     <p className="font-body text-xs text-[var(--text-muted)] uppercase tracking-widest">{item.label}</p>
-                    <p className="font-body font-medium text-sm text-[var(--text-primary)] mt-0.5 group-hover:text-[var(--accent)] transition-colors">
+                    <p className="font-body font-medium text-[0.9rem] sm:text-sm text-[var(--text-primary)] mt-0.5 group-hover:text-[var(--accent)] transition-colors leading-snug">
                       {item.value}
                     </p>
                   </div>
@@ -77,7 +77,7 @@ export default function Contact() {
               {/* Socials */}
               <div>
                 <p className="font-body text-xs text-[var(--text-muted)] uppercase tracking-widest mb-4">Follow Us</p>
-                <div className="flex gap-3">
+                <div className="flex gap-3 flex-wrap">
                   {[
                     { icon: ArrowUpRight, href: 'https://instagram.com', label: 'Instagram' },
                     { icon: ArrowUpRight, href: 'https://linkedin.com', label: 'LinkedIn' },
@@ -100,7 +100,7 @@ export default function Contact() {
               </div>
 
               {/* Map placeholder */}
-              <div className="card-base overflow-hidden rounded-2xl h-48 flex items-center justify-center">
+              <div className="card-base overflow-hidden rounded-2xl min-h-48 flex items-center justify-center px-4 py-6">
                 <div className="text-center">
                   <MapPin size={32} className="text-[var(--accent)] mx-auto mb-2" />
                   <p className="font-body font-medium text-sm text-[var(--text-primary)]">Rajagiri Engineering</p>
@@ -120,8 +120,8 @@ export default function Contact() {
 
           {/* Right: form */}
           <AnimateIn type="slideRight">
-            <form onSubmit={handleSubmit} className="card-base p-5 sm:p-8 rounded-3xl space-y-5">
-              <h3 className="font-display text-xl text-[var(--text-primary)]">Send a Message</h3>
+            <form onSubmit={handleSubmit} className="card-base p-4 sm:p-8 rounded-3xl space-y-4 sm:space-y-5">
+              <h3 className="font-display text-[1.1rem] sm:text-xl text-[var(--text-primary)]">Send a Message</h3>
 
               {[
                 { id: 'name',    label: 'Your Name',    type: 'text',  placeholder: 'e.g. Arjun Kumar' },
@@ -139,7 +139,7 @@ export default function Contact() {
                     required
                     value={form[field.id as 'name' | 'email']}
                     onChange={e => setForm(f => ({ ...f, [field.id]: e.target.value }))}
-                    className="w-full bg-[rgba(245,245,240,0.05)] border border-[var(--border)] rounded-xl px-4 py-3 font-body text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:border-[var(--accent)]/60 focus:bg-[rgba(245,245,240,0.08)] transition-all"
+                    className="w-full bg-[rgba(245,245,240,0.05)] border border-[var(--border)] rounded-xl px-4 py-3 font-body text-[0.95rem] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:border-[var(--accent)]/60 focus:bg-[rgba(245,245,240,0.08)] transition-all"
                   />
                 </div>
               ))}
@@ -156,7 +156,7 @@ export default function Contact() {
                   required
                   value={form.message}
                   onChange={e => setForm(f => ({ ...f, message: e.target.value }))}
-                  className="w-full bg-[rgba(245,245,240,0.05)] border border-[var(--border)] rounded-xl px-4 py-3 font-body text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:border-[var(--accent)]/60 focus:bg-[rgba(245,245,240,0.08)] transition-all resize-none"
+                  className="w-full bg-[rgba(245,245,240,0.05)] border border-[var(--border)] rounded-xl px-4 py-3 font-body text-[0.95rem] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:border-[var(--accent)]/60 focus:bg-[rgba(245,245,240,0.08)] transition-all resize-none"
                 />
               </div>
 

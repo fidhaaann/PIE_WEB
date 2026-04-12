@@ -111,7 +111,7 @@ export default function Hero() {
       onMouseMove={handleMouseMove}
       onMouseEnter={() => isHovered.set(1)}
       onMouseLeave={() => isHovered.set(0)}
-      className="relative min-h-[100svh] md:min-h-screen flex items-center overflow-hidden pt-[calc(env(safe-area-inset-top)+5.5rem)] md:pt-0"
+      className="relative min-h-[100svh] md:min-h-screen flex items-center overflow-hidden pt-[calc(env(safe-area-inset-top)+4.5rem)] sm:pt-[calc(env(safe-area-inset-top)+5rem)] md:pt-0"
     >
       {/* Ambient blobs */}
       <motion.div
@@ -119,9 +119,9 @@ export default function Hero() {
         style={{ y: shouldLightMotion ? 0 : blobY }}
         className="absolute inset-0 pointer-events-none transition-transform duration-700 ease-out"
       >
-        <div className="absolute top-1/4 left-1/4 w-[260px] h-[260px] md:w-[500px] md:h-[500px] rounded-full bg-[var(--accent)] opacity-[0.05] md:opacity-[0.06] blur-[70px] md:blur-[120px]" />
-        <div className="absolute bottom-1/4 right-1/4 w-[220px] h-[220px] md:w-[400px] md:h-[400px] rounded-full bg-forest-500 opacity-[0.08] md:opacity-[0.12] blur-[60px] md:blur-[100px]" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[340px] h-[340px] md:w-[700px] md:h-[700px] rounded-full bg-[#076653] opacity-[0.06] md:opacity-[0.08] blur-[80px] md:blur-[140px]" />
+        <div className="absolute top-1/5 left-1/2 -translate-x-1/2 w-[180px] h-[180px] sm:w-[260px] sm:h-[260px] md:w-[500px] md:h-[500px] rounded-full bg-[var(--accent)] opacity-[0.04] md:opacity-[0.06] blur-[56px] sm:blur-[70px] md:blur-[120px]" />
+        <div className="absolute bottom-1/4 right-0 w-[180px] h-[180px] sm:w-[220px] sm:h-[220px] md:w-[400px] md:h-[400px] rounded-full bg-forest-500 opacity-[0.07] md:opacity-[0.12] blur-[48px] sm:blur-[60px] md:blur-[100px]" />
+        <div className="absolute top-[48%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[240px] h-[240px] sm:w-[340px] sm:h-[340px] md:w-[700px] md:h-[700px] rounded-full bg-[#076653] opacity-[0.05] md:opacity-[0.08] blur-[68px] sm:blur-[80px] md:blur-[140px]" />
       </motion.div>
 
       {/* Responsive Dot Grid */}
@@ -149,15 +149,15 @@ export default function Hero() {
         />
       </div>
 
-      <motion.div ref={contentRef} style={{ y: shouldLightMotion ? 0 : contentY }} className="relative z-10 w-full px-5 md:px-10">
+      <motion.div ref={contentRef} style={{ y: shouldLightMotion ? 0 : contentY }} className="relative z-10 w-full px-4 sm:px-5 md:px-10">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12 items-end">
           <div className="lg:col-span-3 text-left">
             <motion.h1
               initial={{ opacity: 0, y: shouldLightMotion ? 12 : 24 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: shouldLightMotion ? 0.35 : 0.65, ease: [0.22, 1, 0.36, 1] }}
-              className="flex flex-wrap items-baseline gap-x-3 gap-y-2 mb-4"
-              style={{ fontSize: 'clamp(2rem, 6vw, 4.4rem)' }}
+              className="flex flex-wrap items-baseline gap-x-2 gap-y-1.5 mb-4"
+              style={{ fontSize: 'clamp(2.15rem, 7vw, 4.4rem)' }}
             >
               {HERO_WORDS.map((word, i) => (
                 <motion.span
@@ -177,7 +177,7 @@ export default function Hero() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: shouldLightMotion ? 0.14 : 0.5, duration: shouldLightMotion ? 0.35 : 0.6 }}
               className="hero-display gradient-text"
-              style={{ fontSize: 'clamp(2.6rem, 11vw, 8rem)', lineHeight: 0.92 }}
+              style={{ fontSize: 'clamp(2.8rem, 13vw, 8rem)', lineHeight: 0.92 }}
             >
               V-FIESTA 5.0
             </motion.p>
@@ -186,7 +186,7 @@ export default function Hero() {
               initial={{ opacity: 0, y: shouldLightMotion ? 12 : 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: shouldLightMotion ? 0.2 : 0.75, duration: shouldLightMotion ? 0.35 : 0.6 }}
-              className="font-body text-[var(--text-secondary)] mt-5 max-w-[36ch]"
+              className="font-body text-[var(--text-secondary)] mt-4 sm:mt-5 max-w-[34ch]"
               style={{ fontSize: 'clamp(0.95rem, 2vw, 1.2rem)' }}
             >
               Innovate · Inspire · Impact <span className="text-[var(--accent)]">June 14–15, 2026</span> · Kochi, Kerala
@@ -196,7 +196,7 @@ export default function Hero() {
               initial={{ opacity: 0, y: shouldLightMotion ? 14 : 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: shouldLightMotion ? 0.26 : 0.95, duration: shouldLightMotion ? 0.38 : 0.6 }}
-              className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-8 w-full max-w-md"
+              className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-7 w-full max-w-md"
             >
               <a href="#register" className="btn-primary btn-register-dark text-base px-8 py-4 justify-center w-full sm:w-auto">
                 Register Now
@@ -214,9 +214,9 @@ export default function Hero() {
             initial={{ opacity: 0, y: shouldLightMotion ? 18 : 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: shouldLightMotion ? 0.32 : 1.1, duration: shouldLightMotion ? 0.42 : 0.7 }}
-            className="lg:col-span-2"
+            className="lg:col-span-2 mt-4 lg:mt-0"
           >
-            <div className="glass accent-stroke rounded-[28px] p-4 md:p-6 w-full max-w-[560px] mx-auto lg:mx-0 overflow-hidden">
+            <div className="glass accent-stroke rounded-[24px] sm:rounded-[28px] p-3.5 sm:p-4 md:p-6 w-full max-w-[560px] mx-auto lg:mx-0 overflow-hidden">
               <div className="rounded-[22px] border border-[var(--border)] bg-[linear-gradient(180deg,rgba(8,36,29,0.96),rgba(6,35,29,0.98))] shadow-card overflow-hidden">
                 <div className="flex items-center justify-between gap-3 px-4 md:px-5 py-3 border-b border-[var(--border)] bg-[rgba(255,255,255,0.02)]">
                   <div className="flex items-center gap-2">
@@ -228,7 +228,7 @@ export default function Hero() {
                   <div className="w-16" />
                 </div>
 
-                <div className="px-4 md:px-5 py-4 md:py-5 min-h-[300px] md:min-h-[330px] font-mono text-sm md:text-[0.95rem] leading-relaxed text-[var(--text-secondary)]">
+                <div className="px-4 md:px-5 py-4 md:py-5 min-h-[265px] md:min-h-[330px] font-mono text-[0.83rem] sm:text-sm md:text-[0.95rem] leading-relaxed text-[var(--text-secondary)]">
                   <div className="mb-4 flex items-center gap-2 text-[var(--accent)]">
                     <span className="inline-block h-2.5 w-2.5 rounded-full bg-[var(--accent)] shadow-[0_0_12px_rgba(227,239,38,0.5)]" />
                     <span className="font-body text-[0.65rem] uppercase tracking-[0.18em] text-[var(--text-muted)]">Live event feed</span>
@@ -272,7 +272,7 @@ export default function Hero() {
         animate={{ opacity: 1 }}
         transition={{ delay: shouldLightMotion ? 0.4 : 2, duration: shouldLightMotion ? 0.45 : 0.8 }}
         onClick={scrollDown}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-[var(--text-muted)] hover:text-[var(--accent)] transition-colors"
+        className="absolute bottom-6 sm:bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-[var(--text-muted)] hover:text-[var(--accent)] transition-colors"
         aria-label="Scroll down"
       >
         <span className="text-xs font-body tracking-widest uppercase">Scroll</span>

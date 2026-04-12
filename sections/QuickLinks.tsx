@@ -41,7 +41,7 @@ const links = [
 
 export default function QuickLinks() {
   return (
-    <section id="about" className="section-pad">
+    <section id="about" className="section-pad py-16 sm:py-20 md:py-24">
       <div className="max-w-7xl mx-auto">
         <AnimateIn className="section-intro">
           <p className="section-label">Quick Access</p>
@@ -58,33 +58,33 @@ export default function QuickLinks() {
           </p>
         </AnimateIn>
 
-        <StaggerContainer className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-6 lg:auto-rows-[minmax(168px,1fr)]">
+        <StaggerContainer className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 md:gap-6 lg:auto-rows-[minmax(168px,1fr)]">
           {links.map((link, i) => (
             <StaggerItem key={link.title}>
               <a
                 href={link.href}
-                className={`card-base group relative isolate flex flex-col h-full p-5 md:p-6 cursor-pointer overflow-hidden ${link.span}`}
+                className={`card-base group relative isolate flex flex-col h-full p-4 sm:p-5 md:p-6 cursor-pointer overflow-hidden ${link.span}`}
               >
                 <div
                   className="absolute inset-x-0 top-0 h-px opacity-70"
                   style={{ background: `linear-gradient(90deg, transparent, ${link.accent}, transparent)` }}
                 />
                 <div
-                  className="w-11 h-11 rounded-xl flex items-center justify-center mb-5"
+                  className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center mb-4 sm:mb-5"
                   style={{ background: `${link.accent}18`, border: `1px solid ${link.accent}30` }}
                 >
-                  <link.icon size={20} style={{ color: link.accent }} />
+                  <link.icon size={18} style={{ color: link.accent }} />
                 </div>
                 <p className="font-body text-[0.65rem] tracking-[0.16em] uppercase text-[var(--text-muted)] mb-2">
                   {i === 0 ? 'Most Used' : 'Quick Route'}
                 </p>
-                <h3 className={`font-display text-[var(--text-primary)] mb-2 leading-tight ${i === 0 || i === 3 ? 'text-xl md:text-2xl' : 'text-lg'}`}>
+                <h3 className={`font-display text-[var(--text-primary)] mb-2 leading-tight ${i === 0 || i === 3 ? 'text-lg sm:text-xl md:text-2xl' : 'text-base sm:text-lg'}`}>
                   {link.title}
                 </h3>
-                <p className="font-body text-sm text-[var(--text-secondary)] flex-1 leading-relaxed">
+                <p className="font-body text-[0.9rem] sm:text-sm text-[var(--text-secondary)] flex-1 leading-relaxed">
                   {link.desc}
                 </p>
-                <div className="mt-5 flex items-center gap-1.5 text-xs font-body font-medium text-[var(--accent)] group-hover:gap-3 transition-all">
+                <div className="mt-4 sm:mt-5 flex items-center gap-1.5 text-xs font-body font-medium text-[var(--accent)] group-hover:gap-3 transition-all">
                   Explore
                   <ArrowUpRight size={14} />
                 </div>

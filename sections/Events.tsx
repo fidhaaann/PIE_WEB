@@ -1,8 +1,8 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
-import { motion, useScroll, useTransform } from 'framer-motion'
+import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion'
 import { ArrowUpRight } from 'lucide-react'
 import AnimateIn from '@/components/AnimateIn'
 
@@ -72,9 +72,22 @@ const events = [
 export default function Events() {
   const sectionRef = useRef<HTMLElement>(null)
   const [isTrainPaused, setIsTrainPaused] = useState(false)
+  const [isMobileLike, setIsMobileLike] = useState(false)
+  const prefersReducedMotion = useReducedMotion()
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start end', 'end start'] })
   const accentY = useTransform(scrollYProgress, [0, 1], [24, -32])
   const trainEvents = [...events, ...events]
+
+  useEffect(() => {
+    const media = window.matchMedia('(max-width: 900px), (pointer: coarse)')
+    const update = () => setIsMobileLike(media.matches)
+
+    update()
+    media.addEventListener('change', update)
+    return () => media.removeEventListener('change', update)
+  }, [])
+
+  const useStaticLayout = Boolean(prefersReducedMotion) || isMobileLike
 
   return (
     <section ref={sectionRef} id="events" className="section-pad relative overflow-hidden" style={{ position: 'relative' }}>
@@ -105,59 +118,81 @@ export default function Events() {
             <div className="flex items-end justify-between gap-4 mb-4">
               <div>
                 <p className="font-body text-[0.66rem] uppercase tracking-[0.18em] text-[var(--text-muted)]">Competition Train</p>
-                <h3 className="font-display text-xl md:text-2xl text-[var(--text-primary)] mt-1">Hover any card to pause and inspect it.</h3>
+                <h3 className="font-display text-xl md:text-2xl text-[var(--text-primary)] mt-1">{useStaticLayout ? 'Browse the event cards below.' : 'Hover any card to pause and inspect it.'}</h3>
               </div>
               <p className="hidden md:block font-body text-xs text-[var(--text-muted)] text-right max-w-[16rem]">
                 The lineup loops to the right automatically until you hover a card.
               </p>
             </div>
 
-            <div
-              className="relative overflow-hidden rounded-[28px] border border-[var(--border)] bg-[linear-gradient(160deg,rgba(14,54,44,0.92),rgba(8,36,29,0.94))] p-4 md:p-5"
-              onMouseEnter={() => setIsTrainPaused(true)}
-              onMouseLeave={() => setIsTrainPaused(false)}
-            >
-              <div className="pointer-events-none absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-[#06231D] to-transparent z-10" />
-              <div className="pointer-events-none absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-[#06231D] to-transparent z-10" />
-
-              <motion.div
-                className="train-track flex w-max gap-4 md:gap-5"
-                style={{ animationPlayState: isTrainPaused ? 'paused' : 'running' }}
-              >
-                {trainEvents.map((ev, i) => (
-                  <motion.article
-                    key={`${ev.id}-${i}`}
-                    className="group relative flex-shrink-0 w-[280px] md:w-[304px] h-[380px] overflow-hidden rounded-[24px] border border-[var(--border)] bg-[linear-gradient(180deg,rgba(14,54,44,0.98),rgba(6,35,29,0.98))] shadow-card"
-                    whileHover={{ y: -6 }}
-                    transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-                  >
-                    <div className="relative h-[168px]">
-                      <Image src={ev.img} alt={ev.title} fill className="object-cover" sizes="304px" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#06231D] via-[#06231D]/24 to-transparent" />
+            {useStaticLayout ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {events.map((ev) => (
+                  <article key={ev.id} className="overflow-hidden rounded-[22px] border border-[var(--border)] bg-[linear-gradient(180deg,rgba(14,54,44,0.98),rgba(6,35,29,0.98))] shadow-card">
+                    <div className="relative h-44">
+                      <Image src={ev.img} alt={ev.title} fill className="object-cover" sizes="(max-width: 640px) 92vw, 304px" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#06231D] via-[#06231D]/30 to-transparent" />
                     </div>
-
-                    <div className="relative flex h-[212px] flex-col p-4 md:p-5">
-                      <div className="flex-1 flex items-center justify-center text-center">
-                        <div>
-                          <p className="font-body text-[0.68rem] uppercase tracking-[0.18em] text-[var(--accent)]">Event</p>
-                          <h4 className="font-display text-2xl text-[var(--text-primary)] mt-3 leading-tight">{ev.title}</h4>
-                        </div>
-                      </div>
-
-                      <div className="mt-auto pt-4 border-t border-[var(--border)] overflow-hidden">
-                        <div className="max-h-0 opacity-0 translate-y-2 transition-all duration-300 group-hover:max-h-32 group-hover:opacity-100 group-hover:translate-y-0">
-                          <p className="font-body text-sm text-[var(--text-secondary)] leading-relaxed">{ev.desc}</p>
-                        </div>
-                        <div className="mt-3 flex items-center justify-between">
-                          <span className="font-body text-[0.68rem] uppercase tracking-[0.16em] text-[var(--text-muted)]">Hover to pause</span>
-                          <ArrowUpRight size={14} className="text-[var(--accent)]" />
-                        </div>
+                    <div className="p-4">
+                      <p className="font-body text-[0.68rem] uppercase tracking-[0.18em] text-[var(--accent)]">{ev.category}</p>
+                      <h4 className="font-display text-[1.15rem] text-[var(--text-primary)] mt-2 leading-tight">{ev.title}</h4>
+                      <p className="mt-2 font-body text-[0.88rem] text-[var(--text-secondary)] leading-relaxed">{ev.desc}</p>
+                      <div className="mt-4 flex items-center justify-between border-t border-[var(--border)] pt-3">
+                        <span className="font-body text-[0.68rem] uppercase tracking-[0.16em] text-[var(--text-muted)]">{ev.date}</span>
+                        <span className="font-body text-[0.68rem] uppercase tracking-[0.16em] text-[var(--accent)]">{ev.prize}</span>
                       </div>
                     </div>
-                  </motion.article>
+                  </article>
                 ))}
-              </motion.div>
-            </div>
+              </div>
+            ) : (
+              <div
+                className="relative overflow-hidden rounded-[28px] border border-[var(--border)] bg-[linear-gradient(160deg,rgba(14,54,44,0.92),rgba(8,36,29,0.94))] p-4 md:p-5"
+                onMouseEnter={() => setIsTrainPaused(true)}
+                onMouseLeave={() => setIsTrainPaused(false)}
+              >
+                <div className="pointer-events-none absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-[#06231D] to-transparent z-10" />
+                <div className="pointer-events-none absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-[#06231D] to-transparent z-10" />
+
+                <motion.div
+                  className="train-track flex w-max gap-4 md:gap-5"
+                  style={{ animationPlayState: isTrainPaused ? 'paused' : 'running' }}
+                >
+                  {trainEvents.map((ev, i) => (
+                    <motion.article
+                      key={`${ev.id}-${i}`}
+                      className="group relative flex-shrink-0 w-[280px] md:w-[304px] h-[380px] overflow-hidden rounded-[24px] border border-[var(--border)] bg-[linear-gradient(180deg,rgba(14,54,44,0.98),rgba(6,35,29,0.98))] shadow-card"
+                      whileHover={{ y: -6 }}
+                      transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+                    >
+                      <div className="relative h-[168px]">
+                        <Image src={ev.img} alt={ev.title} fill className="object-cover" sizes="304px" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#06231D] via-[#06231D]/24 to-transparent" />
+                      </div>
+
+                      <div className="relative flex h-[212px] flex-col p-4 md:p-5">
+                        <div className="flex-1 flex items-center justify-center text-center">
+                          <div>
+                            <p className="font-body text-[0.68rem] uppercase tracking-[0.18em] text-[var(--accent)]">Event</p>
+                            <h4 className="font-display text-2xl text-[var(--text-primary)] mt-3 leading-tight">{ev.title}</h4>
+                          </div>
+                        </div>
+
+                        <div className="mt-auto pt-4 border-t border-[var(--border)] overflow-hidden">
+                          <div className="max-h-0 opacity-0 translate-y-2 transition-all duration-300 group-hover:max-h-32 group-hover:opacity-100 group-hover:translate-y-0">
+                            <p className="font-body text-sm text-[var(--text-secondary)] leading-relaxed">{ev.desc}</p>
+                          </div>
+                          <div className="mt-3 flex items-center justify-between">
+                            <span className="font-body text-[0.68rem] uppercase tracking-[0.16em] text-[var(--text-muted)]">Hover to pause</span>
+                            <ArrowUpRight size={14} className="text-[var(--accent)]" />
+                          </div>
+                        </div>
+                      </div>
+                    </motion.article>
+                  ))}
+                </motion.div>
+              </div>
+            )}
           </div>
         </div>
       </div>
