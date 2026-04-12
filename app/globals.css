@@ -240,9 +240,7 @@ select {
 }
 
 .section-pad {
-  padding: clamp(4.5rem, 9vw, 9rem) clamp(1.25rem, 5vw, 6rem);
-  min-height: 100vh;
-  min-height: 100dvh;
+  padding: clamp(4rem, 7.5vw, 6.75rem) clamp(1.25rem, 5vw, 6rem);
   position: relative;
 }
 

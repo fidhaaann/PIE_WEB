@@ -152,11 +152,14 @@ export default function Highlights() {
           ))}
         </div>
 
-        {/* Marquee ticker */}
+      </div>
+
+      {/* Full-width marquee ticker */}
+      <div className="mt-2 md:mt-4">
         <div className="divider mb-6 md:mb-8" />
-        <div className="overflow-hidden relative">
+        <div className="overflow-hidden relative w-full">
           <motion.div
-            className="flex gap-6 md:gap-8 whitespace-nowrap"
+            className="flex w-max gap-6 md:gap-8 whitespace-nowrap"
             animate={{ x: [0, '-50%'] }}
             transition={{ repeat: Infinity, duration: 20, ease: 'linear' }}
           >

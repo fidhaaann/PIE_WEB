@@ -77,7 +77,12 @@ export default function Events() {
   const trainEvents = [...events, ...events]
 
   return (
-    <section ref={sectionRef} id="events" className="section-pad relative overflow-hidden" style={{ position: 'relative' }}>
+    <section
+      ref={sectionRef}
+      id="events"
+      className="section-pad relative overflow-hidden"
+      style={{ position: 'relative' }}
+    >
       <motion.div
         style={{ y: accentY }}
         className="pointer-events-none absolute left-0 top-12 w-[220px] h-[220px] md:w-[340px] md:h-[340px] rounded-full bg-[var(--accent)] opacity-[0.05] blur-[90px]"

@@ -41,7 +41,7 @@ const links = [
 
 export default function QuickLinks() {
   return (
-    <section id="about" className="section-pad py-16 sm:py-20 md:py-24">
+    <section id="about" className="section-pad">
       <div className="max-w-7xl mx-auto">
         <AnimateIn className="section-intro">
           <p className="section-label">Quick Access</p>
