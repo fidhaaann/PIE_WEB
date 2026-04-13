@@ -4,15 +4,30 @@ import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 export default function Loader() {
+  const letters = ['L', 'O', 'A', 'D', 'I', 'N', 'G']
   const [loading, setLoading] = useState(true)
+  const [activeIndex, setActiveIndex] = useState(0)
 
   useEffect(() => {
-    // Show notebook intro briefly before revealing the site
-    const timer = setTimeout(() => {
+    if (!loading) return
+
+    const stepTimer = window.setInterval(() => {
+      setActiveIndex((prev) => Math.min(letters.length - 1, prev + 1))
+    }, 320)
+
+    return () => window.clearInterval(stepTimer)
+  }, [letters.length, loading])
+
+  useEffect(() => {
+    if (!loading) return
+    if (activeIndex !== letters.length - 1) return
+
+    const finishTimer = window.setTimeout(() => {
       setLoading(false)
-    }, 3000)
-    return () => clearTimeout(timer)
-  }, [])
+    }, 520)
+
+    return () => window.clearTimeout(finishTimer)
+  }, [activeIndex, letters.length, loading])
 
   return (
     <AnimatePresence>
@@ -21,71 +36,67 @@ export default function Loader() {
           key="loader"
           initial={{ opacity: 1 }}
           exit={{ opacity: 0, transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] } }}
-          className="fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden bg-[#f4ecd9]"
+          className="fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden bg-[#f6efdb]"
         >
-          {/* Notebook ruled lines */}
+          {/* Pseudo-brutalism backdrop */}
+          <div className="pointer-events-none absolute left-[-5%] top-[8%] h-28 w-28 rotate-12 border-4 border-[#0b0b0b] bg-[#E3EF26] shadow-[8px_8px_0_#0b0b0b]" />
+          <div className="pointer-events-none absolute right-[7%] top-[18%] h-20 w-36 -rotate-6 border-4 border-[#0b0b0b] bg-[#3fad92] shadow-[8px_8px_0_#0b0b0b]" />
+          <div className="pointer-events-none absolute bottom-[11%] left-[12%] h-24 w-24 -rotate-12 border-4 border-[#0b0b0b] bg-[#f97316] shadow-[8px_8px_0_#0b0b0b]" />
+          <div className="pointer-events-none absolute bottom-[14%] right-[10%] h-16 w-44 rotate-3 border-4 border-[#0b0b0b] bg-[#60a5fa] shadow-[8px_8px_0_#0b0b0b]" />
           <div
             className="pointer-events-none absolute inset-0"
             style={{
               backgroundImage:
-                'repeating-linear-gradient(to bottom, rgba(46,104,201,0.18) 0px, rgba(46,104,201,0.18) 1px, transparent 1px, transparent 42px)',
-              backgroundSize: '100% 43px',
+                'repeating-linear-gradient(45deg, rgba(11,11,11,0.08) 0px, rgba(11,11,11,0.08) 2px, transparent 2px, transparent 16px)',
+              backgroundSize: '20px 20px',
             }}
           />
 
-          {/* Left notebook margin line */}
-          <div className="pointer-events-none absolute bottom-0 left-[12%] top-0 w-[2px] bg-[#e35b5b]/70" />
+          <div className="relative z-10 rounded-[20px] border-[5px] border-[#0b0b0b] bg-[#fff7e8] px-6 py-8 shadow-[12px_12px_0_#0b0b0b] md:px-10">
+            <div className="relative mx-auto w-fit pt-11">
+              <motion.div
+                className="absolute left-0 top-0 h-5 w-5 border-[3px] border-[#0b0b0b] bg-[#E3EF26] shadow-[4px_4px_0_#0b0b0b]"
+                animate={{
+                  x: activeIndex * 68,
+                  y: [0, -20, 0],
+                }}
+                transition={{
+                  x: { duration: 0.26, ease: [0.25, 0.9, 0.35, 1] },
+                  y: { duration: 0.26, ease: [0.3, 0.8, 0.4, 1] },
+                }}
+              />
 
-          {/* Paper grain */}
-          <div
-            className="pointer-events-none absolute inset-0 opacity-[0.08]"
-            style={{
-              backgroundImage:
-                'radial-gradient(circle at 1px 1px, rgba(30,30,30,0.15) 1px, transparent 0)',
-              backgroundSize: '16px 16px',
-            }}
-          />
-
-          <div className="relative z-10 w-[min(88vw,720px)]">
-            <svg viewBox="0 0 400 260" className="h-auto w-full" aria-label="loading handwritten animation">
-              <motion.text
-                x="200"
-                y="168"
-                fill="#111827"
-                fontSize="84"
-                fontWeight="400"
-                fontFamily="'Caveat', 'Comic Sans MS', cursive"
-                fontStyle="normal"
-                textAnchor="middle"
-                style={{ letterSpacing: '0.02em' }}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.15 }}
-              >
-                {['l', 'o', 'a', 'd', 'i', 'n', 'g'].map((letter, index) => (
-                  <motion.tspan
-                    key={letter}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.18, duration: 0.22, ease: 'easeOut' }}
+              <div className="flex items-end gap-3">
+                {letters.map((letter, index) => (
+                  <motion.span
+                    key={`${letter}-${index}`}
+                    className="inline-flex h-16 w-14 select-none items-center justify-center border-[3px] border-[#0b0b0b] font-body text-5xl font-black uppercase shadow-[4px_4px_0_#0b0b0b] md:h-[74px] md:w-[58px] md:text-6xl"
+                    animate={{
+                      backgroundColor:
+                        index < activeIndex
+                          ? '#3fad92'
+                          : index === activeIndex
+                            ? '#E3EF26'
+                            : '#ffffff',
+                      color: index === activeIndex ? '#0b0b0b' : '#1f2937',
+                      y: index === activeIndex ? -4 : 0,
+                    }}
+                    transition={{ duration: 0.2, ease: 'easeOut' }}
                   >
                     {letter}
-                  </motion.tspan>
+                  </motion.span>
                 ))}
-              </motion.text>
+              </div>
+            </div>
 
-              <motion.path
-                d="M34 154 C44 68 356 70 366 154 C376 238 44 242 34 154 Z"
-                fill="none"
-                stroke="#d62828"
-                strokeWidth="6"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                initial={{ pathLength: 0, opacity: 0.95 }}
-                animate={{ pathLength: 1, opacity: 1 }}
-                transition={{ delay: 1.75, duration: 0.95, ease: [0.2, 0.75, 0.3, 1] }}
-              />
-            </svg>
+            <motion.p
+              className="mt-8 text-center font-body text-xs font-medium uppercase tracking-[0.22em] text-[#1f2937]"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.15, duration: 0.35 }}
+            >
+              preparing your experience
+            </motion.p>
           </div>
         </motion.div>
       )}
