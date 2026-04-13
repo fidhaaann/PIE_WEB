@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import { motion, AnimatePresence, useMotionValueEvent, useSpring, PanInfo } from 'framer-motion'
-import { X, ArrowUpRight, ChevronLeft, ChevronRight } from 'lucide-react'
+import { X, ArrowUpRight, ArrowLeft, ArrowRight } from 'lucide-react'
 import AnimateIn from '@/components/AnimateIn'
 
 const speakers = [
@@ -246,22 +246,22 @@ export default function Speakers() {
       <div className="relative w-full h-[480px] md:h-[620px] lg:h-[660px]">
         
         {/* Navigation Buttons */}
-        <div className="flex absolute inset-x-2 md:inset-x-4 max-w-7xl mx-auto top-[92%] lg:top-1/2 -translate-y-1/2 z-[300] items-center justify-between pointer-events-none opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity duration-300">
+        <div className="hidden lg:flex absolute inset-x-4 max-w-7xl mx-auto top-1/2 -translate-y-1/2 z-[300] items-center justify-between pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300">
           <button
             onClick={() => setActiveIndex(prev => Math.max(0, prev - 1))}
             disabled={activeIndex === 0}
-            className="w-12 h-12 lg:w-14 lg:h-14 rounded-full glass flex items-center justify-center text-white/70 hover:text-white disabled:opacity-20 disabled:cursor-not-allowed pointer-events-auto cursor-pointer border border-white/10 shadow-lg"
+            className="relative w-14 h-14 rounded-full bg-[#fef08a] flex items-center justify-center text-[#0b0b0b] hover:scale-105 disabled:opacity-20 disabled:cursor-not-allowed pointer-events-auto cursor-pointer border-[3px] border-[#0b0b0b] shadow-[4px_4px_0_#0b0b0b] transition-transform"
             aria-label="Previous speaker"
           >
-            <ChevronLeft className="w-6 h-6 lg:w-7 lg:h-7" />
+            <ArrowLeft className="relative z-10 w-7 h-7" strokeWidth={2.75} />
           </button>
           <button
             onClick={() => setActiveIndex(prev => Math.min(speakers.length - 1, prev + 1))}
             disabled={activeIndex === speakers.length - 1}
-            className="w-12 h-12 lg:w-14 lg:h-14 rounded-full glass flex items-center justify-center text-white/70 hover:text-white disabled:opacity-20 disabled:cursor-not-allowed pointer-events-auto cursor-pointer border border-white/10 shadow-lg"
+            className="relative w-14 h-14 rounded-full bg-[#bfdbfe] flex items-center justify-center text-[#0b0b0b] hover:scale-105 disabled:opacity-20 disabled:cursor-not-allowed pointer-events-auto cursor-pointer border-[3px] border-[#0b0b0b] shadow-[4px_4px_0_#0b0b0b] transition-transform"
             aria-label="Next speaker"
           >
-            <ChevronRight className="w-6 h-6 lg:w-7 lg:h-7" />
+            <ArrowRight className="relative z-10 w-7 h-7" strokeWidth={2.75} />
           </button>
         </div>
 
