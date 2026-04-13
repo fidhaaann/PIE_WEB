@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import { ArrowUpRight, ArrowUp } from 'lucide-react'
-import pieLogo from '@/photo/pielogo-Photoroom.png'
+import pieLogo from '@/photo/pie_black_logo-Photoroom.png'
 
 const navLinks = [
   { label: 'About', href: '#about' },

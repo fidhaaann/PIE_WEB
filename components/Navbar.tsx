@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Menu, X } from 'lucide-react'
-import pieLogo from '@/photo/pielogo-Photoroom.png'
+import pieLogo from '@/photo/pie_black_logo-Photoroom.png'
 
 const navLinks = [
   { label: 'About', href: '#about' },
@@ -68,7 +68,7 @@ export default function Navbar() {
               <Image
                 src={pieLogo}
                 alt="IEEE PIE Kerala Section logo"
-                className="h-8 sm:h-9 md:h-10 w-auto"
+                className="h-9 sm:h-10 md:h-11 w-auto"
                 priority
                 loading="eager"
                 fetchPriority="high"
@@ -109,18 +109,18 @@ export default function Navbar() {
       <AnimatePresence>
         {menuOpen && (
           <motion.div
-            initial={{ x: '100%' }}
-            animate={{ x: 0 }}
-            exit={{ x: '100%' }}
-            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-            className="fixed inset-y-0 right-0 z-[99] w-[86vw] max-w-xs bg-[#ffffff] border-l-[4px] border-[#0b0b0b] flex flex-col pt-20 px-6 gap-5 md:hidden"
+            initial={{ y: -16, opacity: 0, scaleY: 0.98 }}
+            animate={{ y: 0, opacity: 1, scaleY: 1 }}
+            exit={{ y: -12, opacity: 0, scaleY: 0.98 }}
+            transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
+            className="fixed top-[calc(env(safe-area-inset-top)+4.75rem)] left-4 right-4 z-[99] origin-top rounded-2xl bg-[#ffffff] border-[4px] border-[#0b0b0b] shadow-[8px_8px_0_#0b0b0b] flex flex-col pt-6 px-5 pb-6 gap-5 md:hidden"
           >
             {navLinks.map((link, i) => (
               <motion.button
                 key={link.label}
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: i * 0.06 }}
+                initial={{ opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.04 + i * 0.05, duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
                 type="button"
                 onClick={() => handleNav(link.href)}
               >

@@ -81,13 +81,13 @@ export default function Hero() {
   return (
     <section
       id="home"
-      className="relative min-h-[100svh] md:min-h-screen flex items-center overflow-hidden pt-[calc(env(safe-area-inset-top)+5.5rem)] md:pt-0"
+      className="relative min-h-[100svh] md:min-h-screen flex items-start md:items-center overflow-hidden pt-[calc(env(safe-area-inset-top)+7rem)] sm:pt-[calc(env(safe-area-inset-top)+7.75rem)] md:pt-0"
     >
       {/* Ambient blobs */}
       <motion.div
         ref={blobRef}
         style={{ y: shouldLightMotion ? 0 : blobY }}
-        className="absolute inset-0 pointer-events-none transition-transform duration-700 ease-out"
+        className="absolute inset-0 pointer-events-none hidden md:block transition-transform duration-700 ease-out"
       >
         <div className="absolute top-8 left-8 w-20 h-20 md:w-28 md:h-28 bg-[#facc15] border-[3px] border-[#0b0b0b] rotate-6" />
         <div className="absolute bottom-16 right-10 w-16 h-16 md:w-24 md:h-24 bg-[#60a5fa] border-[3px] border-[#0b0b0b] -rotate-12" />
@@ -159,13 +159,13 @@ export default function Hero() {
             initial={{ opacity: 0, y: shouldLightMotion ? 18 : 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: shouldLightMotion ? 0.32 : 1.1, duration: shouldLightMotion ? 0.42 : 0.7 }}
-            className="lg:col-span-2"
+            className="lg:col-span-2 mt-10 lg:mt-0"
           >
             <div className="glass accent-stroke rounded-[28px] p-4 md:p-6 w-full max-w-[560px] mx-auto lg:mx-0 overflow-hidden bg-[#fef08a]">
               <div className="rounded-[22px] border-[3px] border-[#0b0b0b] bg-[#ffffff] shadow-[6px_6px_0_#0b0b0b] overflow-hidden">
                 <div className="flex items-center justify-between gap-3 px-4 md:px-5 py-3 border-b-[3px] border-[#0b0b0b] bg-[#dbeafe]">
                   <div className="flex items-center gap-2">
-                    <span className="w-3 h-3 rounded-full bg-[#ff5f57]" />
+                    <span className="hidden sm:inline-block w-3 h-3 rounded-full bg-[#ff5f57]" />
                     <span className="w-3 h-3 rounded-full bg-[#febc2e]" />
                     <span className="w-3 h-3 rounded-full bg-[#28c840]" />
                   </div>
