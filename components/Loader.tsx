@@ -49,13 +49,15 @@ export default function Loader() {
           <div className="relative z-10 w-[min(88vw,720px)]">
             <svg viewBox="0 0 400 260" className="h-auto w-full" aria-label="loading handwritten animation">
               <motion.text
-                x="52"
+                x="200"
                 y="168"
                 fill="#111827"
                 fontSize="84"
-                fontWeight="700"
-                fontFamily="'Segoe Print', 'Bradley Hand', 'Comic Sans MS', cursive"
-                style={{ letterSpacing: '0.04em' }}
+                fontWeight="400"
+                fontFamily="'Caveat', 'Comic Sans MS', cursive"
+                fontStyle="normal"
+                textAnchor="middle"
+                style={{ letterSpacing: '0.02em' }}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.15 }}
