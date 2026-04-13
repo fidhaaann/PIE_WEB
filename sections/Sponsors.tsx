@@ -3,14 +3,17 @@
 import Image from 'next/image'
 import { motion } from 'framer-motion'
 import AnimateIn from '@/components/AnimateIn'
+import GlareHover from '@/components/GlareHover'
+import logo1 from '@/photo/logo1.png'
+import logo2 from '@/photo/logo2.png'
+import logo3 from '@/photo/logo3.png'
+import logo4 from '@/photo/logo4.png'
 
 const sponsors = [
-  { name: 'KSEB', img: 'https://ui-avatars.com/api/?name=KSEB&background=E3EF26&color=06231D&size=512&bold=true' },
-  { name: 'Greenko', img: 'https://ui-avatars.com/api/?name=Greenko&background=E3EF26&color=06231D&size=512&bold=true' },
-  { name: 'VoltEdge', img: 'https://ui-avatars.com/api/?name=VoltEdge&background=76d7b0&color=06231D&size=512&bold=true' },
-  { name: 'Renew Power', img: 'https://ui-avatars.com/api/?name=Renew&background=76d7b0&color=06231D&size=512&bold=true' },
-  { name: 'CESA Tech', img: 'https://ui-avatars.com/api/?name=CESA&background=76d7b0&color=06231D&size=512&bold=true' },
-  { name: 'Zyod Labs', img: 'https://ui-avatars.com/api/?name=Zyod&background=f9a848&color=06231D&size=512&bold=true' },
+  { name: 'Sponsor 1', img: logo1 },
+  { name: 'Sponsor 2', img: logo2 },
+  { name: 'Sponsor 3', img: logo3 },
+  { name: 'Sponsor 4', img: logo4 },
 ]
 
 export default function Sponsors() {
@@ -32,23 +35,38 @@ export default function Sponsors() {
         </AnimateIn>
 
         <AnimateIn>
-          <div className="grid grid-cols-2 gap-3 md:gap-4 max-w-3xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-5 max-w-5xl mx-auto">
             {sponsors.map((sp) => (
               <motion.div
                 key={sp.name}
-                className="relative flex items-center justify-center rounded-[16px] border border-[rgba(255,255,255,0.10)] bg-[rgba(255,255,255,0.02)] p-4 md:p-5"
+                className="relative"
                 whileHover={{ scale: 1.03, y: -1 }}
                 transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
               >
-                <div className="relative h-[74px] w-full max-w-[160px] sm:h-[82px] md:h-[92px] md:max-w-[180px]">
-                  <Image
-                    src={sp.img}
-                    alt={sp.name}
-                    fill
-                    className="object-contain"
-                    sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 180px"
-                  />
-                </div>
+                <GlareHover
+                  width="100%"
+                  height="clamp(220px, 26vw, 280px)"
+                  background="rgba(255,255,255,0.03)"
+                  borderRadius="16px"
+                  borderColor="transparent"
+                  glareColor="#ffffff"
+                  glareOpacity={0.35}
+                  glareAngle={-30}
+                  glareSize={190}
+                  transitionDuration={1000}
+                  playOnce={false}
+                >
+                  <div className="flex h-[165px] w-[165px] items-center justify-center p-3 md:h-[190px] md:w-[190px] md:p-4">
+                    <Image
+                      src={sp.img}
+                      alt={sp.name}
+                      width={170}
+                      height={170}
+                      className="h-auto w-full max-w-[170px] object-contain"
+                      sizes="170px"
+                    />
+                  </div>
+                </GlareHover>
               </motion.div>
             ))}
           </div>

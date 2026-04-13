@@ -73,6 +73,17 @@ const speakers = [
     twitter: '#',
     tag: 'Utility',
   },
+  {
+    id: 7,
+    name: 'Dr. Meera Joseph',
+    role: 'Director, Centre for Energy Analytics',
+    topic: 'AI for Power Grid Reliability',
+    bio: 'Dr. Meera Joseph leads applied research in AI-driven fault prediction and reliability analytics for large-scale transmission networks. Her team has deployed predictive maintenance pilots with utilities across South India.',
+    img: 'https://ui-avatars.com/api/?name=Meera+Joseph&background=076653&color=E3EF26&size=512&bold=true',
+    linkedin: '#',
+    twitter: '#',
+    tag: 'Research',
+  },
 ]
 
 type Speaker = typeof speakers[0]
@@ -283,7 +294,7 @@ export default function Speakers() {
         >
           {/* Card Engine Container */}
           <div 
-            className={`relative ${stackProfiles[screenTier].cardSize}`}
+            className={`relative mx-auto ${stackProfiles[screenTier].cardSize}`}
             style={{ perspective: '1400px', transformStyle: 'preserve-3d' }}
           >
             {speakers.map((sp, i) => {

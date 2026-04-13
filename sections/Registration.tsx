@@ -42,9 +42,9 @@ export default function Registration() {
           </div>
         </AnimateIn>
 
-        <AnimateIn className="section-intro">
+        <AnimateIn className="section-intro text-center mx-auto flex flex-col items-center">
           <h2
-            className="font-display text-center text-[var(--text-primary)] section-title"
+            className="font-display text-center text-[var(--text-primary)] section-title mx-auto"
             style={{ fontSize: 'clamp(2.1rem, 7vw, 4.5rem)' }}
           >
             Secure your <span className="editorial-italic">spot</span>

@@ -5,7 +5,6 @@ import SmoothScroll from '@/components/SmoothScroll'
 import ScrollProgress from '@/components/ScrollProgress'
 import Navbar from '@/components/Navbar'
 import LiquidGlassBackground from '@/components/LiquidGlassBackground'
-import InteractiveDots from '@/components/InteractiveDots'
 import Loader from '@/components/Loader'
 
 const siteUrl =
@@ -50,7 +49,6 @@ export default function RootLayout({
       <body className="font-body">
         <Loader />
         <LiquidGlassBackground />
-        <InteractiveDots />
         <ThemeProvider>
           <SmoothScroll>
             <ScrollProgress />

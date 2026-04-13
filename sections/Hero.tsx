@@ -32,24 +32,30 @@ export default function Hero() {
   const [visibleLineCount, setVisibleLineCount] = useState(1)
   const [typingLine, setTypingLine] = useState(0)
   const [typingCharCount, setTypingCharCount] = useState(0)
-  const shouldLightMotion = Boolean(prefersReducedMotion)
+  const [isAnimationReady, setIsAnimationReady] = useState(false)
+  
+  // Handle reduced motion preference - ensure it's a boolean
+  const shouldLightMotion = prefersReducedMotion === true
 
   const { scrollYProgress } = useScroll()
   const blobY = useTransform(scrollYProgress, [0, 1], [0, 170])
   const contentY = useTransform(scrollYProgress, [0, 1], [0, -56])
 
+  // Initialize animation state when component mounts or reduced motion preference changes
   useEffect(() => {
-    if (!shouldLightMotion) return
-    const rafId = window.requestAnimationFrame(() => {
+    setIsAnimationReady(true)
+    
+    if (shouldLightMotion) {
+      // Instantly show all text if reduced motion is preferred
       setVisibleLineCount(TERMINAL_LINES.length)
       setTypingLine(TERMINAL_LINES.length - 1)
       setTypingCharCount(TERMINAL_LINES[TERMINAL_LINES.length - 1].length)
-    })
-    return () => window.cancelAnimationFrame(rafId)
+    }
   }, [shouldLightMotion])
 
+  // Terminal typing animation
   useEffect(() => {
-    if (shouldLightMotion) return
+    if (shouldLightMotion || !isAnimationReady) return
 
     const currentLine = TERMINAL_LINES[typingLine] ?? ''
     const isTypingCommand = currentLine.startsWith('$')
@@ -72,7 +78,7 @@ export default function Hero() {
 
       return () => window.clearTimeout(timer)
     }
-  }, [typingCharCount, typingLine, visibleLineCount, shouldLightMotion])
+  }, [typingCharCount, typingLine, visibleLineCount, shouldLightMotion, isAnimationReady])
 
   const scrollDown = () => {
     document.querySelector('#about')?.scrollIntoView({ behavior: 'smooth' })
@@ -156,21 +162,20 @@ export default function Hero() {
           </div>
 
           <motion.div
-            initial={{ opacity: 0, y: shouldLightMotion ? 18 : 40 }}
+            initial={{ scale: 0.85, y: shouldLightMotion ? 18 : 40 }}
             animate={
               shouldLightMotion
-                ? { opacity: 1, y: 0 }
-                : { opacity: 1, y: [0, -10, 0] }
+                ? { scale: 1, y: 0 }
+                : { scale: 1, y: 0 }
             }
             transition={
               shouldLightMotion
                 ? { delay: 0.32, duration: 0.42 }
-                : { delay: 1.1, duration: 5.5, repeat: Infinity, ease: 'easeInOut' }
+                : { delay: 1.1, duration: 0.8, ease: 'easeInOut' }
             }
             className="lg:col-span-2 mt-10 lg:mt-0"
           >
-            <div className="glass accent-stroke rounded-[28px] p-4 md:p-6 w-full max-w-[560px] mx-auto lg:mx-0 overflow-hidden bg-[#fef08a] shadow-[0_24px_60px_rgba(0,0,0,0.22)]">
-              <div className="rounded-[22px] border-[3px] border-[#0b0b0b] bg-[#ffffff] shadow-[10px_12px_0_#0b0b0b] overflow-hidden">
+            <div className="rounded-[22px] border-[3px] border-[#0b0b0b] bg-[#ffffff] shadow-[10px_12px_0_#0b0b0b] overflow-hidden w-full max-w-[560px] mx-auto lg:mx-0">
                 <div className="flex items-center justify-between gap-3 px-4 md:px-5 py-3 border-b-[3px] border-[#0b0b0b] bg-[#dbeafe]">
                   <div className="flex items-center gap-2">
                     <span className="hidden sm:inline-block w-3 h-3 rounded-full bg-[#ff5f57]" />
@@ -214,7 +219,7 @@ export default function Hero() {
                   </div>
                 </div>
               </div>
-            </div>
+
           </motion.div>
         </div>
       </motion.div>

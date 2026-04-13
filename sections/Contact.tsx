@@ -2,8 +2,25 @@
 
 import { useState, FormEvent } from 'react'
 import { motion } from 'framer-motion'
-import { Mail, Phone, MapPin, Send, ArrowUpRight } from 'lucide-react'
+import { Mail, Phone, MapPin, Send } from 'lucide-react'
 import AnimateIn from '@/components/AnimateIn'
+
+const InstagramIcon = ({ size = 16 }: { size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" strokeWidth="1.8" />
+    <circle cx="12" cy="12" r="4" stroke="currentColor" strokeWidth="1.8" />
+    <circle cx="17.2" cy="6.8" r="1.2" fill="currentColor" />
+  </svg>
+)
+
+const LinkedinIcon = ({ size = 16 }: { size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <rect x="3" y="3" width="18" height="18" rx="3" stroke="currentColor" strokeWidth="1.8" />
+    <rect x="7" y="10" width="2.2" height="7" fill="currentColor" />
+    <circle cx="8.1" cy="7.3" r="1.2" fill="currentColor" />
+    <path d="M12 10h2v1.2c.5-.8 1.3-1.4 2.6-1.4 2.2 0 3.4 1.4 3.4 4v3.2h-2.2v-2.9c0-1.4-.5-2.3-1.7-2.3-1.3 0-2 .9-2 2.3v2.9H12V10Z" fill="currentColor" />
+  </svg>
+)
 
 export default function Contact() {
   const [form, setForm] = useState({ name: '', email: '', message: '' })
@@ -79,9 +96,8 @@ export default function Contact() {
                 <p className="font-body text-xs text-[var(--text-muted)] uppercase tracking-widest mb-4">Follow Us</p>
                 <div className="flex gap-3 flex-wrap">
                   {[
-                    { icon: ArrowUpRight, href: 'https://instagram.com', label: 'Instagram' },
-                    { icon: ArrowUpRight, href: 'https://linkedin.com', label: 'LinkedIn' },
-                    { icon: ArrowUpRight, href: 'https://twitter.com', label: 'Twitter' },
+                    { icon: InstagramIcon, href: 'https://www.instagram.com/ieeepie.kerala/', label: 'Instagram' },
+                    { icon: LinkedinIcon, href: 'https://www.linkedin.com/company/ieee-pie-kerala-section/', label: 'LinkedIn' },
                   ].map((soc) => (
                     <motion.a
                       key={soc.label}
